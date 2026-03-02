@@ -20,7 +20,14 @@ class User extends Authenticatable
     protected $fillable = [
         'name',
         'email',
-        'password',
+        'google_id',
+        'role',
+        'sex',
+        'student_number',
+        'college_id',
+        'course',
+        'year_level',
+        'status'
     ];
 
     /**
@@ -44,5 +51,20 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
+    }
+
+    public function candidate()
+    {
+        return $this->hasOne(Candidate::class);
+    }
+
+    public function votes()
+    {
+        return $this->hasMany(CastedVote::class, 'voter_id');
+    }
+
+    public function college()
+    {
+        return $this->belongsTo(College::class);
     }
 }
