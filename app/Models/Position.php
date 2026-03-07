@@ -10,7 +10,10 @@ class Position extends Model
     use HasFactory;
 
     protected $primaryKey = 'position_id';
-    protected $fillable = ['name'];
+    
+    protected $fillable = [
+        'name'
+    ];
 
     public function candidates()
     {

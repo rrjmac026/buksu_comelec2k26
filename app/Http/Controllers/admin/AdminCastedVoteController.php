@@ -1,11 +1,12 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Admin;
 
-use App\Models\Feedback;
+use App\Http\Controllers\Controller;
+use App\Models\CastedVote;
 use Illuminate\Http\Request;
 
-class FeedbackController extends Controller
+class AdminCastedVoteController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -34,7 +35,7 @@ class FeedbackController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Feedback $feedback)
+    public function show(CastedVote $castedVote)
     {
         //
     }
@@ -42,7 +43,7 @@ class FeedbackController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Feedback $feedback)
+    public function edit(CastedVote $castedVote)
     {
         //
     }
@@ -50,7 +51,7 @@ class FeedbackController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Feedback $feedback)
+    public function update(Request $request, CastedVote $castedVote)
     {
         //
     }
@@ -58,7 +59,7 @@ class FeedbackController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Feedback $feedback)
+    public function destroy(CastedVote $castedVote)
     {
         //
     }

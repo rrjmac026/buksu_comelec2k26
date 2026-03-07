@@ -1,11 +1,12 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Admin;
 
-use App\Models\Organization;
+use App\Http\Controllers\Controller;
+use App\Models\College;
 use Illuminate\Http\Request;
 
-class OrganizationController extends Controller
+class AdminCollegeController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -34,7 +35,7 @@ class OrganizationController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Organization $organization)
+    public function show(College $college)
     {
         //
     }
@@ -42,7 +43,7 @@ class OrganizationController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Organization $organization)
+    public function edit(College $college)
     {
         //
     }
@@ -50,7 +51,7 @@ class OrganizationController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Organization $organization)
+    public function update(Request $request, College $college)
     {
         //
     }
@@ -58,7 +59,7 @@ class OrganizationController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Organization $organization)
+    public function destroy(College $college)
     {
         //
     }

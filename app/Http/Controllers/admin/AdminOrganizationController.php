@@ -1,11 +1,12 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Admin;
 
-use App\Models\Position;
+use App\Http\Controllers\Controller;
+use App\Models\Organization;
 use Illuminate\Http\Request;
 
-class PositionController extends Controller
+class AdminOrganizationController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -34,7 +35,7 @@ class PositionController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Position $position)
+    public function show(Organization $organization)
     {
         //
     }
@@ -42,7 +43,7 @@ class PositionController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Position $position)
+    public function edit(Organization $organization)
     {
         //
     }
@@ -50,7 +51,7 @@ class PositionController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Position $position)
+    public function update(Request $request, Organization $organization)
     {
         //
     }
@@ -58,7 +59,7 @@ class PositionController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Position $position)
+    public function destroy(Organization $organization)
     {
         //
     }

@@ -1,11 +1,12 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Admin;
 
-use App\Models\CastedVote;
+use App\Http\Controllers\Controller;
+use App\Models\Candidate;
 use Illuminate\Http\Request;
 
-class CastedVoteController extends Controller
+class AdminCandidateController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -34,7 +35,7 @@ class CastedVoteController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(CastedVote $castedVote)
+    public function show(Candidate $candidate)
     {
         //
     }
@@ -42,7 +43,7 @@ class CastedVoteController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(CastedVote $castedVote)
+    public function edit(Candidate $candidate)
     {
         //
     }
@@ -50,7 +51,7 @@ class CastedVoteController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, CastedVote $castedVote)
+    public function update(Request $request, Candidate $candidate)
     {
         //
     }
@@ -58,7 +59,7 @@ class CastedVoteController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(CastedVote $castedVote)
+    public function destroy(Candidate $candidate)
     {
         //
     }
