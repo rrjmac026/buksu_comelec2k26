@@ -8,7 +8,7 @@ use App\Models\Organization;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 
-class OrganizationController extends Controller
+class AdminOrganizationController extends Controller
 {
     public function index()
     {

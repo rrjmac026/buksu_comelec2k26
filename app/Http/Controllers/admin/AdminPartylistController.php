@@ -7,7 +7,7 @@ use App\Models\Partylist;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 
-class PartylistController extends Controller
+class AdminPartylistController extends Controller
 {
     public function index()
     {

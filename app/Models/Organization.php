@@ -2,27 +2,21 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Organization extends Model
 {
-    use HasFactory;
+    protected $primaryKey = 'id';
 
-    protected $table = 'organizations';
-    protected $primaryKey = 'organization_id';
-    public $incrementing = true;
-    protected $keyType = 'int';
-
-    protected $fillable = ['name', 'description', 'college_id'];
+    protected $fillable = ['name', 'description', 'acronym', 'college_id'];
 
     public function college()
     {
-        return $this->belongsTo(College::class, 'college_id');
+        return $this->belongsTo(College::class, 'college_id', 'id');
     }
 
-    public function positions()
+    public function candidates()
     {
-        return $this->hasMany(Position::class, 'organization_id');
+        return $this->hasMany(Candidate::class, 'organization_id', 'id');
     }
 }

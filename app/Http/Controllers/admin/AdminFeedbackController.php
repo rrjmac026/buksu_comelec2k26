@@ -6,7 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Feedback;
 use Illuminate\Http\Request;
 
-class FeedbackController extends Controller
+class AdminFeedbackController extends Controller
 {
     /**
      * List all feedback submissions with optional filtering.

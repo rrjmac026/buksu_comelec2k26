@@ -7,7 +7,7 @@ use App\Models\Position;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 
-class PositionController extends Controller
+class AdminPositionController extends Controller
 {
     public function index()
     {

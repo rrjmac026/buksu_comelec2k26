@@ -11,7 +11,7 @@ use App\Models\Position;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 
-class CandidateController extends Controller
+class AdminCandidateController extends Controller
 {
     public function index()
     {

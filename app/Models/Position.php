@@ -2,21 +2,21 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Position extends Model
 {
-    use HasFactory;
+    protected $primaryKey = 'id';
 
-    protected $primaryKey = 'position_id';
-    
-    protected $fillable = [
-        'name'
-    ];
+    protected $fillable = ['name'];
 
     public function candidates()
     {
-        return $this->hasMany(Candidate::class, 'position_id', 'position_id');
+        return $this->hasMany(Candidate::class, 'position_id', 'id');
+    }
+
+    public function votes()
+    {
+        return $this->hasMany(CastedVote::class, 'position_id', 'id');
     }
 }

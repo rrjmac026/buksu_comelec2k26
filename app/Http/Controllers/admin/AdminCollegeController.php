@@ -7,7 +7,7 @@ use App\Models\College;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 
-class CollegeController extends Controller
+class AdminCollegeController extends Controller
 {
     public function index()
     {
