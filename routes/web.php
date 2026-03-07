@@ -1,6 +1,15 @@
 <?php
 
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\Admin\AdminDashboardController;
+use App\Http\Controllers\Admin\CandidateController;
+use App\Http\Controllers\Admin\CollegeController;
+use App\Http\Controllers\Admin\OrganizationController;
+use App\Http\Controllers\Admin\PartylistController;
+use App\Http\Controllers\Admin\PositionController;
+use App\Http\Controllers\Voter\CastedVoteController;
+use App\Http\Controllers\Voter\FeedbackController;
+use App\Http\Controllers\Voter\VoterDashboardController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -18,6 +27,7 @@ Route::middleware('auth')->group(function () {
 });
 
 Route::middleware(['auth', 'admin'])->group(function () {
+    Route::get('/admin/dashboard', [AdminDashboardController::class, 'index'])->name('admin.dashboard');
     Route::resource('candidates', CandidateController::class);
     Route::resource('positions', PositionController::class);
     Route::resource('partylists', PartylistController::class);
@@ -27,6 +37,7 @@ Route::middleware(['auth', 'admin'])->group(function () {
 
 // Voter routes
 Route::middleware(['auth', 'voter'])->group(function () {
+    Route::get('/voter/dashboard', [VoterDashboardController::class, 'index'])->name('voter.dashboard');
     Route::resource('votes', CastedVoteController::class);
     Route::resource('feedback', FeedbackController::class);
 });

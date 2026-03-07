@@ -1,17 +1,16 @@
 <?php
 
-namespace App\Http\Controllers\voter;
+namespace App\Http\Controllers\Voter;
 
-use app\Http\Controllers\Controller;
+use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use App\Models\Voter;
+
 
 
 class VoterDashboardController extends Controller
 {
     public function index()
     {
-        $voters = Voter::all();
-        return view('voter.dashboard', compact('voters'));
+        return view('voter.dashboard');
     }
 }
