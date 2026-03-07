@@ -9,7 +9,7 @@ use App\Http\Controllers\Admin\AdminPartylistController;
 use App\Http\Controllers\Admin\AdminPositionController;
 use App\Http\Controllers\Admin\AdminCastedVoteController;
 use App\Http\Controllers\Admin\AdminVoterController;
-use App\Http\Controllers\Admin\FeedbackController as AdminFeedbackController;
+use App\Http\Controllers\Admin\AdminFeedbackController;
 use App\Http\Controllers\Voter\VoterDashboardController;
 use App\Http\Controllers\Voter\CastedVoteController as VoterCastedVoteController;
 use App\Http\Controllers\Voter\FeedbackController as VoterFeedbackController;
@@ -56,6 +56,7 @@ Route::middleware(['auth', 'admin'])
 
         // Dashboard
         Route::get('dashboard', [AdminDashboardController::class, 'index'])->name('dashboard');
+        Route::get('dashboard/live', [AdminDashboardController::class, 'live'])->name('dashboard.live');
 
         // Election Setup
         Route::resource('candidates',   AdminCandidateController::class);
@@ -63,6 +64,7 @@ Route::middleware(['auth', 'admin'])
         Route::resource('partylists',   AdminPartylistController::class);
         Route::resource('organizations',AdminOrganizationController::class);
         Route::resource('colleges',     AdminCollegeController::class);
+        Route::resource('feedback', AdminFeedbackController::class)->only(['index', 'show', 'destroy']);
 
         // Voters
         Route::patch('voters/{voter}/status', [AdminVoterController::class, 'toggleStatus'])

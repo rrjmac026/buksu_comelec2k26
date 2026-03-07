@@ -13,7 +13,7 @@ class AdminOrganizationController extends Controller
     public function index()
     {
         $organizations = Organization::with('college')
-            ->withCount('positions')
+            ->withCount('candidates')
             ->orderBy('name')
             ->paginate(15);
 
@@ -32,18 +32,19 @@ class AdminOrganizationController extends Controller
         $validated = $request->validate([
             'name'        => ['required', 'string', 'max:255', 'unique:organizations,name'],
             'description' => ['nullable', 'string'],
-            'college_id'  => ['required', 'exists:colleges,college_id'],
+            'acronym'     => ['nullable', 'string', 'max:20'],
+            'college_id'  => ['required', 'exists:colleges,id'],
         ]);
 
         Organization::create($validated);
 
-        return redirect()->route('organizations.index')
+        return redirect()->route('admin.organizations.index')
             ->with('success', 'Organization created successfully.');
     }
 
     public function show(Organization $organization)
     {
-        $organization->load(['college', 'positions.candidates']);
+        $organization->load(['college', 'candidates.position', 'candidates.partylist']);
 
         return view('admin.organizations.show', compact('organization'));
     }
@@ -58,27 +59,28 @@ class AdminOrganizationController extends Controller
     public function update(Request $request, Organization $organization)
     {
         $validated = $request->validate([
-            'name'        => ['required', 'string', 'max:255', Rule::unique('organizations', 'name')->ignore($organization->organization_id, 'organization_id')],
+            'name'        => ['required', 'string', 'max:255', Rule::unique('organizations', 'name')->ignore($organization->id)],
             'description' => ['nullable', 'string'],
-            'college_id'  => ['required', 'exists:colleges,college_id'],
+            'acronym'     => ['nullable', 'string', 'max:20'],
+            'college_id'  => ['required', 'exists:colleges,id'],
         ]);
 
         $organization->update($validated);
 
-        return redirect()->route('organizations.index')
+        return redirect()->route('admin.organizations.index')
             ->with('success', 'Organization updated successfully.');
     }
 
     public function destroy(Organization $organization)
     {
-        if ($organization->positions()->exists()) {
-            return redirect()->route('organizations.index')
-                ->with('error', 'Cannot delete organization — it has associated positions.');
+        if ($organization->candidates()->exists()) {
+            return redirect()->route('admin.organizations.index')
+                ->with('error', 'Cannot delete organization — it still has associated candidates.');
         }
 
         $organization->delete();
 
-        return redirect()->route('organizations.index')
+        return redirect()->route('admin.organizations.index')
             ->with('success', 'Organization deleted successfully.');
     }
 }
