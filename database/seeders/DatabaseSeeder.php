@@ -49,11 +49,20 @@ class DatabaseSeeder extends Seeder
         );
 
         User::updateOrCreate(
-            ['email' => '20000000@student.buksu.edu.ph'],
+            ['email' => '2001102491@student.buksu.edu.ph'],
             [
                 'name' => 'Admin Bernardo Dela Cerna',
-                'password' => Hash::make('gwaposikirk123'),
+                'password' => Hash::make('gwaposibernard123'),
                 'role' => 'admin',
+            ]
+        );
+
+        User::updateOrCreate(
+            ['email' => 'user@student.buksu.edu.ph'],
+            [
+                'name' => 'Regular User',
+                'password' => Hash::make('password'),
+                'role' => 'voter',
             ]
         );
         
