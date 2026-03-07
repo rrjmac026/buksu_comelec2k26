@@ -18,7 +18,7 @@ class College extends Model
 
     public function voters()
     {
-        return $this->hasMany(Voter::class, 'college_id');
+        return $this->hasMany(User::class, 'college_id');
     }
 
     public function candidates()
