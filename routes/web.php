@@ -7,44 +7,104 @@ use App\Http\Controllers\Admin\AdminCollegeController;
 use App\Http\Controllers\Admin\AdminOrganizationController;
 use App\Http\Controllers\Admin\AdminPartylistController;
 use App\Http\Controllers\Admin\AdminPositionController;
-use App\Http\Controllers\Voter\CastedVoteController;
-use App\Http\Controllers\Voter\FeedbackController;
-use App\Http\Controllers\Voter\VoterDashboardController;
+use App\Http\Controllers\Admin\AdminCastedVoteController;
 use App\Http\Controllers\Admin\AdminVoterController;
+use App\Http\Controllers\Admin\FeedbackController as AdminFeedbackController;
+use App\Http\Controllers\Voter\VoterDashboardController;
+use App\Http\Controllers\Voter\CastedVoteController as VoterCastedVoteController;
+use App\Http\Controllers\Voter\FeedbackController as VoterFeedbackController;
 use Illuminate\Support\Facades\Route;
 
-Route::get('/', function () {
-    return view('welcome');
-});
+/*
+|--------------------------------------------------------------------------
+| Public Routes
+|--------------------------------------------------------------------------
+*/
 
-Route::get('/dashboard', function () {
-    return view('dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
+Route::get('/', fn() => view('welcome'))->name('home');
+
+/*
+|--------------------------------------------------------------------------
+| Authenticated (shared) Routes
+|--------------------------------------------------------------------------
+*/
 
 Route::middleware('auth')->group(function () {
-    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
-    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
-    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+
+    Route::get('/dashboard', fn() => view('dashboard'))
+        ->middleware('verified')
+        ->name('dashboard');
+
+    Route::prefix('profile')->name('profile.')->group(function () {
+        Route::get('/',     [ProfileController::class, 'edit'])->name('edit');
+        Route::patch('/',   [ProfileController::class, 'update'])->name('update');
+        Route::delete('/',  [ProfileController::class, 'destroy'])->name('destroy');
+    });
+
 });
 
-Route::middleware(['auth', 'admin'])->group(function () {
-    Route::get('/admin/dashboard', [AdminDashboardController::class, 'index'])->name('admin.dashboard');
-    Route::resource('candidates', AdminCandidateController::class);
-    Route::resource('positions', AdminPositionController::class);
-    Route::resource('partylists', AdminPartylistController::class);
-    Route::resource('organizations', AdminOrganizationController::class);
-    Route::resource('colleges', AdminCollegeController::class);
-    Route::get('/admin/votes/results', [AdminCastedVoteController::class, 'results'])->name('admin.votes.results');
-    Route::resource('admin/votes', AdminCastedVoteController::class)->names('admin.votes');
-    Route::patch('/admin/voters/{voter}/status', [AdminVoterController::class, 'toggleStatus'])->name('admin.voters.toggle-status');
-    Route::resource('admin/voters', AdminVoterController::class)->names('admin.voters');
-});
+/*
+|--------------------------------------------------------------------------
+| Admin Routes
+|--------------------------------------------------------------------------
+*/
 
-// Voter routes
-Route::middleware(['auth', 'voter'])->group(function () {
-    Route::get('/voter/dashboard', [VoterDashboardController::class, 'index'])->name('voter.dashboard');
-    Route::resource('votes', CastedVoteController::class);
-    Route::resource('feedback', FeedbackController::class);
-});
+Route::middleware(['auth', 'admin'])
+    ->prefix('admin')
+    ->name('admin.')
+    ->group(function () {
 
-require __DIR__.'/auth.php';
+        // Dashboard
+        Route::get('dashboard', [AdminDashboardController::class, 'index'])->name('dashboard');
+
+        // Election Setup
+        Route::resource('candidates',   AdminCandidateController::class);
+        Route::resource('positions',    AdminPositionController::class);
+        Route::resource('partylists',   AdminPartylistController::class);
+        Route::resource('organizations',AdminOrganizationController::class);
+        Route::resource('colleges',     AdminCollegeController::class);
+
+        // Voters
+        Route::patch('voters/{voter}/status', [AdminVoterController::class, 'toggleStatus'])
+            ->name('voters.toggle-status');
+        Route::resource('voters', AdminVoterController::class);
+
+        // Votes & Results
+        Route::get('votes/results', [AdminCastedVoteController::class, 'results'])->name('votes.results');
+        Route::resource('votes', AdminCastedVoteController::class);
+
+        // Feedback (read-only for admins)
+        Route::resource('feedback', AdminFeedbackController::class)
+            ->only(['index', 'show', 'destroy']);
+
+    });
+
+/*
+|--------------------------------------------------------------------------
+| Voter Routes
+|--------------------------------------------------------------------------
+*/
+
+Route::middleware(['auth', 'voter'])
+    ->prefix('voter')
+    ->name('voter.')
+    ->group(function () {
+
+        // Dashboard
+        Route::get('dashboard', [VoterDashboardController::class, 'index'])->name('dashboard');
+
+        // Voting
+        Route::resource('votes', VoterCastedVoteController::class);
+
+        // Feedback
+        Route::resource('feedback', VoterFeedbackController::class);
+
+    });
+
+/*
+|--------------------------------------------------------------------------
+| Auth Routes (login, register, password reset, etc.)
+|--------------------------------------------------------------------------
+*/
+
+require __DIR__ . '/auth.php';

@@ -21,7 +21,7 @@
 {{-- ── Election Setup ── --}}
 <div class="nav-section-label">Election Setup</div>
 
-<a href="{{ route('positions.index') }}"
+<a href="{{ route('admin.positions.index') }}"
    class="nav-link {{ Str::startsWith($currentRoute, 'positions') ? 'active' : '' }}">
     <div class="nav-link-icon"><i class="fas fa-sitemap"></i></div>
     <div class="nav-link-text">
@@ -30,7 +30,7 @@
     </div>
 </a>
 
-<a href="{{ route('partylists.index') }}"
+<a href="{{ route('admin.partylists.index') }}"
    class="nav-link {{ Str::startsWith($currentRoute, 'partylists') ? 'active' : '' }}">
     <div class="nav-link-icon"><i class="fas fa-flag"></i></div>
     <div class="nav-link-text">
@@ -39,7 +39,7 @@
     </div>
 </a>
 
-<a href="{{ route('organizations.index') }}"
+<a href="{{ route('admin.organizations.index') }}"
    class="nav-link {{ Str::startsWith($currentRoute, 'organizations') ? 'active' : '' }}">
     <div class="nav-link-icon"><i class="fas fa-building-columns"></i></div>
     <div class="nav-link-text">
@@ -48,7 +48,7 @@
     </div>
 </a>
 
-<a href="{{ route('colleges.index') }}"
+<a href="{{ route('admin.colleges.index') }}"
    class="nav-link {{ Str::startsWith($currentRoute, 'colleges') ? 'active' : '' }}">
     <div class="nav-link-icon"><i class="fas fa-graduation-cap"></i></div>
     <div class="nav-link-text">
@@ -60,7 +60,7 @@
 {{-- ── Candidates ── --}}
 <div class="nav-section-label">Candidates</div>
 
-<a href="{{ route('candidates.index') }}"
+<a href="{{ route('admin.candidates.index') }}"
    class="nav-link {{ Str::startsWith($currentRoute, 'candidates') ? 'active' : '' }}">
     <div class="nav-link-icon"><i class="fas fa-id-card"></i></div>
     <div class="nav-link-text">

@@ -6,20 +6,25 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
     public function up(): void
     {
         Schema::create('users', function (Blueprint $table) {
             $table->id();
             $table->string('name');
             $table->string('email')->unique();
+            $table->string('google_id')->nullable()->unique();
             $table->timestamp('email_verified_at')->nullable();
-            $table->string('password');
-            $table->string('role')->default('voter');
+            $table->string('password')->nullable(); // nullable for Google OAuth users
+            $table->string('role')->default('voter'); // admin | voter
+            $table->enum('sex', ['male', 'female', 'other'])->nullable();
+            $table->string('student_number', 50)->nullable()->unique();
+            $table->unsignedBigInteger('college_id')->nullable();
+            $table->string('course', 100)->nullable();
+            $table->unsignedTinyInteger('year_level')->nullable();
+            $table->enum('status', ['active', 'inactive'])->default('active');
             $table->rememberToken();
             $table->timestamps();
+            // FK to colleges added in a later migration (after colleges table exists)
         });
 
         Schema::create('password_reset_tokens', function (Blueprint $table) {
@@ -38,9 +43,6 @@ return new class extends Migration
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
         Schema::dropIfExists('users');

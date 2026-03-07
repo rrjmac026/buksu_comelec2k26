@@ -7,7 +7,7 @@ use App\Models\CastedVote;
 use App\Models\Position;
 use Illuminate\Http\Request;
 
-class CastedVoteController extends Controller
+class AdminCastedVoteController extends Controller
 {
     /**
      * Display all casted votes with filtering options.
