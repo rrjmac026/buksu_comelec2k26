@@ -5,62 +5,72 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Partylist;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 
-class AdminPartylistController extends Controller
+class PartylistController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
     public function index()
     {
-        //
+        $partylists = Partylist::withCount('candidates')
+            ->orderBy('name')
+            ->paginate(15);
+
+        return view('admin.partylists.index', compact('partylists'));
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
     public function create()
     {
-        //
+        return view('admin.partylists.create');
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
     {
-        //
+        $validated = $request->validate([
+            'name'        => ['required', 'string', 'max:255', 'unique:partylists,name'],
+            'description' => ['nullable', 'string'],
+        ]);
+
+        Partylist::create($validated);
+
+        return redirect()->route('partylists.index')
+            ->with('success', 'Partylist created successfully.');
     }
 
-    /**
-     * Display the specified resource.
-     */
     public function show(Partylist $partylist)
     {
-        //
+        $partylist->load(['candidates.position', 'candidates.college']);
+
+        return view('admin.partylists.show', compact('partylist'));
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
     public function edit(Partylist $partylist)
     {
-        //
+        return view('admin.partylists.edit', compact('partylist'));
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
     public function update(Request $request, Partylist $partylist)
     {
-        //
+        $validated = $request->validate([
+            'name'        => ['required', 'string', 'max:255', Rule::unique('partylists', 'name')->ignore($partylist->partylist_id, 'partylist_id')],
+            'description' => ['nullable', 'string'],
+        ]);
+
+        $partylist->update($validated);
+
+        return redirect()->route('partylists.index')
+            ->with('success', 'Partylist updated successfully.');
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
     public function destroy(Partylist $partylist)
     {
-        //
+        if ($partylist->candidates()->exists()) {
+            return redirect()->route('partylists.index')
+                ->with('error', 'Cannot delete partylist — it has associated candidates.');
+        }
+
+        $partylist->delete();
+
+        return redirect()->route('partylists.index')
+            ->with('success', 'Partylist deleted successfully.');
     }
 }

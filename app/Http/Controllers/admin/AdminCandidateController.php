@@ -4,63 +4,127 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Candidate;
+use App\Models\College;
+use App\Models\Organization;
+use App\Models\Partylist;
+use App\Models\Position;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
-class AdminCandidateController extends Controller
+class CandidateController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
     public function index()
     {
-        //
+        $candidates = Candidate::with(['partylist', 'organization', 'position', 'college'])
+            ->latest()
+            ->paginate(15);
+
+        return view('admin.candidates.index', compact('candidates'));
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
     public function create()
     {
-        //
+        $partylists    = Partylist::orderBy('name')->get();
+        $organizations = Organization::with('college')->orderBy('name')->get();
+        $positions     = Position::orderBy('name')->get();
+        $colleges      = College::orderBy('name')->get();
+
+        return view('admin.candidates.create', compact('partylists', 'organizations', 'positions', 'colleges'));
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
     {
-        //
+        $validated = $request->validate([
+            'first_name'      => ['required', 'string', 'max:100'],
+            'last_name'       => ['required', 'string', 'max:100'],
+            'middle_name'     => ['nullable', 'string', 'max:100'],
+            'partylist_id'    => ['required', 'exists:partylists,partylist_id'],
+            'organization_id' => ['required', 'exists:organizations,organization_id'],
+            'position_id'     => ['required', 'exists:positions,position_id'],
+            'college_id'      => ['required', 'exists:colleges,college_id'],
+            'course'          => ['required', 'string', 'max:100'],
+            'platform'        => ['nullable', 'string'],
+            'photo'           => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:2048'],
+        ]);
+
+        if ($request->hasFile('photo')) {
+            $file = $request->file('photo');
+            $filename = time() . '_' . $file->getClientOriginalName();
+            $file->move(public_path('images/candidates'), $filename);
+            $validated['photo'] = $filename;
+        }
+
+        Candidate::create($validated);
+
+        return redirect()->route('candidates.index')
+            ->with('success', 'Candidate created successfully.');
     }
 
-    /**
-     * Display the specified resource.
-     */
     public function show(Candidate $candidate)
     {
-        //
+        $candidate->load(['partylist', 'organization', 'position', 'college', 'castedVotes']);
+
+        return view('admin.candidates.show', compact('candidate'));
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
     public function edit(Candidate $candidate)
     {
-        //
+        $partylists    = Partylist::orderBy('name')->get();
+        $organizations = Organization::with('college')->orderBy('name')->get();
+        $positions     = Position::orderBy('name')->get();
+        $colleges      = College::orderBy('name')->get();
+
+        return view('admin.candidates.edit', compact('candidate', 'partylists', 'organizations', 'positions', 'colleges'));
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
     public function update(Request $request, Candidate $candidate)
     {
-        //
+        $validated = $request->validate([
+            'first_name'      => ['required', 'string', 'max:100'],
+            'last_name'       => ['required', 'string', 'max:100'],
+            'middle_name'     => ['nullable', 'string', 'max:100'],
+            'partylist_id'    => ['required', 'exists:partylists,partylist_id'],
+            'organization_id' => ['required', 'exists:organizations,organization_id'],
+            'position_id'     => ['required', 'exists:positions,position_id'],
+            'college_id'      => ['required', 'exists:colleges,college_id'],
+            'course'          => ['required', 'string', 'max:100'],
+            'platform'        => ['nullable', 'string'],
+            'photo'           => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:2048'],
+        ]);
+
+        if ($request->hasFile('photo')) {
+            // Delete old photo if it exists
+            if ($candidate->photo) {
+                $oldPath = public_path('images/candidates/' . $candidate->photo);
+                if (file_exists($oldPath)) {
+                    unlink($oldPath);
+                }
+            }
+
+            $file = $request->file('photo');
+            $filename = time() . '_' . $file->getClientOriginalName();
+            $file->move(public_path('images/candidates'), $filename);
+            $validated['photo'] = $filename;
+        }
+
+        $candidate->update($validated);
+
+        return redirect()->route('candidates.index')
+            ->with('success', 'Candidate updated successfully.');
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
     public function destroy(Candidate $candidate)
     {
-        //
+        if ($candidate->photo) {
+            $photoPath = public_path('images/candidates/' . $candidate->photo);
+            if (file_exists($photoPath)) {
+                unlink($photoPath);
+            }
+        }
+
+        $candidate->delete();
+
+        return redirect()->route('candidates.index')
+            ->with('success', 'Candidate deleted successfully.');
     }
 }

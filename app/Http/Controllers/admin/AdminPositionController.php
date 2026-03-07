@@ -5,62 +5,70 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Position;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 
-class AdminPositionController extends Controller
+class PositionController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
     public function index()
     {
-        //
+        $positions = Position::withCount('candidates')
+            ->orderBy('name')
+            ->paginate(15);
+
+        return view('admin.positions.index', compact('positions'));
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
     public function create()
     {
-        //
+        return view('admin.positions.create');
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
     {
-        //
+        $validated = $request->validate([
+            'name' => ['required', 'string', 'max:255', 'unique:positions,name'],
+        ]);
+
+        Position::create($validated);
+
+        return redirect()->route('positions.index')
+            ->with('success', 'Position created successfully.');
     }
 
-    /**
-     * Display the specified resource.
-     */
     public function show(Position $position)
     {
-        //
+        $position->load(['candidates.partylist', 'candidates.college']);
+
+        return view('admin.positions.show', compact('position'));
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
     public function edit(Position $position)
     {
-        //
+        return view('admin.positions.edit', compact('position'));
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
     public function update(Request $request, Position $position)
     {
-        //
+        $validated = $request->validate([
+            'name' => ['required', 'string', 'max:255', Rule::unique('positions', 'name')->ignore($position->position_id, 'position_id')],
+        ]);
+
+        $position->update($validated);
+
+        return redirect()->route('positions.index')
+            ->with('success', 'Position updated successfully.');
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
     public function destroy(Position $position)
     {
-        //
+        if ($position->candidates()->exists()) {
+            return redirect()->route('positions.index')
+                ->with('error', 'Cannot delete position — it has associated candidates.');
+        }
+
+        $position->delete();
+
+        return redirect()->route('positions.index')
+            ->with('success', 'Position deleted successfully.');
     }
 }

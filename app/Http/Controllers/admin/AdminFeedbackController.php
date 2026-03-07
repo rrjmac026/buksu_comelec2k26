@@ -6,61 +6,59 @@ use App\Http\Controllers\Controller;
 use App\Models\Feedback;
 use Illuminate\Http\Request;
 
-class AdminFeedbackController extends Controller
+class FeedbackController extends Controller
 {
     /**
-     * Display a listing of the resource.
+     * List all feedback submissions with optional filtering.
      */
-    public function index()
+    public function index(Request $request)
     {
-        //
+        $query = Feedback::with('user')->latest();
+
+        if ($request->filled('rating')) {
+            $query->where('rating', $request->rating);
+        }
+
+        if ($request->filled('search')) {
+            $search = $request->search;
+            $query->whereHas('user', fn($q) => $q->where('name', 'like', "%{$search}%"))
+                ->orWhere('feedback', 'like', "%{$search}%");
+        }
+
+        $feedbacks = $query->paginate(20)->withQueryString();
+
+        $averageRating = Feedback::avg('rating');
+        $ratingCounts  = Feedback::selectRaw('rating, COUNT(*) as count')
+            ->groupBy('rating')
+            ->pluck('count', 'rating');
+
+        return view('admin.feedback.index', compact('feedbacks', 'averageRating', 'ratingCounts'));
     }
 
     /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
-    {
-        //
-    }
-
-    /**
-     * Display the specified resource.
+     * Show a single feedback entry.
      */
     public function show(Feedback $feedback)
     {
-        //
+        $feedback->load('user');
+
+        return view('admin.feedback.show', compact('feedback'));
     }
 
     /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Feedback $feedback)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, Feedback $feedback)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
+     * Delete a feedback entry.
      */
     public function destroy(Feedback $feedback)
     {
-        //
+        $feedback->delete();
+
+        return redirect()->route('admin.feedback.index')
+            ->with('success', 'Feedback deleted successfully.');
     }
+
+    // Admins view feedback only — creation/editing is handled by voters.
+    public function create()   { abort(403); }
+    public function store(Request $request) { abort(403); }
+    public function edit(Feedback $feedback)  { abort(403); }
+    public function update(Request $request, Feedback $feedback) { abort(403); }
 }

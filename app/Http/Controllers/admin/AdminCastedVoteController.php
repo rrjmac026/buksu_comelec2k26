@@ -4,63 +4,91 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\CastedVote;
+use App\Models\Position;
 use Illuminate\Http\Request;
 
-class AdminCastedVoteController extends Controller
+class CastedVoteController extends Controller
 {
     /**
-     * Display a listing of the resource.
+     * Display all casted votes with filtering options.
      */
-    public function index()
+    public function index(Request $request)
     {
-        //
+        $query = CastedVote::with(['voter', 'candidate', 'position']);
+
+        if ($request->filled('position_id')) {
+            $query->where('position_id', $request->position_id);
+        }
+
+        if ($request->filled('search')) {
+            $search = $request->search;
+            $query->whereHas('voter', fn($q) => $q->where('name', 'like', "%{$search}%")
+                ->orWhere('email', 'like', "%{$search}%"))
+                ->orWhere('transaction_number', 'like', "%{$search}%");
+        }
+
+        $votes     = $query->latest('voted_at')->paginate(20)->withQueryString();
+        $positions = Position::orderBy('name')->get();
+
+        return view('admin.votes.index', compact('votes', 'positions'));
     }
 
     /**
-     * Show the form for creating a new resource.
+     * Display vote tallies grouped by position and candidate.
      */
-    public function create()
+    public function results()
     {
-        //
+        $results = Position::with([
+            'candidates' => fn($q) => $q->withCount('castedVotes')->orderByDesc('casted_votes_count'),
+        ])->get();
+
+        $totalVotersTurnout = CastedVote::distinct('voter_id')->count('voter_id');
+
+        return view('admin.votes.results', compact('results', 'totalVotersTurnout'));
     }
 
     /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
-    {
-        //
-    }
-
-    /**
-     * Display the specified resource.
+     * Show a single vote's details.
      */
     public function show(CastedVote $castedVote)
     {
-        //
+        $castedVote->load(['voter', 'candidate.partylist', 'candidate.college', 'position']);
+
+        return view('admin.votes.show', compact('castedVote'));
     }
 
     /**
-     * Show the form for editing the specified resource.
+     * Admins cannot create votes manually — votes are cast by voters only.
+     * This method is intentionally disabled.
      */
+    public function create()
+    {
+        abort(403, 'Votes can only be cast by registered voters.');
+    }
+
+    public function store(Request $request)
+    {
+        abort(403, 'Votes can only be cast by registered voters.');
+    }
+
     public function edit(CastedVote $castedVote)
     {
-        //
+        abort(403, 'Votes cannot be edited to preserve election integrity.');
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
     public function update(Request $request, CastedVote $castedVote)
     {
-        //
+        abort(403, 'Votes cannot be edited to preserve election integrity.');
     }
 
     /**
-     * Remove the specified resource from storage.
+     * Delete a specific vote (e.g. to handle duplicate/fraud cases).
      */
     public function destroy(CastedVote $castedVote)
     {
-        //
+        $castedVote->delete();
+
+        return redirect()->route('admin.votes.index')
+            ->with('success', 'Vote record deleted successfully.');
     }
 }

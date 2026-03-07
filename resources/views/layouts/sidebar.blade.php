@@ -359,7 +359,7 @@
                 </div>
                 <div class="footer-text">
                     <span class="footer-app-name">{{ config('app.name') }}</span>
-                    <span class="footer-version">v1.0 · Stable</span>
+                    <span class="footer-version">v2.0 · Stable</span>
                 </div>
                 <div class="footer-status" title="System online"></div>
             </div>
