@@ -11,21 +11,6 @@
                 </p>
             </div>
             <div class="flex items-center gap-3">
-                <div style="position:relative;">
-                    <input type="text" placeholder="Search..." id="dash-search"
-                           style="background:rgba(255,255,255,0.06);border:1px solid rgba(167,139,250,0.2);border-radius:10px;padding:7px 14px 7px 34px;font-size:0.75rem;color:#e0d7ff;outline:none;width:180px;font-family:'DM Sans',sans-serif;"
-                           onfocus="this.style.borderColor='rgba(167,139,250,0.5)'" onblur="this.style.borderColor='rgba(167,139,250,0.2)'">
-                    <i class="fas fa-search" style="position:absolute;left:10px;top:50%;transform:translateY(-50%);color:#7c6fa0;font-size:0.7rem;"></i>
-                </div>
-                <div style="position:relative;cursor:pointer;">
-                    <div style="width:34px;height:34px;border-radius:10px;background:rgba(255,255,255,0.07);border:1px solid rgba(167,139,250,0.2);display:flex;align-items:center;justify-content:center;">
-                        <i class="fas fa-bell" style="color:#a78bfa;font-size:0.75rem;"></i>
-                    </div>
-                    <span style="position:absolute;top:-4px;right:-4px;width:14px;height:14px;border-radius:50%;background:#7c3aed;font-size:0.55rem;color:#fff;font-weight:700;display:flex;align-items:center;justify-content:center;">3</span>
-                </div>
-                <div style="width:34px;height:34px;border-radius:10px;background:linear-gradient(135deg,#7c3aed,#4f46e5);display:flex;align-items:center;justify-content:center;box-shadow:0 0 14px rgba(124,58,237,0.5);cursor:pointer;">
-                    <i class="fas fa-user" style="color:#fff;font-size:0.75rem;"></i>
-                </div>
                 <select id="refresh-interval"
                         style="background:rgba(255,255,255,0.06);border:1px solid rgba(167,139,250,0.2);border-radius:10px;padding:6px 10px;font-size:0.72rem;color:#c4b5fd;outline:none;font-family:'DM Sans',sans-serif;cursor:pointer;">
                     <option value="5000">5s</option>
@@ -227,80 +212,110 @@
     ══════════════════════════════════════════════════════════ --}}
     <div class="grid gap-5 mb-5" style="grid-template-columns:1fr 320px;">
 
-        {{-- DATA ANALYTICS CARD --}}
-        <div class="gc-bright p-5" style="animation-delay:.1s">
-            {{-- Header row --}}
-            <div class="flex items-start justify-between mb-4">
-                <div>
-                    <p class="section-label">Overview</p>
-                    <h3 class="card-title mt-1">Data Analytics</h3>
-                </div>
-                <div class="flex items-center gap-2">
-                    <select style="background:rgba(255,255,255,0.06);border:1px solid rgba(167,139,250,0.2);border-radius:8px;padding:4px 10px;font-size:0.7rem;color:#c4b5fd;outline:none;font-family:'DM Sans',sans-serif;">
-                        <option>All</option><option>Month</option><option>Week</option>
-                    </select>
-                    <button style="background:rgba(255,255,255,0.06);border:1px solid rgba(167,139,250,0.2);border-radius:8px;padding:4px 12px;font-size:0.7rem;color:#c4b5fd;cursor:pointer;">
-                        Filters <i class="fas fa-sliders-h ml-1"></i>
+        {{-- DATA ANALYTICS CARD — copied from reference image --}}
+        <div style="background:rgba(255,255,255,0.07);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);border:1px solid rgba(167,139,250,0.22);border-radius:18px;box-shadow:0 4px 40px rgba(109,40,217,0.18),inset 0 1px 0 rgba(255,255,255,0.1);padding:20px;animation:fadeInUp .5s ease both;animation-delay:.1s;">
+
+            {{-- TOP BAR: title left, All+Filters right (exactly like image) --}}
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">
+                <h3 style="font-family:'Orbitron',sans-serif;font-size:0.85rem;font-weight:700;color:#e0d7ff;letter-spacing:.02em;margin:0;">Data Analytics</h3>
+                <div style="display:flex;gap:8px;">
+                    <button style="display:flex;align-items:center;gap:5px;background:rgba(255,255,255,0.08);border:1px solid rgba(167,139,250,0.25);border-radius:8px;padding:4px 12px;font-size:0.7rem;color:#c4b5fd;cursor:pointer;font-family:'DM Sans',sans-serif;">
+                        All <i class="fas fa-chevron-down" style="font-size:0.55rem;"></i>
+                    </button>
+                    <button style="display:flex;align-items:center;gap:5px;background:rgba(255,255,255,0.08);border:1px solid rgba(167,139,250,0.25);border-radius:8px;padding:4px 12px;font-size:0.7rem;color:#c4b5fd;cursor:pointer;font-family:'DM Sans',sans-serif;">
+                        Filters <i class="fas fa-chevron-down" style="font-size:0.55rem;"></i>
                     </button>
                 </div>
             </div>
 
-            {{-- 3 metric numbers at top (like reference) --}}
-            <div class="grid gap-3 mb-4" style="grid-template-columns:repeat(3,1fr);">
+            {{-- 3 METRIC NUMBERS (like image: Total / Average / Earnrange analysis) --}}
+            <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:0;margin-bottom:14px;border-bottom:1px solid rgba(167,139,250,0.1);padding-bottom:14px;">
                 <div>
-                    <div style="font-size:0.65rem;color:#7c6fa0;font-weight:600;letter-spacing:.06em;text-transform:uppercase;">Total Voters</div>
-                    <div id="analytic-voters" style="font-family:'Orbitron',sans-serif;font-size:1.3rem;font-weight:900;color:#e0d7ff;margin-top:2px;">{{ number_format($stats['total_voters']) }}</div>
-                    <div class="stat-delta mt-1"><i class="fas fa-arrow-up" style="font-size:.5rem;"></i> +5.57%</div>
+                    <div style="font-size:0.65rem;color:#a78bfa;font-weight:500;margin-bottom:2px;">Total</div>
+                    <div id="analytic-voters" style="font-family:'Orbitron',sans-serif;font-size:1.35rem;font-weight:900;background:linear-gradient(135deg,#22d3ee,#818cf8);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;line-height:1.1;">{{ number_format($stats['total_voters']) }}</div>
+                    <div style="display:flex;align-items:center;gap:3px;margin-top:3px;">
+                        <i class="fas fa-arrow-up" style="font-size:0.5rem;color:#34d399;"></i>
+                        <span id="analytic-voters-delta" style="font-size:0.65rem;font-weight:700;color:#34d399;">—</span>
+                    </div>
                 </div>
                 <div>
-                    <div style="font-size:0.65rem;color:#7c6fa0;font-weight:600;letter-spacing:.06em;text-transform:uppercase;">Votes Cast</div>
-                    <div id="analytic-votes" style="font-family:'Orbitron',sans-serif;font-size:1.3rem;font-weight:900;color:#e0d7ff;margin-top:2px;">{{ number_format($stats['total_votes']) }}</div>
-                    <div class="stat-delta mt-1"><i class="fas fa-arrow-up" style="font-size:.5rem;"></i> +29.75%</div>
+                    <div style="font-size:0.65rem;color:#a78bfa;font-weight:500;margin-bottom:2px;">Votes Cast</div>
+                    <div id="analytic-votes" style="font-family:'Orbitron',sans-serif;font-size:1.35rem;font-weight:900;background:linear-gradient(135deg,#22d3ee,#818cf8);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;line-height:1.1;">{{ number_format($stats['total_votes']) }}</div>
+                    <div style="display:flex;align-items:center;gap:3px;margin-top:3px;">
+                        <i class="fas fa-arrow-up" style="font-size:0.5rem;color:#34d399;"></i>
+                        <span id="analytic-votes-delta" style="font-size:0.65rem;font-weight:700;color:#34d399;">—</span>
+                    </div>
                 </div>
                 <div>
-                    <div style="font-size:0.65rem;color:#7c6fa0;font-weight:600;letter-spacing:.06em;text-transform:uppercase;">Turnout Rate</div>
-                    <div id="analytic-turnout" style="font-family:'Orbitron',sans-serif;font-size:1.3rem;font-weight:900;color:#e0d7ff;margin-top:2px;">—%</div>
-                    <div class="stat-delta mt-1"><i class="fas fa-arrow-up" style="font-size:.5rem;"></i> +4.88%</div>
+                    <div style="font-size:0.65rem;color:#a78bfa;font-weight:500;margin-bottom:2px;">Turnout Rate</div>
+                    <div id="analytic-turnout" style="font-family:'Orbitron',sans-serif;font-size:1.35rem;font-weight:900;background:linear-gradient(135deg,#22d3ee,#818cf8);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;line-height:1.1;">—%</div>
+                    <div style="display:flex;align-items:center;gap:3px;margin-top:3px;">
+                        <i class="fas fa-arrow-up" style="font-size:0.5rem;color:#34d399;"></i>
+                        <span style="font-size:0.65rem;font-weight:700;color:#34d399;">Live · <span id="refresh-label">10s</span></span>
+                    </div>
                 </div>
             </div>
 
-            {{-- Charts row: Line + Bar + Doughnut --}}
-            <div class="grid gap-4" style="grid-template-columns:1fr 1fr 180px;align-items:center;">
-                {{-- Line chart --}}
+            {{-- 3-COLUMN CHARTS: Line | Bar | Pie (exact layout from image) --}}
+            <div style="display:grid;grid-template-columns:1fr 1fr 200px;gap:16px;align-items:end;">
+
+                {{-- LEFT: Line Chart (two lines, cyan + purple, filled, smooth — like image left chart) --}}
                 <div>
-                    <div style="font-size:0.65rem;color:#7c6fa0;margin-bottom:6px;font-weight:600;">Voter Trend</div>
-                    <div style="position:relative;height:130px;">
+                    <div style="position:relative;height:150px;">
                         <canvas id="chartLine"></canvas>
                     </div>
-                </div>
-                {{-- Bar chart --}}
-                <div>
-                    <div style="font-size:0.65rem;color:#7c6fa0;margin-bottom:6px;font-weight:600;">Votes by Position</div>
-                    <div style="position:relative;height:130px;">
-                        <canvas id="chartPositions"></canvas>
+                    {{-- X axis labels like image --}}
+                    <div style="display:flex;justify-content:space-between;padding:0 4px;margin-top:4px;">
+                        <span style="font-size:0.6rem;color:#52525b;">Jan</span>
+                        <span style="font-size:0.6rem;color:#52525b;">Feb</span>
+                        <span style="font-size:0.6rem;color:#52525b;">Mar</span>
+                        <span style="font-size:0.6rem;color:#52525b;">Apr</span>
+                        <span style="font-size:0.6rem;color:#52525b;">May</span>
                     </div>
                 </div>
-                {{-- Pie / doughnut chart with legend --}}
+
+                {{-- MIDDLE: Grouped Bar Chart (cyan + purple alternating bars — like image middle) --}}
                 <div>
-                    <div style="font-size:0.65rem;color:#7c6fa0;margin-bottom:6px;font-weight:600;">Participation</div>
-                    <div style="position:relative;height:100px;display:flex;align-items:center;justify-content:center;">
-                        <canvas id="chartTurnout"></canvas>
-                        <div style="position:absolute;text-align:center;pointer-events:none;">
-                            <div id="turnout-center-pct" style="font-family:'Orbitron',sans-serif;font-size:0.9rem;font-weight:900;color:#e0d7ff;">—</div>
+                    <div style="position:relative;height:150px;">
+                        <canvas id="chartBar"></canvas>
+                    </div>
+                    <div style="display:flex;justify-content:space-between;padding:0 4px;margin-top:4px;">
+                        <span style="font-size:0.6rem;color:#52525b;">Jan</span>
+                        <span style="font-size:0.6rem;color:#52525b;">Feb</span>
+                        <span style="font-size:0.6rem;color:#52525b;">Mar</span>
+                        <span style="font-size:0.6rem;color:#52525b;">Apr</span>
+                        <span style="font-size:0.6rem;color:#52525b;">May</span>
+                    </div>
+                </div>
+
+                {{-- RIGHT: Large Pie/Doughnut + legend (like image right side) --}}
+                <div style="display:flex;flex-direction:column;align-items:center;gap:12px;">
+                    {{-- Pie chart — no center text, matches image --}}
+                    <div style="position:relative;width:140px;height:140px;">
+                        <canvas id="chartTurnout" style="position:absolute;top:0;left:0;width:140px!important;height:140px!important;"></canvas>
+                        <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;pointer-events:none;">
+                            <div id="turnout-center-pct" style="font-family:'Orbitron',sans-serif;font-size:1rem;font-weight:900;color:#e0d7ff;"></div>
                         </div>
                     </div>
-                    <div style="display:flex;flex-direction:column;gap:4px;margin-top:6px;">
-                        <div style="display:flex;justify-content:space-between;align-items:center;font-size:0.65rem;">
-                            <span style="display:flex;align-items:center;gap:5px;color:#a1a1aa;">
-                                <span style="width:8px;height:8px;border-radius:50%;background:#818cf8;display:inline-block;"></span>Voted
+                    {{-- Legend exactly like image --}}
+                    <div style="width:100%;display:flex;flex-direction:column;gap:6px;">
+                        <div style="display:flex;align-items:center;justify-content:space-between;">
+                            <span style="display:flex;align-items:center;gap:6px;font-size:0.68rem;color:#c4b5fd;">
+                                <span style="width:10px;height:10px;border-radius:50%;background:#22d3ee;display:inline-block;box-shadow:0 0 6px #22d3ee;flex-shrink:0;"></span>
+                                Voted
                             </span>
-                            <span id="pct-voted" style="color:#e0d7ff;font-weight:700;">—%</span>
+                            <span id="pct-voted" style="font-size:0.72rem;font-weight:700;color:#e0d7ff;">—%</span>
                         </div>
-                        <div style="display:flex;justify-content:space-between;align-items:center;font-size:0.65rem;">
-                            <span style="display:flex;align-items:center;gap:5px;color:#a1a1aa;">
-                                <span style="width:8px;height:8px;border-radius:50%;background:#22d3ee;display:inline-block;"></span>Not yet
+                        <div style="display:flex;align-items:center;justify-content:space-between;">
+                            <span style="display:flex;align-items:center;gap:6px;font-size:0.68rem;color:#c4b5fd;">
+                                <span style="width:10px;height:10px;border-radius:50%;background:#818cf8;display:inline-block;box-shadow:0 0 6px #818cf8;flex-shrink:0;"></span>
+                                Not yet
                             </span>
-                            <span id="pct-not" style="color:#e0d7ff;font-weight:700;">—%</span>
+                            <span id="pct-not" style="font-size:0.72rem;font-weight:700;color:#e0d7ff;">—%</span>
+                        </div>
+                        <div style="margin-top:2px;padding:6px 8px;border-radius:8px;background:rgba(34,211,238,0.07);border:1px solid rgba(34,211,238,0.15);text-align:center;">
+                            <div style="font-size:0.6rem;color:#7c6fa0;">Remaining</div>
+                            <div id="remaining-voters" style="font-family:'Orbitron',sans-serif;font-size:0.78rem;font-weight:700;color:#22d3ee;margin-top:1px;">—</div>
                         </div>
                     </div>
                 </div>
@@ -617,17 +632,38 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
     <script>
     (() => {
-        // ── Shared chart defaults ─────────────────────────────────
         Chart.defaults.color = '#7c6fa0';
         Chart.defaults.font.family = "'DM Sans', sans-serif";
 
-        // ── Helper: gradient ──────────────────────────────────────
-        function grad(ctx, c1, c2, h=160) {
+        const tooltipDefaults = {
+            backgroundColor:'rgba(10,6,30,.95)',
+            borderColor:'rgba(167,139,250,.3)',
+            borderWidth:1,
+            titleColor:'#c4b5fd',
+            bodyColor:'#e0d7ff',
+            padding:10,
+        };
+
+        function grad(ctx, c1, c2, h=150) {
             const g = ctx.createLinearGradient(0,0,0,h);
-            g.addColorStop(0, c1); g.addColorStop(1, c2); return g;
+            g.addColorStop(0,c1); g.addColorStop(1,c2); return g;
         }
 
-        // ── Line Chart (Voter Trend) ───────────────────────────────
+        const scaleDefaults = {
+            x: {
+                grid:{ color:'rgba(167,139,250,.06)', drawBorder:false },
+                border:{ display:false },
+                ticks:{ display:false }, // hide — we show custom labels below
+            },
+            y: {
+                grid:{ color:'rgba(167,139,250,.06)', drawBorder:false },
+                border:{ display:false },
+                ticks:{ font:{size:9}, color:'#52525b', maxTicksLimit:5 },
+                beginAtZero:true,
+            }
+        };
+
+        // ══ LEFT: Line Chart (cyan + purple filled lines, like image) ══
         const ctxLine = document.getElementById('chartLine').getContext('2d');
         const lineChart = new Chart(ctxLine, {
             type: 'line',
@@ -636,144 +672,165 @@
                 datasets: [
                     {
                         label: 'Voters',
-                        data: [20,45,35,70,55],
+                        data: [],
                         borderColor: '#818cf8',
-                        backgroundColor: grad(ctxLine,'rgba(129,140,248,0.35)','rgba(129,140,248,0)'),
-                        borderWidth: 2, fill: true, tension: 0.45,
-                        pointBackgroundColor: '#818cf8', pointRadius: 3, pointHoverRadius: 5,
+                        backgroundColor: grad(ctxLine,'rgba(129,140,248,0.45)','rgba(129,140,248,0.02)'),
+                        borderWidth: 2.5, fill: true, tension: 0.5,
+                        pointBackgroundColor: '#818cf8',
+                        pointBorderColor: 'rgba(10,6,30,.9)',
+                        pointBorderWidth: 1.5,
+                        pointRadius: 3.5, pointHoverRadius: 6,
                     },
                     {
                         label: 'Votes',
-                        data: [10,30,25,50,40],
+                        data: [],
                         borderColor: '#22d3ee',
-                        backgroundColor: grad(ctxLine,'rgba(34,211,238,0.2)','rgba(34,211,238,0)'),
-                        borderWidth: 2, fill: true, tension: 0.45,
-                        pointBackgroundColor: '#22d3ee', pointRadius: 3, pointHoverRadius: 5,
+                        backgroundColor: grad(ctxLine,'rgba(34,211,238,0.35)','rgba(34,211,238,0.02)'),
+                        borderWidth: 2.5, fill: true, tension: 0.5,
+                        pointBackgroundColor: '#22d3ee',
+                        pointBorderColor: 'rgba(10,6,30,.9)',
+                        pointBorderWidth: 1.5,
+                        pointRadius: 3.5, pointHoverRadius: 6,
                     }
                 ]
             },
             options: {
                 responsive:true, maintainAspectRatio:false,
-                plugins:{legend:{display:false},tooltip:{backgroundColor:'rgba(15,10,40,.9)',borderColor:'rgba(167,139,250,.3)',borderWidth:1,titleColor:'#c4b5fd',bodyColor:'#e0d7ff'}},
-                scales:{
-                    x:{grid:{color:'rgba(167,139,250,.06)'},ticks:{font:{size:9}}},
-                    y:{grid:{color:'rgba(167,139,250,.06)'},ticks:{font:{size:9}},beginAtZero:true}
-                }
+                animation:{ duration:700, easing:'easeInOutQuart' },
+                plugins:{
+                    legend:{display:false},
+                    tooltip:{...tooltipDefaults, callbacks:{
+                        label: c => ` ${c.dataset.label}: ${c.parsed.y.toLocaleString()}`
+                    }}
+                },
+                scales: scaleDefaults,
             }
         });
 
-        // ── Bar Chart (Votes by Position) ─────────────────────────
-        const ctxPos = document.getElementById('chartPositions').getContext('2d');
-        const posChart = new Chart(ctxPos, {
+        // ══ MIDDLE: Grouped Bar Chart (cyan + purple, like image) ══
+        const ctxBar = document.getElementById('chartBar').getContext('2d');
+        const barChart = new Chart(ctxBar, {
             type: 'bar',
             data: {
-                labels: @json($topCandidates->pluck('position.name')->unique()->values()),
-                datasets: [{
-                    label: 'Votes',
-                    data: [],
-                    backgroundColor: [
-                        'rgba(129,140,248,0.75)','rgba(34,211,238,0.75)',
-                        'rgba(244,114,182,0.75)','rgba(52,211,153,0.75)',
-                        'rgba(251,146,60,0.75)'
-                    ],
-                    borderColor: [
-                        'rgba(129,140,248,1)','rgba(34,211,238,1)',
-                        'rgba(244,114,182,1)','rgba(52,211,153,1)',
-                        'rgba(251,146,60,1)'
-                    ],
-                    borderWidth: 1.5, borderRadius: 6, borderSkipped: false,
-                }]
+                labels: ['Jan','Feb','Mar','Apr','May'],
+                datasets: [
+                    {
+                        label: 'Voters',
+                        data: [],
+                        backgroundColor: 'rgba(129,140,248,0.75)',
+                        borderColor: 'rgba(129,140,248,1)',
+                        borderWidth: 1,
+                        borderRadius: { topLeft:4, topRight:4 },
+                        borderSkipped: false,
+                        barPercentage: 0.45,
+                        categoryPercentage: 0.8,
+                    },
+                    {
+                        label: 'Votes',
+                        data: [],
+                        backgroundColor: 'rgba(34,211,238,0.75)',
+                        borderColor: 'rgba(34,211,238,1)',
+                        borderWidth: 1,
+                        borderRadius: { topLeft:4, topRight:4 },
+                        borderSkipped: false,
+                        barPercentage: 0.45,
+                        categoryPercentage: 0.8,
+                    }
+                ]
             },
             options: {
                 responsive:true, maintainAspectRatio:false,
-                plugins:{legend:{display:false},tooltip:{backgroundColor:'rgba(15,10,40,.9)',borderColor:'rgba(167,139,250,.3)',borderWidth:1,titleColor:'#c4b5fd',bodyColor:'#e0d7ff',callbacks:{label:c=>` ${c.parsed.y} votes`}}},
-                scales:{
-                    x:{grid:{display:false},ticks:{font:{size:9}}},
-                    y:{grid:{color:'rgba(167,139,250,.06)'},ticks:{font:{size:9},stepSize:1},beginAtZero:true}
-                }
+                animation:{ duration:700, easing:'easeInOutQuart' },
+                plugins:{
+                    legend:{display:false},
+                    tooltip:{...tooltipDefaults, callbacks:{
+                        label: c => ` ${c.dataset.label}: ${c.parsed.y.toLocaleString()}`
+                    }}
+                },
+                scales: scaleDefaults,
             }
         });
 
-        // ── Doughnut (Turnout) ────────────────────────────────────
+        // ══ RIGHT: Pie/Doughnut (like image — large, cyan + purple) ══
         const ctxTurn = document.getElementById('chartTurnout').getContext('2d');
         const turnoutChart = new Chart(ctxTurn, {
             type: 'doughnut',
             data: {
-                labels:['Voted','Not Yet'],
-                datasets:[{
-                    data:[0,1],
-                    backgroundColor:['rgba(129,140,248,0.85)','rgba(34,211,238,0.3)'],
-                    borderColor:['rgba(129,140,248,0.5)','rgba(34,211,238,0.15)'],
-                    borderWidth:2, hoverOffset:4,
+                labels: ['Voted','Not Yet'],
+                datasets: [{
+                    data: [0,1],
+                    backgroundColor: ['rgba(34,211,238,0.85)','rgba(129,140,248,0.75)'],
+                    borderColor: ['rgba(34,211,238,0.4)','rgba(129,140,248,0.4)'],
+                    borderWidth: 2,
+                    hoverOffset: 8,
                 }]
             },
             options:{
-                responsive:true, maintainAspectRatio:false, cutout:'72%',
-                plugins:{legend:{display:false},tooltip:{backgroundColor:'rgba(15,10,40,.9)',borderColor:'rgba(167,139,250,.3)',borderWidth:1,titleColor:'#c4b5fd',bodyColor:'#e0d7ff'}}
+                responsive:false,   // fixed size canvas, no responsive resize
+                maintainAspectRatio:false,
+                cutout:'55%',       // less cutout = thicker pie like image
+                animation:{ duration:900, easing:'easeInOutQuart' },
+                plugins:{
+                    legend:{display:false},
+                    tooltip:{...tooltipDefaults, callbacks:{
+                        label: c => ` ${c.label}: ${c.parsed.toLocaleString()} voters`
+                    }}
+                }
             }
         });
 
-        // ── Gauge needle animation ─────────────────────────────────
+        // ══ Gauge needle ══════════════════════════════════════════
         function setGaugeAngle(pct) {
-            // -120deg = 0%, +60deg = 100%  (180deg total sweep)
-            const angle = -120 + (pct / 100) * 180;
-            document.getElementById('gauge-needle').style.transform =
-                `translateX(-50%) rotate(${angle}deg)`;
-            // Color by health
-            const color = pct > 80 ? '#34d399' : pct > 50 ? '#22d3ee' : '#f472b6';
-            document.getElementById('gauge-needle').style.background =
-                `linear-gradient(to top,${color},transparent)`;
-            document.getElementById('system-status-label').style.color = color;
-            document.getElementById('system-status-label').textContent =
-                pct > 80 ? 'Operational' : pct > 50 ? 'Degraded' : 'Critical';
+            const angle = -120 + (pct/100)*180;
+            const needle = document.getElementById('gauge-needle');
+            if(!needle) return;
+            needle.style.transform = `translateX(-50%) rotate(${angle}deg)`;
+            const color = pct>80?'#34d399':pct>50?'#22d3ee':'#f472b6';
+            needle.style.background = `linear-gradient(to top,${color},transparent)`;
+            const lbl = document.getElementById('system-status-label');
+            if(lbl){ lbl.style.color=color; lbl.textContent=pct>80?'Operational':pct>50?'Degraded':'Critical'; }
         }
-        // Initial gauge at ~75% (good)
-        setTimeout(() => setGaugeAngle(75), 400);
+        setTimeout(()=>setGaugeAngle(75),400);
 
-        // ── Counter animation ─────────────────────────────────────
+        // ══ Counter animation ═════════════════════════════════════
         function animateCount(el, newVal) {
-            const cur = parseInt(el.textContent.replace(/[^0-9]/g,'')) || 0;
-            if (cur === newVal) return;
-            const steps=20, diff=newVal-cur, dur=400; let step=0;
-            const t = setInterval(()=>{
+            const cur = parseInt(el.textContent.replace(/[^0-9]/g,''))||0;
+            if(cur===newVal) return;
+            const steps=24,diff=newVal-cur,dur=500; let step=0;
+            const t=setInterval(()=>{
                 step++;
-                el.textContent = Math.round(cur+(diff*step/steps)).toLocaleString();
+                el.textContent=Math.round(cur+(diff*step/steps)).toLocaleString();
                 if(step>=steps){el.textContent=newVal.toLocaleString();clearInterval(t);}
-            }, dur/steps);
+            },dur/steps);
         }
 
-        // ── Render recent votes ───────────────────────────────────
+        // ══ Render recent votes ═══════════════════════════════════
         function renderRecentVotes(votes) {
-            const list = document.getElementById('recent-votes-list');
-            if (!votes.length) return;
-            list.innerHTML = votes.map(v => `
+            const list=document.getElementById('recent-votes-list');
+            if(!votes||!votes.length) return;
+            list.innerHTML=votes.map(v=>`
                 <div class="vote-row">
-                    <div style="width:28px;height:28px;border-radius:50%;background:linear-gradient(135deg,#7c3aed,#4f46e5);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:0.65rem;font-weight:700;color:#fff;">
-                        ${(v.voter||'U')[0].toUpperCase()}
-                    </div>
+                    <div style="width:28px;height:28px;border-radius:50%;background:linear-gradient(135deg,#7c3aed,#4f46e5);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:0.65rem;font-weight:700;color:#fff;">${(v.voter||'U')[0].toUpperCase()}</div>
                     <div style="flex:1;min-width:0;">
                         <div style="font-size:0.72rem;font-weight:600;color:#e0d7ff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${v.voter}</div>
                         <div style="font-size:0.65rem;color:#7c6fa0;">${v.candidate}</div>
                         <div style="font-size:0.62rem;color:#52525b;margin-top:1px;">${v.voted_at}</div>
                     </div>
                     <div style="width:7px;height:7px;border-radius:50%;background:#34d399;flex-shrink:0;margin-top:4px;box-shadow:0 0 6px #34d399;"></div>
-                </div>
-            `).join('');
+                </div>`).join('');
         }
 
-        // ── Render top candidates ─────────────────────────────────
-        function renderTopCandidates(candidates, totalVotes) {
-            const list = document.getElementById('top-candidates-list');
-            if (!candidates.length) return;
-            const rankColors = ['#f59e0b','#a1a1aa','#fb923c'];
-            list.innerHTML = candidates.map((c,i) => {
-                const pct = totalVotes > 0 ? ((c.votes/totalVotes)*100).toFixed(1) : 0;
+        // ══ Render top candidates ═════════════════════════════════
+        function renderTopCandidates(candidates,totalVotes) {
+            const list=document.getElementById('top-candidates-list');
+            if(!candidates||!candidates.length) return;
+            const rankColors=['#f59e0b','#a1a1aa','#fb923c'];
+            list.innerHTML=candidates.map((c,i)=>{
+                const pct=totalVotes>0?((c.votes/totalVotes)*100).toFixed(1):0;
                 return `
                 <div style="display:flex;align-items:center;gap:10px;">
                     <span style="width:18px;font-size:0.7rem;font-weight:700;color:${rankColors[i]||'#52525b'};text-align:center;flex-shrink:0;">${i+1}</span>
-                    <div style="width:32px;height:32px;border-radius:10px;background:linear-gradient(135deg,#7c3aed,#4f46e5);display:flex;align-items:center;justify-content:center;color:#fff;font-size:0.7rem;font-weight:700;flex-shrink:0;">
-                        ${(c.name||'U')[0].toUpperCase()}
-                    </div>
+                    <div style="width:32px;height:32px;border-radius:10px;background:linear-gradient(135deg,#7c3aed,#4f46e5);display:flex;align-items:center;justify-content:center;color:#fff;font-size:0.7rem;font-weight:700;flex-shrink:0;">${(c.name||'U')[0].toUpperCase()}</div>
                     <div style="flex:1;min-width:0;">
                         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;">
                             <span style="font-size:0.72rem;font-weight:600;color:#e0d7ff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:140px;">${c.name}</span>
@@ -786,26 +843,24 @@
             }).join('');
         }
 
-        // ── Table search filter ───────────────────────────────────
-        window.filterTable = function(q) {
-            const rows = document.querySelectorAll('#table-body tr');
-            rows.forEach(row => {
-                const text = row.dataset.search || '';
-                row.style.display = text.includes(q.toLowerCase()) ? '' : 'none';
+        // ══ Table search ══════════════════════════════════════════
+        window.filterTable=function(q){
+            document.querySelectorAll('#table-body tr').forEach(row=>{
+                row.style.display=(row.dataset.search||'').includes(q.toLowerCase())?'':'none';
             });
         };
 
-        // ── Main fetch ────────────────────────────────────────────
+        // ══ Main live fetch ═══════════════════════════════════════
         async function fetchLive() {
             try {
-                const res = await fetch('{{ route('admin.dashboard.live') }}', {
+                const res=await fetch('{{ route('admin.dashboard.live') }}',{
                     headers:{'Accept':'application/json','X-Requested-With':'XMLHttpRequest'}
                 });
-                if (!res.ok) return;
-                const d = await res.json();
+                if(!res.ok) return;
+                const d=await res.json();
 
                 // Stat cards
-                const map = {
+                const map={
                     'stat-voters':d.stats.total_voters,'stat-votes':d.stats.total_votes,
                     'stat-candidates':d.stats.total_candidates,'stat-positions':d.stats.total_positions,
                     'stat-partylists':d.stats.total_partylists,'stat-colleges':d.stats.total_colleges,
@@ -814,45 +869,77 @@
                 Object.entries(map).forEach(([id,val])=>{
                     const el=document.getElementById(id); if(el) animateCount(el,val);
                 });
-                // Also update analytic row numbers
-                const av=document.getElementById('analytic-voters'); if(av) av.textContent=d.stats.total_voters.toLocaleString();
-                const avv=document.getElementById('analytic-votes'); if(avv) avv.textContent=d.stats.total_votes.toLocaleString();
+
+                // Analytics top numbers
+                const av=document.getElementById('analytic-voters'); if(av) animateCount(av,d.stats.total_voters);
+                const avv=document.getElementById('analytic-votes'); if(avv) animateCount(avv,d.stats.total_votes);
 
                 // Turnout
-                const {voted, not_voted} = d.turnout;
-                const total = voted+not_voted;
-                const pct = total>0 ? ((voted/total)*100).toFixed(1) : 0;
+                const {voted,not_voted}=d.turnout;
+                const total=voted+not_voted;
+                const pct=total>0?((voted/total)*100).toFixed(1):0;
+                const notPct=total>0?(100-parseFloat(pct)).toFixed(1):0;
 
-                const turnEl=document.getElementById('stat-turnout'); if(turnEl) turnEl.textContent=pct+'%';
-                const centerEl=document.getElementById('turnout-center-pct'); if(centerEl) centerEl.textContent=pct+'%';
-                const at=document.getElementById('analytic-turnout'); if(at) at.textContent=pct+'%';
+                ['stat-turnout','analytic-turnout','turnout-center-pct'].forEach(id=>{
+                    const el=document.getElementById(id); if(el) el.textContent=pct+'%';
+                });
                 const pv=document.getElementById('pct-voted'); if(pv) pv.textContent=pct+'%';
-                const pn=document.getElementById('pct-not'); if(pn) pn.textContent=(100-pct)+'%';
+                const pn=document.getElementById('pct-not'); if(pn) pn.textContent=notPct+'%';
+                const rv=document.getElementById('remaining-voters'); if(rv) rv.textContent=not_voted.toLocaleString()+' voters';
 
-                turnoutChart.data.datasets[0].data=[voted, not_voted];
+                turnoutChart.data.datasets[0].data=[voted,not_voted];
                 turnoutChart.update('active');
 
-                // Bar chart
-                posChart.data.labels=d.votesByPosition.map(p=>p.label);
-                posChart.data.datasets[0].data=d.votesByPosition.map(p=>p.count);
-                posChart.update('active');
+                // Monthly trend → line + bar charts
+                if(d.monthlyTrend&&d.monthlyTrend.length){
+                    const labels=d.monthlyTrend.map(m=>m.month);
+                    const voters=d.monthlyTrend.map(m=>m.voters);
+                    const votes=d.monthlyTrend.map(m=>m.votes);
 
-                // Gauge: use turnout pct as system health
-                setGaugeAngle(parseFloat(pct) || 75);
+                    // Line chart
+                    lineChart.data.labels=labels;
+                    lineChart.data.datasets[0].data=voters;
+                    lineChart.data.datasets[1].data=votes;
+                    lineChart.update('active');
+
+                    // Bar chart (same data grouped)
+                    barChart.data.labels=labels;
+                    barChart.data.datasets[0].data=voters;
+                    barChart.data.datasets[1].data=votes;
+                    barChart.update('active');
+
+                    // Month-over-month deltas
+                    if(d.monthlyTrend.length>=2){
+                        const len=d.monthlyTrend.length;
+                        const cur=d.monthlyTrend[len-1], prev=d.monthlyTrend[len-2];
+                        const vd=cur.voters-prev.voters, wd=cur.votes-prev.votes;
+                        const e1=document.getElementById('analytic-voters-delta');
+                        if(e1) e1.textContent=(vd>=0?'+':'')+vd.toLocaleString();
+                        const e2=document.getElementById('analytic-votes-delta');
+                        if(e2) e2.textContent=(wd>=0?'+':'')+wd.toLocaleString();
+                    }
+                }
+
+                // Gauge
+                setGaugeAngle(parseFloat(pct)||75);
 
                 // Lists
                 renderRecentVotes(d.recentVotes);
-                renderTopCandidates(d.topCandidates, d.stats.total_votes);
+                renderTopCandidates(d.topCandidates,d.stats.total_votes);
 
-                document.getElementById('last-updated').textContent=d.timestamp;
+                // Timestamp
+                const lu=document.getElementById('last-updated'); if(lu) lu.textContent=d.timestamp;
+
             } catch(e){ console.warn('Live poll error:',e); }
         }
 
-        // ── Polling ───────────────────────────────────────────────
+        // ══ Polling ═══════════════════════════════════════════════
         let pollTimer=null;
         function startPolling(ms){
             if(pollTimer) clearInterval(pollTimer);
             if(ms>0) pollTimer=setInterval(fetchLive,ms);
+            const rl=document.getElementById('refresh-label');
+            if(rl) rl.textContent=ms>0?(ms/1000)+'s':'paused';
         }
         document.getElementById('refresh-interval').addEventListener('change',function(){
             startPolling(parseInt(this.value));

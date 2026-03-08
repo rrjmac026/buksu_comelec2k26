@@ -95,6 +95,19 @@ class AdminDashboardController extends Controller
                 'voted_at'    => $v->voted_at?->diffForHumans() ?? '—',
                 'transaction' => $v->transaction_number ?? '—',
             ]);
+        
+        $monthlyTrend = collect(range(1, 12))->map(function ($month) {
+            return [
+                'month' => date('M', mktime(0,0,0,$month,1)),
+                'voters' => \App\Models\User::where('role','voter')
+                            ->whereMonth('created_at', $month)
+                            ->whereYear('created_at', now()->year)
+                            ->count(),
+                'votes'  => \App\Models\Vote::whereMonth('voted_at', $month)
+                            ->whereYear('voted_at', now()->year)
+                            ->count(),
+            ];
+        });
 
         // Voter turnout: voted vs not voted
         $totalVoters  = User::where('role', 'voter')->count();
@@ -108,6 +121,7 @@ class AdminDashboardController extends Controller
             'recentVotes'      => $recentVotes,
             'turnout'          => ['voted' => $votedCount, 'not_voted' => $notVoted],
             'timestamp'        => now()->format('H:i:s'),
+            'monthlyTrend' => $monthlyTrend,
         ]);
     }
 }

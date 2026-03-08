@@ -10,9 +10,10 @@ use App\Http\Controllers\Admin\AdminPositionController;
 use App\Http\Controllers\Admin\AdminCastedVoteController;
 use App\Http\Controllers\Admin\AdminVoterController;
 use App\Http\Controllers\Admin\AdminFeedbackController;
+
 use App\Http\Controllers\Voter\VoterDashboardController;
-use App\Http\Controllers\Voter\CastedVoteController as VoterCastedVoteController;
-use App\Http\Controllers\Voter\FeedbackController as VoterFeedbackController;
+use App\Http\Controllers\Voter\VoterCastedVoteController;
+use App\Http\Controllers\Voter\VoterFeedbackController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -87,21 +88,21 @@ Route::middleware(['auth', 'admin'])
 |--------------------------------------------------------------------------
 */
 
-Route::middleware(['auth', 'voter'])
-    ->prefix('voter')
-    ->name('voter.')
-    ->group(function () {
+Route::middleware(['auth', 'voter'])->prefix('voter')->name('voter.')->group(function () {
 
-        // Dashboard
-        Route::get('dashboard', [VoterDashboardController::class, 'index'])->name('dashboard');
+    // Dashboard
+    Route::get('/dashboard',    [VoterDashboardController::class, 'index'])->name('dashboard');
+    Route::get('/results',      [VoterDashboardController::class, 'results'])->name('results');
+    Route::get('/results/live', [VoterDashboardController::class, 'liveResults'])->name('results.live');
 
-        // Voting
-        Route::resource('votes', VoterCastedVoteController::class);
+    // CastedVote (Ballot)
+    Route::get('/vote',         [VoterCastedVoteController::class, 'create'])->name('vote');
+    Route::post('/vote',        [VoterCastedVoteController::class, 'store'])->name('vote.store');
 
-        // Feedback
-        Route::resource('feedback', VoterFeedbackController::class);
-
-    });
+    // Feedback
+    Route::get('/feedback',     [VoterFeedbackController::class, 'show'])->name('feedback');
+    Route::post('/feedback',    [VoterFeedbackController::class, 'submit'])->name('feedback.submit');
+});
 
 /*
 |--------------------------------------------------------------------------
