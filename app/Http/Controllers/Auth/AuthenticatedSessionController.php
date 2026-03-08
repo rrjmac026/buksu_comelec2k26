@@ -31,14 +31,14 @@ class AuthenticatedSessionController extends Controller
         $user = Auth::user();
 
         if ($user->role === 'admin') {
-            return view('admin.dashboard');
+            return redirect()->route('admin.dashboard');
         }
 
         if ($user->role === 'voter') {
-            return view('voter.dashboard');
+            return redirect()->route('voter.dashboard');
         }
 
-        return view('dashboard');
+        return redirect()->route('dashboard');
     }
 
     /**

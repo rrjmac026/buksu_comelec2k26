@@ -38,7 +38,11 @@ class AdminDashboardController extends Controller
             ->take(5)
             ->get();
 
-        return view('admin.dashboard', compact('stats', 'recentVotes', 'topCandidates'));
+        $teamMembers = User::where('role', 'admin')
+                       ->orderBy('name')
+                       ->get();
+
+        return view('admin.dashboard', compact('stats', 'recentVotes', 'topCandidates', 'teamMembers'));
     }
 
     /**
