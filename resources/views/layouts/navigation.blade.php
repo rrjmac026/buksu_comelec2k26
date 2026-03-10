@@ -9,13 +9,14 @@
 <style>
     /* ── Navigation Core ── */
     .nav-root {
-        background: rgba(26, 0, 32, 0.92);
+        background: rgba(26, 0, 32, 0.95);
         backdrop-filter: blur(24px) saturate(1.6);
         -webkit-backdrop-filter: blur(24px) saturate(1.6);
         border-bottom: 1px solid rgba(249, 180, 15, 0.2);
-        box-shadow: 0 1px 32px rgba(0, 0, 0, 0.4);
+        box-shadow: 0 1px 32px rgba(0, 0, 0, 0.5);
         transition: background 0.3s, box-shadow 0.3s;
         position: relative;
+        z-index: 50;
     }
     .nav-root::after {
         content: '';
@@ -63,7 +64,7 @@
         color: rgba(249, 180, 15, 0.6); text-transform: uppercase;
     }
 
-    /* ── Icon buttons (bell, profile) ── */
+    /* ── Icon buttons ── */
     .nav-icon-btn {
         position: relative; display: flex; align-items: center; justify-content: center;
         width: 38px; height: 38px; border-radius: 10px;
@@ -84,7 +85,7 @@
         color: #380041; font-size: 0.62rem; font-weight: 700;
         display: flex; align-items: center; justify-content: center;
         padding: 0 3px;
-        box-shadow: 0 0 0 2px #1e0025, 0 2px 8px rgba(249,180,15,0.4);
+        box-shadow: 0 0 0 2px rgba(26,0,32,1), 0 2px 8px rgba(249,180,15,0.4);
         animation: badge-pop 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
     }
     @keyframes badge-pop {
@@ -92,27 +93,39 @@
         100% { transform: scale(1); }
     }
 
+    /* ── Dropdown wrapper — critical for correct positioning ── */
+    .nav-dropdown-wrap {
+        position: relative;
+        display: flex;
+        align-items: center;
+    }
+
     /* ── Dropdown Panel ── */
     .dropdown-panel {
-        background: rgba(26, 0, 32, 0.97);
-        backdrop-filter: blur(24px);
-        border: 1px solid rgba(249, 180, 15, 0.2);
+        position: absolute;
+        top: calc(100% + 12px);
+        right: 0;
+        left: auto;
+        z-index: 9999;
+        background: rgba(22, 0, 28, 0.99);
+        backdrop-filter: blur(28px) saturate(1.8);
+        -webkit-backdrop-filter: blur(28px) saturate(1.8);
+        border: 1px solid rgba(249, 180, 15, 0.25);
         border-radius: 16px;
         box-shadow:
-            0 4px 6px rgba(0, 0, 0, 0.3),
-            0 12px 40px rgba(0, 0, 0, 0.5),
-            0 0 0 0.5px rgba(249, 180, 15, 0.08);
+            0 8px 20px rgba(0, 0, 0, 0.6),
+            0 24px 60px rgba(0, 0, 0, 0.5),
+            inset 0 0 0 1px rgba(249, 180, 15, 0.05);
         overflow: hidden;
-        position: relative;
     }
     .dropdown-panel::before {
         content: '';
-        position: absolute; top: 0; left: 0; right: 0; height: 1px;
-        background: linear-gradient(90deg, transparent, rgba(249,180,15,0.5), transparent);
+        position: absolute; top: 0; left: 0; right: 0; height: 1px; z-index: 1;
+        background: linear-gradient(90deg, transparent, rgba(249,180,15,0.6), transparent);
         pointer-events: none;
     }
 
-    /* ── Notification items ── */
+    /* ── Notification header ── */
     .notif-header {
         padding: 14px 16px 10px;
         display: flex; align-items: center; justify-content: space-between;
@@ -131,197 +144,155 @@
     .notif-list { max-height: 320px; overflow-y: auto; padding: 6px 0; }
     .notif-list::-webkit-scrollbar { width: 4px; }
     .notif-list::-webkit-scrollbar-track { background: transparent; }
-    .notif-list::-webkit-scrollbar-thumb {
-        background: rgba(249, 180, 15, 0.2); border-radius: 99px;
-    }
+    .notif-list::-webkit-scrollbar-thumb { background: rgba(249,180,15,0.2); border-radius: 99px; }
 
     .notif-item {
         display: flex; align-items: flex-start; gap: 10px;
         padding: 10px 16px; cursor: pointer;
-        transition: background 0.15s;
-        position: relative;
-        text-decoration: none;
+        transition: background 0.15s; position: relative; text-decoration: none;
     }
     .notif-item:hover { background: rgba(249, 180, 15, 0.06); }
 
     .notif-icon {
         width: 32px; height: 32px; border-radius: 9px; flex-shrink: 0;
         display: flex; align-items: center; justify-content: center;
-        background: rgba(249, 180, 15, 0.12);
-        color: #f9b40f; font-size: 0.78rem;
+        background: rgba(249, 180, 15, 0.12); color: #f9b40f; font-size: 0.78rem;
         border: 1px solid rgba(249, 180, 15, 0.2);
     }
-
     .notif-content { flex: 1; min-width: 0; }
-    .notif-title {
-        font-size: 0.8rem; font-weight: 600; color: #fffbf0;
-        white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-    }
-    .notif-msg {
-        font-size: 0.73rem; color: rgba(249, 180, 15, 0.7); margin-top: 1px;
-        white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-    }
-    .notif-time { font-size: 0.67rem; color: rgba(255, 251, 240, 0.35); margin-top: 2px; }
-
+    .notif-title { font-size: 0.8rem; font-weight: 600; color: #fffbf0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .notif-msg { font-size: 0.73rem; color: rgba(249,180,15,0.7); margin-top: 1px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .notif-time { font-size: 0.67rem; color: rgba(255,251,240,0.35); margin-top: 2px; }
     .notif-unread-dot {
         width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; margin-top: 6px;
         background: linear-gradient(135deg, #f9b40f, #fcd558);
-        box-shadow: 0 0 6px rgba(249, 180, 15, 0.5);
+        box-shadow: 0 0 6px rgba(249,180,15,0.5);
     }
-    .notif-empty {
-        padding: 28px 16px; text-align: center; color: rgba(255, 251, 240, 0.35);
-    }
+    .notif-empty { padding: 28px 16px; text-align: center; color: rgba(255,251,240,0.35); }
     .notif-empty i { font-size: 1.6rem; margin-bottom: 8px; opacity: 0.4; display: block; color: #f9b40f; }
-    .notif-empty p { font-size: 0.8rem; }
+    .notif-empty p { font-size: 0.8rem; margin: 0; }
 
     /* ── Profile button ── */
     .profile-btn {
         display: flex; align-items: center; gap: 10px;
         padding: 5px 10px 5px 5px; border-radius: 12px;
-        transition: background 0.18s;
+        transition: background 0.18s, border-color 0.18s;
         cursor: pointer;
+        border: 1px solid transparent;
     }
-    .profile-btn:hover { background: rgba(249, 180, 15, 0.08); }
+    .profile-btn:hover {
+        background: rgba(249, 180, 15, 0.08);
+        border-color: rgba(249, 180, 15, 0.15);
+    }
 
     .avatar-circle {
         width: 34px; height: 34px; border-radius: 10px;
-        background: linear-gradient(135deg, #f9b40f 0%, #fcd558 100%);
-        color: #380041; font-size: 0.88rem; font-weight: 700;
+        background: linear-gradient(135deg, #f9b40f, #fcd558);
+        color: #380041; font-size: 0.88rem; font-weight: 900;
         display: flex; align-items: center; justify-content: center;
-        box-shadow: 0 2px 12px rgba(249, 180, 15, 0.35);
-        flex-shrink: 0;
+        box-shadow: 0 2px 12px rgba(249,180,15,0.4); flex-shrink: 0;
+        font-family: 'Playfair Display', serif;
     }
     .avatar-circle-lg {
         width: 52px; height: 52px; border-radius: 14px; font-size: 1.3rem;
-        background: linear-gradient(135deg, #f9b40f 0%, #fcd558 100%);
-        color: #380041; font-weight: 700;
+        background: linear-gradient(135deg, #f9b40f, #fcd558);
+        color: #380041; font-weight: 900;
         display: flex; align-items: center; justify-content: center;
-        box-shadow: 0 4px 20px rgba(249, 180, 15, 0.4);
-        flex-shrink: 0;
+        box-shadow: 0 4px 20px rgba(249,180,15,0.45); flex-shrink: 0;
+        font-family: 'Playfair Display', serif;
     }
 
-    .profile-name {
-        font-size: 0.82rem; font-weight: 600; color: #fffbf0; line-height: 1.2;
-    }
-    .profile-role {
-        font-size: 0.7rem; color: rgba(249, 180, 15, 0.7); letter-spacing: 0.03em;
-    }
-    .chevron-icon {
-        font-size: 0.7rem; color: rgba(249, 180, 15, 0.5);
-        transition: transform 0.2s;
-    }
+    .profile-name { font-size: 0.82rem; font-weight: 600; color: #fffbf0; line-height: 1.2; display: block; }
+    .profile-role { font-size: 0.68rem; color: rgba(249,180,15,0.65); letter-spacing: 0.03em; display: block; }
+    .chevron-icon { font-size: 0.65rem; color: rgba(249,180,15,0.4); transition: transform 0.2s, color 0.2s; margin-left: 2px; }
 
     /* ── Profile dropdown hero ── */
     .profile-hero {
         padding: 16px;
-        background: linear-gradient(135deg, rgba(56,0,65,0.8) 0%, rgba(82,0,96,0.6) 100%);
+        background: linear-gradient(135deg, rgba(56,0,65,0.9) 0%, rgba(82,0,96,0.7) 100%);
         display: flex; align-items: center; gap: 12px;
-        border-bottom: 1px solid rgba(249, 180, 15, 0.12);
+        border-bottom: 1px solid rgba(249,180,15,0.12);
     }
-    .profile-hero-name {
-        font-size: 0.9rem; font-weight: 700; color: #fffbf0; line-height: 1.2;
-    }
+    .profile-hero-name { font-size: 0.9rem; font-weight: 700; color: #fffbf0; line-height: 1.2; }
     .profile-hero-badge {
         display: inline-flex; align-items: center; gap: 4px;
         font-size: 0.68rem; font-weight: 600; letter-spacing: 0.04em;
         padding: 2px 8px; border-radius: 99px;
-        background: rgba(249, 180, 15, 0.12);
-        color: #f9b40f; border: 1px solid rgba(249, 180, 15, 0.25);
-        margin-top: 3px;
+        background: rgba(249,180,15,0.12); color: #f9b40f;
+        border: 1px solid rgba(249,180,15,0.25); margin-top: 3px;
     }
 
     /* ── Dropdown menu items ── */
-    .dropdown-menu { padding: 6px; }
+    .dropdown-menu-inner { padding: 6px; }
     .dropdown-item {
         display: flex; align-items: center; gap: 10px;
         padding: 9px 10px; border-radius: 10px;
         cursor: pointer; text-decoration: none;
         transition: background 0.15s, transform 0.15s;
-        width: 100%;
+        width: 100%; background: transparent; border: none; text-align: left;
+        color: inherit;
     }
-    .dropdown-item:hover {
-        background: rgba(249, 180, 15, 0.08);
-        transform: translateX(2px);
-    }
+    .dropdown-item:hover { background: rgba(249,180,15,0.07); transform: translateX(2px); }
 
     .dropdown-item-icon {
         width: 32px; height: 32px; border-radius: 9px;
         display: flex; align-items: center; justify-content: center;
-        background: rgba(249, 180, 15, 0.1);
-        color: #f9b40f; font-size: 0.82rem; flex-shrink: 0;
-        border: 1px solid rgba(249, 180, 15, 0.15);
-        transition: background 0.15s;
+        background: rgba(249,180,15,0.1); color: #f9b40f; font-size: 0.82rem; flex-shrink: 0;
+        border: 1px solid rgba(249,180,15,0.15); transition: all 0.15s;
     }
     .dropdown-item:hover .dropdown-item-icon {
         background: linear-gradient(135deg, #f9b40f, #fcd558);
-        color: #380041;
-        border-color: #f9b40f;
-        box-shadow: 0 2px 12px rgba(249,180,15,0.35);
+        color: #380041; border-color: #f9b40f;
+        box-shadow: 0 2px 12px rgba(249,180,15,0.4);
     }
-
-    .dropdown-item-icon.danger { background: rgba(239, 68, 68, 0.1); color: #f87171; border-color: rgba(239,68,68,0.2); }
-    .dropdown-item:hover .dropdown-item-icon.danger { background: rgba(239,68,68,0.2); color: #fca5a5; }
+    .dropdown-item-icon.danger { background: rgba(239,68,68,0.1); color: #f87171; border-color: rgba(239,68,68,0.2); }
+    .dropdown-item:hover .dropdown-item-icon.danger { background: rgba(239,68,68,0.2); color: #fca5a5; border-color: rgba(239,68,68,0.3); box-shadow: 0 2px 10px rgba(239,68,68,0.2); }
 
     .dropdown-item-text { flex: 1; }
-    .dropdown-item-label {
-        font-size: 0.82rem; font-weight: 600; color: #fffbf0; display: block;
-    }
+    .dropdown-item-label { font-size: 0.82rem; font-weight: 600; color: #fffbf0; display: block; }
     .dropdown-item-label.danger { color: #f87171; }
-    .dropdown-item-desc {
-        font-size: 0.7rem; color: rgba(255, 251, 240, 0.4);
-    }
-    .dropdown-item-desc.danger { color: rgba(248, 113, 113, 0.6); }
-    .dropdown-chevron { font-size: 0.65rem; color: rgba(249, 180, 15, 0.3); }
+    .dropdown-item-desc { font-size: 0.7rem; color: rgba(255,251,240,0.38); display: block; margin-top: 1px; }
+    .dropdown-item-desc.danger { color: rgba(248,113,113,0.55); }
+    .dropdown-chevron { font-size: 0.62rem; color: rgba(249,180,15,0.25); flex-shrink: 0; }
 
     /* ── Toggle switch ── */
     .toggle-track {
         width: 34px; height: 19px; border-radius: 99px;
-        background: rgba(255, 251, 240, 0.1);
-        transition: background 0.2s;
+        background: rgba(255,251,240,0.1); transition: background 0.2s;
         position: relative; flex-shrink: 0;
     }
-    .toggle-track.active {
-        background: linear-gradient(90deg, #f9b40f, #fcd558);
-    }
+    .toggle-track.active { background: linear-gradient(90deg, #f9b40f, #fcd558); }
     .toggle-thumb {
         position: absolute; top: 2px; left: 2px;
-        width: 15px; height: 15px; border-radius: 50%;
-        background: #fff;
+        width: 15px; height: 15px; border-radius: 50%; background: #fff;
         box-shadow: 0 1px 4px rgba(0,0,0,0.3);
         transition: transform 0.2s cubic-bezier(0.34,1.56,0.64,1);
     }
     .toggle-thumb.active { transform: translateX(15px); }
 
     /* ── Divider ── */
-    .dropdown-divider {
-        margin: 4px 10px;
-        border: none; border-top: 1px solid rgba(249, 180, 15, 0.1);
-    }
+    .dropdown-divider { margin: 4px 10px; border: none; border-top: 1px solid rgba(249,180,15,0.1); }
 
     /* ── Dropdown footer ── */
     .dropdown-footer {
-        padding: 8px 16px;
-        text-align: center;
-        font-size: 0.67rem; color: rgba(249, 180, 15, 0.4); letter-spacing: 0.05em;
-        background: rgba(56, 0, 65, 0.5);
-        border-top: 1px solid rgba(249, 180, 15, 0.1);
+        padding: 8px 16px; text-align: center;
+        font-size: 0.67rem; color: rgba(249,180,15,0.35); letter-spacing: 0.05em;
+        background: rgba(56,0,65,0.6); border-top: 1px solid rgba(249,180,15,0.1);
     }
 
     /* ── Spinner ── */
     .spin { animation: spin 0.8s linear infinite; }
     @keyframes spin { to { transform: rotate(360deg); } }
 
-    /* ── Pulse glow on bell icon when unread ── */
+    /* ── Bell pulse when unread ── */
     .bell-pulse::after {
-        content: '';
-        position: absolute; inset: 0; border-radius: 10px;
-        background: rgba(249, 180, 15, 0.15);
-        animation: bell-glow 1.8s ease-in-out infinite;
-        pointer-events: none;
+        content: ''; position: absolute; inset: 0; border-radius: 10px;
+        background: rgba(249,180,15,0.12);
+        animation: bell-glow 1.8s ease-in-out infinite; pointer-events: none;
     }
     @keyframes bell-glow {
-        0%, 100% { opacity: 0; transform: scale(1); }
-        50% { opacity: 1; transform: scale(1.15); }
+        0%,100% { opacity: 0; transform: scale(1); }
+        50% { opacity: 1; transform: scale(1.18); }
     }
 </style>
 
@@ -332,12 +303,9 @@
 
                 <!-- Left Side -->
                 <div class="flex items-center gap-3">
-                    <!-- Sidebar Toggle -->
                     <button @click="$store.sidebar.toggle()" class="nav-toggle border-0 bg-transparent cursor-pointer">
                         <i class="fas fa-bars-staggered text-base"></i>
                     </button>
-
-                    <!-- Logo + App Name -->
                     <a href="{{ $dashboardRoute }}" class="nav-logo-wrap">
                         <img src="{{ asset('assets/app_logo.png') }}" alt="Logo" class="nav-logo-img" />
                         <div class="nav-logo-text">
@@ -351,8 +319,8 @@
                 <div class="flex items-center gap-2">
 
                     <!-- Notification Bell -->
-                    <div class="relative">
-                        <button @click="toggleNotifications()"
+                    <div class="nav-dropdown-wrap">
+                        <button @click="notificationOpen = !notificationOpen; profileOpen = false"
                                 class="nav-icon-btn border-0 bg-transparent cursor-pointer"
                                 :class="{ 'bell-pulse': unreadCount > 0 }">
                             <i class="fas fa-bell"></i>
@@ -361,42 +329,37 @@
                             </div>
                         </button>
 
-                        <!-- Notification Dropdown -->
                         <div x-show="notificationOpen"
                              @click.away="notificationOpen = false"
                              x-transition:enter="transition ease-out duration-200"
                              x-transition:enter-start="opacity-0 scale-95 -translate-y-2"
                              x-transition:enter-end="opacity-100 scale-100 translate-y-0"
                              x-transition:leave="transition ease-in duration-150"
-                             x-transition:leave-start="opacity-100 scale-100"
+                             x-transition:leave-start="opacity-100 scale-100 translate-y-0"
                              x-transition:leave-end="opacity-0 scale-95 -translate-y-2"
                              x-cloak
-                             class="dropdown-panel absolute right-0 mt-3 w-80">
+                             class="dropdown-panel" style="width:320px;">
 
-                            <!-- Header -->
                             <div class="notif-header">
                                 <span class="notif-header-title">
                                     <i class="fas fa-bell"></i> Notifications
                                 </span>
-                                <div class="flex items-center gap-2">
-                                    <div x-show="loading" class="spin w-3.5 h-3.5 border-2 border-yellow-400 border-t-transparent rounded-full"></div>
+                                <div style="display:flex;align-items:center;gap:8px;">
+                                    <div x-show="loading" class="spin" style="width:14px;height:14px;border:2px solid rgba(249,180,15,0.3);border-top-color:#f9b40f;border-radius:50%;flex-shrink:0;"></div>
                                     <span x-show="unreadCount > 0 && !loading" class="notif-header-badge" x-text="unreadCount + ' unread'"></span>
-                                    <span x-show="!loading && allRead" class="notif-header-badge" style="color: #34d399; background: rgba(52,211,153,0.1); border-color: rgba(52,211,153,0.25);">
-                                        <i class="fas fa-check-circle mr-1"></i>All read
+                                    <span x-show="!loading && allRead" class="notif-header-badge" style="color:#34d399;background:rgba(52,211,153,0.1);border-color:rgba(52,211,153,0.25);">
+                                        <i class="fas fa-check-circle" style="margin-right:3px;"></i>All read
                                     </span>
                                 </div>
                             </div>
 
-                            <!-- List -->
                             <div class="notif-list">
                                 <template x-for="notif in notifications" :key="notif.id">
                                     <a :href="notif.link || '#'"
                                        @click="notif.link ? handleNotificationClick($event, notif) : $event.preventDefault()"
                                        class="notif-item"
-                                       :style="!notif.is_read ? 'background:rgba(249,180,15,0.05);' : ''">
-                                        <div class="notif-icon">
-                                            <i class="fas fa-bell"></i>
-                                        </div>
+                                       :style="!notif.is_read ? 'background:rgba(249,180,15,0.04);' : ''">
+                                        <div class="notif-icon"><i class="fas fa-bell"></i></div>
                                         <div class="notif-content">
                                             <div class="notif-title" x-text="notif.title"></div>
                                             <div class="notif-msg" x-text="notif.message"></div>
@@ -405,7 +368,6 @@
                                         <div x-show="!notif.is_read" class="notif-unread-dot"></div>
                                     </a>
                                 </template>
-
                                 <div x-show="notifications.length === 0" class="notif-empty">
                                     <i class="fas fa-bell-slash"></i>
                                     <p>No notifications yet</p>
@@ -415,29 +377,30 @@
                     </div>
 
                     <!-- Profile Button -->
-                    <div class="relative">
-                        <button @click="profileOpen = !profileOpen" class="profile-btn border-0 bg-transparent cursor-pointer">
+                    <div class="nav-dropdown-wrap">
+                        <button @click="profileOpen = !profileOpen; notificationOpen = false"
+                                class="profile-btn border-0 bg-transparent cursor-pointer">
                             <div class="avatar-circle">
                                 <span x-text="userInitial">{{ Auth::check() ? substr(Auth::user()->name, 0, 1) : 'G' }}</span>
                             </div>
-                            <div class="hidden sm:block text-left">
-                                <div class="profile-name" x-text="userName">{{ Auth::check() ? Auth::user()->name : 'Guest' }}</div>
-                                <div class="profile-role">{{ Auth::check() ? ucfirst(Auth::user()->role) : '' }}</div>
+                            <div class="hidden sm:block">
+                                <span class="profile-name" x-text="userName">{{ Auth::check() ? Auth::user()->name : 'Guest' }}</span>
+                                <span class="profile-role">{{ Auth::check() ? ucfirst(Auth::user()->role) : '' }}</span>
                             </div>
-                            <i class="fas fa-chevron-down chevron-icon" :style="profileOpen ? 'transform:rotate(180deg)' : ''"></i>
+                            <i class="fas fa-chevron-down chevron-icon"
+                               :style="profileOpen ? 'transform:rotate(180deg);color:rgba(249,180,15,0.7)' : ''"></i>
                         </button>
 
-                        <!-- Profile Dropdown -->
                         <div x-show="profileOpen"
                              @click.away="profileOpen = false"
                              x-transition:enter="transition ease-out duration-200"
                              x-transition:enter-start="opacity-0 scale-95 -translate-y-2"
                              x-transition:enter-end="opacity-100 scale-100 translate-y-0"
                              x-transition:leave="transition ease-in duration-150"
-                             x-transition:leave-start="opacity-100 scale-100"
+                             x-transition:leave-start="opacity-100 scale-100 translate-y-0"
                              x-transition:leave-end="opacity-0 scale-95 -translate-y-2"
                              x-cloak
-                             class="dropdown-panel absolute right-0 mt-3 w-64">
+                             class="dropdown-panel" style="width:256px;">
 
                             <!-- Hero -->
                             <div class="profile-hero">
@@ -454,7 +417,7 @@
                             </div>
 
                             <!-- Menu -->
-                            <div class="dropdown-menu">
+                            <div class="dropdown-menu-inner">
                                 <a :href="profileEditRoute" class="dropdown-item">
                                     <div class="dropdown-item-icon"><i class="fas fa-user"></i></div>
                                     <div class="dropdown-item-text">
@@ -466,8 +429,7 @@
 
                                 <button @click="$store.darkMode.toggle()" class="dropdown-item">
                                     <div class="dropdown-item-icon">
-                                        <template x-if="$store.darkMode.on"><i class="fas fa-sun"></i></template>
-                                        <template x-if="!$store.darkMode.on"><i class="fas fa-moon"></i></template>
+                                        <i :class="$store.darkMode.on ? 'fas fa-sun' : 'fas fa-moon'"></i>
                                     </div>
                                     <div class="dropdown-item-text">
                                         <span class="dropdown-item-label" x-text="$store.darkMode.on ? 'Light Mode' : 'Dark Mode'"></span>
@@ -490,7 +452,6 @@
                                 </button>
                             </div>
 
-                            <!-- Footer -->
                             <div class="dropdown-footer">
                                 {{ config('app.name') }} · v1.0
                             </div>
@@ -523,10 +484,6 @@ function navigationComponent() {
         init() {
             this.updateUnreadCount();
             this.updateAllReadStatus();
-        },
-
-        toggleNotifications() {
-            this.notificationOpen = !this.notificationOpen;
         },
 
         handleNotificationClick(event, notif) {
