@@ -4,6 +4,8 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
+use GuzzleHttp\Client;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Laravel\Socialite\Facades\Socialite;
@@ -17,16 +19,18 @@ class GoogleController extends Controller
             ->redirect();
     }
 
-    public function callback()
+    public function callback(Request $request)
     {
         try {
-            $googleUser = Socialite::driver('google')->user();
+            $googleUser = Socialite::driver('google')
+                ->setHttpClient(new Client(['verify' => false]))
+                ->user();
+
         } catch (\Exception $e) {
             return redirect()->route('login')
-                ->with('error', 'Google authentication failed. Please try again.');
+                ->with('error', 'Google authentication failed: ' . $e->getMessage());
         }
 
-        // Find pre-registered voter by email
         $user = User::where('email', $googleUser->getEmail())
                     ->where('role', 'voter')
                     ->first();
@@ -41,20 +45,17 @@ class GoogleController extends Controller
                 ->with('error', 'Your account has been deactivated. Please contact the administrator.');
         }
 
-        // Save google_id using raw DB to bypass all mutators/casts
-        if (!$user->google_id) {
-            DB::table('users')
-                ->where('id', $user->id)
-                ->update([
-                    'google_id'  => $googleUser->getId(),
-                    'updated_at' => now(),
-                ]);
-        }
+        DB::table('users')
+            ->where('id', $user->id)
+            ->update([
+                'google_id'  => $googleUser->getId(),
+                'updated_at' => now(),
+            ]);
 
-        // Re-fetch fresh model after DB update
         $user = User::find($user->id);
 
         Auth::login($user, true);
+        $request->session()->regenerate();
 
         return redirect()->route('voter.dashboard')
             ->with('success', 'Welcome back, ' . $user->name . '!');

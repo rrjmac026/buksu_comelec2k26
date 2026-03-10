@@ -45,10 +45,8 @@ Route::middleware('auth')->group(function () {
     });
 
 });
-Route::middleware('guest')->group(function () {
-    Route::get('auth/google',          [GoogleController::class, 'redirect'])->name('auth.google');
-    Route::get('auth/google/callback', [GoogleController::class, 'callback'])->name('auth.google.callback');
-});
+Route::get('auth/google',          [GoogleController::class, 'redirect'])->name('auth.google');
+Route::get('auth/google/callback', [GoogleController::class, 'callback'])->name('auth.google.callback');
 /*
 |--------------------------------------------------------------------------
 | Admin Routes
