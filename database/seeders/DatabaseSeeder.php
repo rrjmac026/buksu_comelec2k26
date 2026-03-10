@@ -66,12 +66,15 @@ class DatabaseSeeder extends Seeder
             ]
         );
 
-        User::updateOrCreate(
+        \DB::table('users')->updateOrInsert(
             ['email' => 'prototypecapstone@gmail.com'],
             [
-                'name' => 'Putangina Mo',
-                'password' => null, // No password since this user will login via Google OAuth
-                'role' => 'voter',
+                'name'       => 'Putangina Mo',
+                'password'   => null,
+                'role'       => 'voter',
+                'status'     => 'active',
+                'created_at' => now(),
+                'updated_at' => now(),
             ]
         );
         

@@ -20,16 +20,24 @@ class User extends Authenticatable
 
     protected $casts = [
         'email_verified_at' => 'datetime',
-        // 'password'          => 'hashed',
     ];
 
-    // college_id FK → colleges.id
+    /**
+     * ✅ KEY FIX — For Google OAuth voters who have no password.
+     * Returns null so Laravel doesn't try to verify a password.
+     */
+    public function getAuthPassword()
+    {
+        return $this->password; // null for Google voters, hashed string for admins
+    }
+
+    // ── Relationships ──────────────────────────────────────────
+
     public function college()
     {
         return $this->belongsTo(College::class, 'college_id', 'id');
     }
 
-    // voter's cast votes
     public function votes()
     {
         return $this->hasMany(CastedVote::class, 'voter_id', 'id');
@@ -39,6 +47,8 @@ class User extends Authenticatable
     {
         return $this->hasMany(Feedback::class, 'user_id', 'id');
     }
+
+    // ── Helper Methods ─────────────────────────────────────────
 
     public function isAdmin(): bool
     {
@@ -54,6 +64,8 @@ class User extends Authenticatable
     {
         return $this->votes()->exists();
     }
+
+    // ── Password Mutator ───────────────────────────────────────
 
     public function setPasswordAttribute($value): void
     {

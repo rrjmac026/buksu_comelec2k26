@@ -5,13 +5,11 @@ namespace App\Http\Controllers\Auth;
 use App\Http\Controllers\Controller;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Laravel\Socialite\Facades\Socialite;
 
 class GoogleController extends Controller
 {
-    /**
-     * Redirect voter to Google.
-     */
     public function redirect()
     {
         return Socialite::driver('google')
@@ -19,9 +17,6 @@ class GoogleController extends Controller
             ->redirect();
     }
 
-    /**
-     * Handle Google callback.
-     */
     public function callback()
     {
         try {
@@ -31,28 +26,33 @@ class GoogleController extends Controller
                 ->with('error', 'Google authentication failed. Please try again.');
         }
 
-        // Only allow pre-registered voters
+        // Find pre-registered voter by email
         $user = User::where('email', $googleUser->getEmail())
                     ->where('role', 'voter')
                     ->first();
 
-        // Email not in the system
         if (!$user) {
             return redirect()->route('login')
                 ->with('error', 'Your Google account is not registered as a voter. Please contact the administrator.');
         }
 
-        // Account is disabled
         if ($user->status === 'inactive') {
             return redirect()->route('login')
                 ->with('error', 'Your account has been deactivated. Please contact the administrator.');
         }
 
-        // Link google_id on first login
+        // Save google_id using raw DB to bypass all mutators/casts
         if (!$user->google_id) {
-            $user->google_id = $googleUser->getId();
-            $user->save();
+            DB::table('users')
+                ->where('id', $user->id)
+                ->update([
+                    'google_id'  => $googleUser->getId(),
+                    'updated_at' => now(),
+                ]);
         }
+
+        // Re-fetch fresh model after DB update
+        $user = User::find($user->id);
 
         Auth::login($user, true);
 
