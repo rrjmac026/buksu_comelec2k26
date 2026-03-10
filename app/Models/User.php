@@ -20,7 +20,7 @@ class User extends Authenticatable
 
     protected $casts = [
         'email_verified_at' => 'datetime',
-        'password'          => 'hashed',
+        // 'password'          => 'hashed',
     ];
 
     // college_id FK → colleges.id
@@ -53,5 +53,12 @@ class User extends Authenticatable
     public function hasVoted(): bool
     {
         return $this->votes()->exists();
+    }
+
+    public function setPasswordAttribute($value): void
+    {
+        $this->attributes['password'] = $value !== null
+            ? \Illuminate\Support\Facades\Hash::make($value)
+            : null;
     }
 }

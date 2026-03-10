@@ -69,8 +69,8 @@ class DatabaseSeeder extends Seeder
         User::updateOrCreate(
             ['email' => 'prototypecapstone@gmail.com'],
             [
-                'name' => 'Regular User',
-                'password' => Hash::make('password'),
+                'name' => 'Putangina Mo',
+                'password' => null, // No password since this user will login via Google OAuth
                 'role' => 'voter',
             ]
         );
