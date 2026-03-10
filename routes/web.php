@@ -14,6 +14,8 @@ use App\Http\Controllers\Admin\AdminFeedbackController;
 use App\Http\Controllers\Voter\VoterDashboardController;
 use App\Http\Controllers\Voter\VoterCastedVoteController;
 use App\Http\Controllers\Voter\VoterFeedbackController;
+
+use App\Http\Controllers\Auth\GoogleController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -43,7 +45,10 @@ Route::middleware('auth')->group(function () {
     });
 
 });
-
+Route::middleware('guest')->group(function () {
+    Route::get('auth/google',          [GoogleController::class, 'redirect'])->name('auth.google');
+    Route::get('auth/google/callback', [GoogleController::class, 'callback'])->name('auth.google.callback');
+});
 /*
 |--------------------------------------------------------------------------
 | Admin Routes

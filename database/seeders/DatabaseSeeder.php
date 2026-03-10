@@ -65,6 +65,15 @@ class DatabaseSeeder extends Seeder
                 'role' => 'voter',
             ]
         );
+
+        User::updateOrCreate(
+            ['email' => 'prototypecapstone@gmail.com'],
+            [
+                'name' => 'Regular User',
+                'password' => Hash::make('password'),
+                'role' => 'voter',
+            ]
+        );
         
     }
 }
