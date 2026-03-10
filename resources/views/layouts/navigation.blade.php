@@ -9,32 +9,33 @@
 <style>
     /* ── Navigation Core ── */
     .nav-root {
-        background: rgba(255, 255, 255, 0.85);
-        backdrop-filter: blur(20px) saturate(1.8);
-        -webkit-backdrop-filter: blur(20px) saturate(1.8);
-        border-bottom: 1px solid rgba(139, 92, 246, 0.12);
-        box-shadow: 0 1px 24px rgba(109, 40, 217, 0.07);
+        background: rgba(26, 0, 32, 0.92);
+        backdrop-filter: blur(24px) saturate(1.6);
+        -webkit-backdrop-filter: blur(24px) saturate(1.6);
+        border-bottom: 1px solid rgba(249, 180, 15, 0.2);
+        box-shadow: 0 1px 32px rgba(0, 0, 0, 0.4);
         transition: background 0.3s, box-shadow 0.3s;
+        position: relative;
     }
-    .dark .nav-root {
-        background: rgba(15, 10, 30, 0.92);
-        border-bottom: 1px solid rgba(139, 92, 246, 0.18);
-        box-shadow: 0 1px 32px rgba(109, 40, 217, 0.18);
+    .nav-root::after {
+        content: '';
+        position: absolute; bottom: 0; left: 0; right: 0; height: 1px;
+        background: linear-gradient(90deg, transparent, rgba(249,180,15,0.5), rgba(249,180,15,0.2), transparent);
+        pointer-events: none;
     }
 
     /* ── Sidebar toggle ── */
     .nav-toggle {
         display: flex; align-items: center; justify-content: center;
         width: 40px; height: 40px; border-radius: 10px;
-        color: #7c3aed;
+        color: #f9b40f;
         transition: background 0.18s, transform 0.18s, color 0.18s;
     }
     .nav-toggle:hover {
-        background: rgba(139, 92, 246, 0.1);
+        background: rgba(249, 180, 15, 0.12);
         transform: scale(1.08);
+        color: #fcd558;
     }
-    .dark .nav-toggle { color: #a78bfa; }
-    .dark .nav-toggle:hover { background: rgba(139, 92, 246, 0.18); }
 
     /* ── Logo ── */
     .nav-logo-wrap {
@@ -44,48 +45,48 @@
     .nav-logo-img {
         width: 36px; height: 36px; object-fit: contain;
         border-radius: 9px;
-        box-shadow: 0 2px 12px rgba(109, 40, 217, 0.18);
-        border: 1.5px solid rgba(139, 92, 246, 0.18);
+        box-shadow: 0 0 16px rgba(249, 180, 15, 0.2);
+        border: 1.5px solid rgba(249, 180, 15, 0.35);
     }
     .nav-logo-text { display: flex; flex-direction: column; line-height: 1.15; }
     .nav-logo-name {
         font-size: 0.97rem; font-weight: 700; letter-spacing: -0.01em;
-        background: linear-gradient(105deg, #6d28d9 0%, #8b5cf6 60%, #a78bfa 100%);
+        font-family: 'Playfair Display', serif;
+        color: #fffbf0;
+    }
+    .nav-logo-name .accent {
+        background: linear-gradient(105deg, #f9b40f 0%, #fcd558 60%, #fff3c4 100%);
         -webkit-background-clip: text; -webkit-text-fill-color: transparent;
     }
     .nav-logo-sub {
-        font-size: 0.67rem; font-weight: 500; letter-spacing: 0.04em;
-        color: #a78bfa; text-transform: uppercase;
+        font-size: 0.67rem; font-weight: 600; letter-spacing: 0.06em;
+        color: rgba(249, 180, 15, 0.6); text-transform: uppercase;
     }
-    .dark .nav-logo-sub { color: #7c3aed; }
 
     /* ── Icon buttons (bell, profile) ── */
     .nav-icon-btn {
         position: relative; display: flex; align-items: center; justify-content: center;
         width: 38px; height: 38px; border-radius: 10px;
-        color: #6d28d9; font-size: 1rem;
+        color: rgba(255, 251, 240, 0.7); font-size: 1rem;
         transition: background 0.18s, transform 0.18s, color 0.18s;
     }
     .nav-icon-btn:hover {
-        background: rgba(139, 92, 246, 0.1);
+        background: rgba(249, 180, 15, 0.12);
         transform: scale(1.08);
-        color: #4c1d95;
+        color: #f9b40f;
     }
-    .dark .nav-icon-btn { color: #a78bfa; }
-    .dark .nav-icon-btn:hover { background: rgba(139, 92, 246, 0.2); color: #ede9fe; }
 
     /* ── Notification badge ── */
     .notif-badge {
         position: absolute; top: 4px; right: 4px;
         min-width: 17px; height: 17px; border-radius: 99px;
-        background: linear-gradient(135deg, #7c3aed, #a78bfa);
-        color: #fff; font-size: 0.62rem; font-weight: 700;
+        background: linear-gradient(135deg, #f9b40f, #fcd558);
+        color: #380041; font-size: 0.62rem; font-weight: 700;
         display: flex; align-items: center; justify-content: center;
         padding: 0 3px;
-        box-shadow: 0 0 0 2px #fff, 0 2px 8px rgba(109,40,217,0.3);
+        box-shadow: 0 0 0 2px #1e0025, 0 2px 8px rgba(249,180,15,0.4);
         animation: badge-pop 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
     }
-    .dark .notif-badge { box-shadow: 0 0 0 2px #0f0a1e, 0 2px 8px rgba(139,92,246,0.4); }
     @keyframes badge-pop {
         0% { transform: scale(0); }
         100% { transform: scale(1); }
@@ -93,49 +94,45 @@
 
     /* ── Dropdown Panel ── */
     .dropdown-panel {
-        background: rgba(255, 255, 255, 0.98);
+        background: rgba(26, 0, 32, 0.97);
         backdrop-filter: blur(24px);
-        border: 1px solid rgba(139, 92, 246, 0.14);
+        border: 1px solid rgba(249, 180, 15, 0.2);
         border-radius: 16px;
         box-shadow:
-            0 4px 6px rgba(109, 40, 217, 0.04),
-            0 12px 40px rgba(109, 40, 217, 0.12),
-            0 0 0 0.5px rgba(139, 92, 246, 0.08);
+            0 4px 6px rgba(0, 0, 0, 0.3),
+            0 12px 40px rgba(0, 0, 0, 0.5),
+            0 0 0 0.5px rgba(249, 180, 15, 0.08);
         overflow: hidden;
+        position: relative;
     }
-    .dark .dropdown-panel {
-        background: rgba(23, 12, 48, 0.97);
-        border-color: rgba(139, 92, 246, 0.25);
-        box-shadow:
-            0 4px 6px rgba(0, 0, 0, 0.2),
-            0 12px 40px rgba(0, 0, 0, 0.35),
-            0 0 0 0.5px rgba(139, 92, 246, 0.15);
+    .dropdown-panel::before {
+        content: '';
+        position: absolute; top: 0; left: 0; right: 0; height: 1px;
+        background: linear-gradient(90deg, transparent, rgba(249,180,15,0.5), transparent);
+        pointer-events: none;
     }
 
     /* ── Notification items ── */
     .notif-header {
         padding: 14px 16px 10px;
         display: flex; align-items: center; justify-content: space-between;
-        border-bottom: 1px solid rgba(139, 92, 246, 0.1);
+        border-bottom: 1px solid rgba(249, 180, 15, 0.12);
     }
-    .dark .notif-header { border-bottom-color: rgba(139, 92, 246, 0.18); }
     .notif-header-title {
         font-size: 0.82rem; font-weight: 700; letter-spacing: 0.03em;
-        color: #4c1d95; display: flex; align-items: center; gap: 6px;
+        color: #f9b40f; display: flex; align-items: center; gap: 6px;
     }
-    .dark .notif-header-title { color: #c4b5fd; }
     .notif-header-badge {
         font-size: 0.68rem; font-weight: 600; padding: 2px 8px; border-radius: 99px;
-        background: linear-gradient(135deg, #7c3aed22, #a78bfa22);
-        color: #7c3aed; border: 1px solid rgba(139, 92, 246, 0.2);
+        background: rgba(249, 180, 15, 0.12);
+        color: #f9b40f; border: 1px solid rgba(249, 180, 15, 0.25);
     }
-    .dark .notif-header-badge { color: #a78bfa; background: rgba(139,92,246,0.15); }
 
     .notif-list { max-height: 320px; overflow-y: auto; padding: 6px 0; }
     .notif-list::-webkit-scrollbar { width: 4px; }
     .notif-list::-webkit-scrollbar-track { background: transparent; }
     .notif-list::-webkit-scrollbar-thumb {
-        background: rgba(139, 92, 246, 0.25); border-radius: 99px;
+        background: rgba(249, 180, 15, 0.2); border-radius: 99px;
     }
 
     .notif-item {
@@ -145,42 +142,36 @@
         position: relative;
         text-decoration: none;
     }
-    .notif-item:hover { background: rgba(139, 92, 246, 0.06); }
-    .dark .notif-item:hover { background: rgba(139, 92, 246, 0.12); }
+    .notif-item:hover { background: rgba(249, 180, 15, 0.06); }
 
     .notif-icon {
         width: 32px; height: 32px; border-radius: 9px; flex-shrink: 0;
         display: flex; align-items: center; justify-content: center;
-        background: linear-gradient(135deg, #ede9fe, #ddd6fe);
-        color: #7c3aed; font-size: 0.78rem;
+        background: rgba(249, 180, 15, 0.12);
+        color: #f9b40f; font-size: 0.78rem;
+        border: 1px solid rgba(249, 180, 15, 0.2);
     }
-    .dark .notif-icon { background: rgba(139, 92, 246, 0.2); color: #a78bfa; }
 
     .notif-content { flex: 1; min-width: 0; }
     .notif-title {
-        font-size: 0.8rem; font-weight: 600; color: #1e1b4b;
+        font-size: 0.8rem; font-weight: 600; color: #fffbf0;
         white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
     }
-    .dark .notif-title { color: #ede9fe; }
     .notif-msg {
-        font-size: 0.73rem; color: #6d28d9; margin-top: 1px;
+        font-size: 0.73rem; color: rgba(249, 180, 15, 0.7); margin-top: 1px;
         white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-        opacity: 0.75;
     }
-    .dark .notif-msg { color: #a78bfa; }
-    .notif-time { font-size: 0.67rem; color: #a78bfa; margin-top: 2px; }
-    .dark .notif-time { color: #6d28d9; }
+    .notif-time { font-size: 0.67rem; color: rgba(255, 251, 240, 0.35); margin-top: 2px; }
 
     .notif-unread-dot {
         width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; margin-top: 6px;
-        background: linear-gradient(135deg, #7c3aed, #a78bfa);
-        box-shadow: 0 0 6px rgba(139, 92, 246, 0.5);
+        background: linear-gradient(135deg, #f9b40f, #fcd558);
+        box-shadow: 0 0 6px rgba(249, 180, 15, 0.5);
     }
     .notif-empty {
-        padding: 28px 16px; text-align: center; color: #a78bfa;
+        padding: 28px 16px; text-align: center; color: rgba(255, 251, 240, 0.35);
     }
-    .dark .notif-empty { color: #6d28d9; }
-    .notif-empty i { font-size: 1.6rem; margin-bottom: 8px; opacity: 0.5; display: block; }
+    .notif-empty i { font-size: 1.6rem; margin-bottom: 8px; opacity: 0.4; display: block; color: #f9b40f; }
     .notif-empty p { font-size: 0.8rem; }
 
     /* ── Profile button ── */
@@ -190,63 +181,54 @@
         transition: background 0.18s;
         cursor: pointer;
     }
-    .profile-btn:hover { background: rgba(139, 92, 246, 0.08); }
-    .dark .profile-btn:hover { background: rgba(139, 92, 246, 0.15); }
+    .profile-btn:hover { background: rgba(249, 180, 15, 0.08); }
 
     .avatar-circle {
         width: 34px; height: 34px; border-radius: 10px;
-        background: linear-gradient(135deg, #7c3aed 0%, #a78bfa 100%);
-        color: #fff; font-size: 0.88rem; font-weight: 700;
+        background: linear-gradient(135deg, #f9b40f 0%, #fcd558 100%);
+        color: #380041; font-size: 0.88rem; font-weight: 700;
         display: flex; align-items: center; justify-content: center;
-        box-shadow: 0 2px 12px rgba(109, 40, 217, 0.3);
+        box-shadow: 0 2px 12px rgba(249, 180, 15, 0.35);
         flex-shrink: 0;
     }
     .avatar-circle-lg {
         width: 52px; height: 52px; border-radius: 14px; font-size: 1.3rem;
-        background: linear-gradient(135deg, #6d28d9 0%, #a78bfa 100%);
-        color: #fff; font-weight: 700;
+        background: linear-gradient(135deg, #f9b40f 0%, #fcd558 100%);
+        color: #380041; font-weight: 700;
         display: flex; align-items: center; justify-content: center;
-        box-shadow: 0 4px 20px rgba(109, 40, 217, 0.35);
+        box-shadow: 0 4px 20px rgba(249, 180, 15, 0.4);
         flex-shrink: 0;
     }
 
     .profile-name {
-        font-size: 0.82rem; font-weight: 600; color: #1e1b4b; line-height: 1.2;
+        font-size: 0.82rem; font-weight: 600; color: #fffbf0; line-height: 1.2;
     }
-    .dark .profile-name { color: #ede9fe; }
     .profile-role {
-        font-size: 0.7rem; color: #7c3aed; letter-spacing: 0.03em;
+        font-size: 0.7rem; color: rgba(249, 180, 15, 0.7); letter-spacing: 0.03em;
     }
-    .dark .profile-role { color: #a78bfa; }
     .chevron-icon {
-        font-size: 0.7rem; color: #a78bfa;
+        font-size: 0.7rem; color: rgba(249, 180, 15, 0.5);
         transition: transform 0.2s;
     }
 
     /* ── Profile dropdown hero ── */
     .profile-hero {
         padding: 16px;
-        background: linear-gradient(135deg, #f5f3ff 0%, #ede9fe 100%);
+        background: linear-gradient(135deg, rgba(56,0,65,0.8) 0%, rgba(82,0,96,0.6) 100%);
         display: flex; align-items: center; gap: 12px;
-        border-bottom: 1px solid rgba(139, 92, 246, 0.12);
-    }
-    .dark .profile-hero {
-        background: linear-gradient(135deg, rgba(109,40,217,0.18) 0%, rgba(139,92,246,0.12) 100%);
-        border-bottom-color: rgba(139, 92, 246, 0.2);
+        border-bottom: 1px solid rgba(249, 180, 15, 0.12);
     }
     .profile-hero-name {
-        font-size: 0.9rem; font-weight: 700; color: #1e1b4b; line-height: 1.2;
+        font-size: 0.9rem; font-weight: 700; color: #fffbf0; line-height: 1.2;
     }
-    .dark .profile-hero-name { color: #ede9fe; }
     .profile-hero-badge {
         display: inline-flex; align-items: center; gap: 4px;
         font-size: 0.68rem; font-weight: 600; letter-spacing: 0.04em;
         padding: 2px 8px; border-radius: 99px;
-        background: linear-gradient(135deg, rgba(109,40,217,0.12), rgba(139,92,246,0.12));
-        color: #6d28d9; border: 1px solid rgba(139, 92, 246, 0.2);
+        background: rgba(249, 180, 15, 0.12);
+        color: #f9b40f; border: 1px solid rgba(249, 180, 15, 0.25);
         margin-top: 3px;
     }
-    .dark .profile-hero-badge { color: #a78bfa; border-color: rgba(139,92,246,0.3); }
 
     /* ── Dropdown menu items ── */
     .dropdown-menu { padding: 6px; }
@@ -258,59 +240,54 @@
         width: 100%;
     }
     .dropdown-item:hover {
-        background: rgba(139, 92, 246, 0.08);
+        background: rgba(249, 180, 15, 0.08);
         transform: translateX(2px);
     }
-    .dark .dropdown-item:hover { background: rgba(139, 92, 246, 0.14); }
 
     .dropdown-item-icon {
         width: 32px; height: 32px; border-radius: 9px;
         display: flex; align-items: center; justify-content: center;
-        background: linear-gradient(135deg, #ede9fe, #ddd6fe);
-        color: #7c3aed; font-size: 0.82rem; flex-shrink: 0;
+        background: rgba(249, 180, 15, 0.1);
+        color: #f9b40f; font-size: 0.82rem; flex-shrink: 0;
+        border: 1px solid rgba(249, 180, 15, 0.15);
         transition: background 0.15s;
     }
-    .dark .dropdown-item-icon { background: rgba(139,92,246,0.18); color: #a78bfa; }
     .dropdown-item:hover .dropdown-item-icon {
-        background: linear-gradient(135deg, #ddd6fe, #c4b5fd);
+        background: linear-gradient(135deg, #f9b40f, #fcd558);
+        color: #380041;
+        border-color: #f9b40f;
+        box-shadow: 0 2px 12px rgba(249,180,15,0.35);
     }
-    .dark .dropdown-item:hover .dropdown-item-icon { background: rgba(139,92,246,0.28); }
 
-    .dropdown-item-icon.danger { background: rgba(239, 68, 68, 0.1); color: #dc2626; }
-    .dark .dropdown-item-icon.danger { background: rgba(239,68,68,0.15); color: #f87171; }
-    .dropdown-item:hover .dropdown-item-icon.danger { background: rgba(239,68,68,0.18); }
+    .dropdown-item-icon.danger { background: rgba(239, 68, 68, 0.1); color: #f87171; border-color: rgba(239,68,68,0.2); }
+    .dropdown-item:hover .dropdown-item-icon.danger { background: rgba(239,68,68,0.2); color: #fca5a5; }
 
     .dropdown-item-text { flex: 1; }
     .dropdown-item-label {
-        font-size: 0.82rem; font-weight: 600; color: #1e1b4b; display: block;
+        font-size: 0.82rem; font-weight: 600; color: #fffbf0; display: block;
     }
-    .dark .dropdown-item-label { color: #ede9fe; }
-    .dropdown-item-label.danger { color: #dc2626; }
-    .dark .dropdown-item-label.danger { color: #f87171; }
+    .dropdown-item-label.danger { color: #f87171; }
     .dropdown-item-desc {
-        font-size: 0.7rem; color: #7c3aed; opacity: 0.75;
+        font-size: 0.7rem; color: rgba(255, 251, 240, 0.4);
     }
-    .dark .dropdown-item-desc { color: #a78bfa; }
-    .dropdown-item-desc.danger { color: #dc2626; opacity: 0.65; }
-
-    .dropdown-chevron { font-size: 0.65rem; color: #c4b5fd; }
-    .dark .dropdown-chevron { color: #4c1d95; }
+    .dropdown-item-desc.danger { color: rgba(248, 113, 113, 0.6); }
+    .dropdown-chevron { font-size: 0.65rem; color: rgba(249, 180, 15, 0.3); }
 
     /* ── Toggle switch ── */
     .toggle-track {
         width: 34px; height: 19px; border-radius: 99px;
-        background: #e2e8f0;
+        background: rgba(255, 251, 240, 0.1);
         transition: background 0.2s;
         position: relative; flex-shrink: 0;
     }
     .toggle-track.active {
-        background: linear-gradient(90deg, #7c3aed, #a78bfa);
+        background: linear-gradient(90deg, #f9b40f, #fcd558);
     }
     .toggle-thumb {
         position: absolute; top: 2px; left: 2px;
         width: 15px; height: 15px; border-radius: 50%;
         background: #fff;
-        box-shadow: 0 1px 4px rgba(0,0,0,0.18);
+        box-shadow: 0 1px 4px rgba(0,0,0,0.3);
         transition: transform 0.2s cubic-bezier(0.34,1.56,0.64,1);
     }
     .toggle-thumb.active { transform: translateX(15px); }
@@ -318,22 +295,16 @@
     /* ── Divider ── */
     .dropdown-divider {
         margin: 4px 10px;
-        border: none; border-top: 1px solid rgba(139, 92, 246, 0.1);
+        border: none; border-top: 1px solid rgba(249, 180, 15, 0.1);
     }
-    .dark .dropdown-divider { border-top-color: rgba(139,92,246,0.18); }
 
     /* ── Dropdown footer ── */
     .dropdown-footer {
         padding: 8px 16px;
         text-align: center;
-        font-size: 0.67rem; color: #c4b5fd; letter-spacing: 0.05em;
-        background: rgba(139, 92, 246, 0.04);
-        border-top: 1px solid rgba(139, 92, 246, 0.08);
-    }
-    .dark .dropdown-footer {
-        color: #4c1d95;
-        background: rgba(139, 92, 246, 0.07);
-        border-top-color: rgba(139, 92, 246, 0.15);
+        font-size: 0.67rem; color: rgba(249, 180, 15, 0.4); letter-spacing: 0.05em;
+        background: rgba(56, 0, 65, 0.5);
+        border-top: 1px solid rgba(249, 180, 15, 0.1);
     }
 
     /* ── Spinner ── */
@@ -344,8 +315,9 @@
     .bell-pulse::after {
         content: '';
         position: absolute; inset: 0; border-radius: 10px;
-        background: rgba(139, 92, 246, 0.2);
+        background: rgba(249, 180, 15, 0.15);
         animation: bell-glow 1.8s ease-in-out infinite;
+        pointer-events: none;
     }
     @keyframes bell-glow {
         0%, 100% { opacity: 0; transform: scale(1); }
@@ -369,7 +341,7 @@
                     <a href="{{ $dashboardRoute }}" class="nav-logo-wrap">
                         <img src="{{ asset('assets/app_logo.png') }}" alt="Logo" class="nav-logo-img" />
                         <div class="nav-logo-text">
-                            <span class="nav-logo-name">{{ config('app.name') }}</span>
+                            <span class="nav-logo-name">{{ config('app.name') }} <span class="accent">System</span></span>
                             <span class="nav-logo-sub">Online Voting System</span>
                         </div>
                     </a>
@@ -407,9 +379,9 @@
                                     <i class="fas fa-bell"></i> Notifications
                                 </span>
                                 <div class="flex items-center gap-2">
-                                    <div x-show="loading" class="spin w-3.5 h-3.5 border-2 border-violet-400 border-t-transparent rounded-full"></div>
+                                    <div x-show="loading" class="spin w-3.5 h-3.5 border-2 border-yellow-400 border-t-transparent rounded-full"></div>
                                     <span x-show="unreadCount > 0 && !loading" class="notif-header-badge" x-text="unreadCount + ' unread'"></span>
-                                    <span x-show="!loading && allRead" class="notif-header-badge" style="color: #16a34a; background: rgba(22,163,74,0.1); border-color: rgba(22,163,74,0.2);">
+                                    <span x-show="!loading && allRead" class="notif-header-badge" style="color: #34d399; background: rgba(52,211,153,0.1); border-color: rgba(52,211,153,0.25);">
                                         <i class="fas fa-check-circle mr-1"></i>All read
                                     </span>
                                 </div>
@@ -421,7 +393,7 @@
                                     <a :href="notif.link || '#'"
                                        @click="notif.link ? handleNotificationClick($event, notif) : $event.preventDefault()"
                                        class="notif-item"
-                                       :class="{ 'bg-violet-50/60 dark:bg-violet-900/10': !notif.is_read }">
+                                       :style="!notif.is_read ? 'background:rgba(249,180,15,0.05);' : ''">
                                         <div class="notif-icon">
                                             <i class="fas fa-bell"></i>
                                         </div>
