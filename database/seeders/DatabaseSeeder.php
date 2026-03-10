@@ -34,7 +34,7 @@ class DatabaseSeeder extends Seeder
             ['email' => '1901102366@student.buksu.edu.ph'],
             [
                 'name' => 'Admin Jam Macalutas',
-                'password' => Hash::make('gwaposijam123'),
+                'password' => Hash::make('password'),
                 'role' => 'admin',
             ]
         );
