@@ -64,13 +64,4 @@ class User extends Authenticatable
     {
         return $this->votes()->exists();
     }
-
-    // ── Password Mutator ───────────────────────────────────────
-
-    public function setPasswordAttribute($value): void
-    {
-        $this->attributes['password'] = $value !== null
-            ? \Illuminate\Support\Facades\Hash::make($value)
-            : null;
-    }
 }

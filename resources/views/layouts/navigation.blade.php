@@ -453,7 +453,7 @@
                             </div>
 
                             <div class="dropdown-footer">
-                                {{ config('app.name') }} · v1.0
+                                {{ config('app.name') }} · v2.0
                             </div>
                         </div>
                     </div>
