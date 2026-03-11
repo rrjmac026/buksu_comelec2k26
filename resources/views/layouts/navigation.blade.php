@@ -427,18 +427,22 @@
                                     <i class="fas fa-chevron-right dropdown-chevron"></i>
                                 </a>
 
+                                {{-- ✅ Dark / Light mode toggle — proper dropdown-item ──────── --}}
                                 <button @click="$store.darkMode.toggle()" class="dropdown-item">
                                     <div class="dropdown-item-icon">
                                         <i :class="$store.darkMode.on ? 'fas fa-sun' : 'fas fa-moon'"></i>
                                     </div>
                                     <div class="dropdown-item-text">
-                                        <span class="dropdown-item-label" x-text="$store.darkMode.on ? 'Light Mode' : 'Dark Mode'"></span>
+                                        <span class="dropdown-item-label"
+                                              x-text="$store.darkMode.on ? 'Light Mode' : 'Dark Mode'"></span>
                                         <span class="dropdown-item-desc">Switch theme appearance</span>
                                     </div>
+                                    {{-- Pill toggle track ── --}}
                                     <div class="toggle-track" :class="{ 'active': $store.darkMode.on }">
                                         <div class="toggle-thumb" :class="{ 'active': $store.darkMode.on }"></div>
                                     </div>
                                 </button>
+                                {{-- ──────────────────────────────────────────────────────────── --}}
 
                                 <hr class="dropdown-divider" />
 

@@ -9,6 +9,7 @@
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
         <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;800;900&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+        <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
         @vite(['resources/css/app.css', 'resources/js/app.js'])
 
         <style>
@@ -31,6 +32,83 @@
                 height: 100%; margin: 0; padding: 0;
                 font-family: 'DM Sans', sans-serif;
             }
+
+            /* ── Light Mode Overrides ── */
+            html:not(.dark) body {
+                background: #f5f0ff;
+                background-image:
+                    radial-gradient(ellipse 90% 70% at 0% 0%, rgba(200,160,220,0.4) 0%, transparent 55%),
+                    radial-gradient(ellipse 70% 60% at 100% 100%, rgba(180,130,210,0.3) 0%, transparent 55%);
+                color: var(--ink);
+            }
+
+            html:not(.dark) nav.top-nav {
+                background: rgba(255, 250, 245, 0.92);
+                border-bottom-color: rgba(180, 100, 0, 0.2);
+            }
+
+            html:not(.dark) .grid-lines {
+                background-image:
+                    linear-gradient(rgba(100,0,120,0.06) 1px, transparent 1px),
+                    linear-gradient(90deg, rgba(100,0,120,0.06) 1px, transparent 1px);
+            }
+
+            /* Welcome page light overrides */
+            html:not(.dark) .hero-card {
+                background: rgba(255, 250, 245, 0.92);
+                border-color: rgba(180, 100, 0, 0.2);
+                box-shadow: 0 24px 80px rgba(100, 0, 120, 0.12);
+            }
+
+            html:not(.dark) .hero-h1 { color: var(--violet); }
+            html:not(.dark) .hero-lead { color: rgba(30, 0, 40, 0.65); }
+
+            html:not(.dark) .feature-card {
+                background: rgba(255, 245, 255, 0.8);
+                border-color: rgba(180, 100, 0, 0.15);
+            }
+            html:not(.dark) .feature-title { color: var(--violet); }
+            html:not(.dark) .feature-desc { color: rgba(30, 0, 40, 0.6); }
+
+            html:not(.dark) .stats-bar {
+                background: rgba(255, 245, 255, 0.7);
+                border-color: rgba(180, 100, 0, 0.15);
+            }
+
+            /* Login page light overrides */
+            html:not(.dark) .login-form-side {
+                background: rgba(255, 250, 245, 0.97);
+                border-left-color: rgba(180, 100, 0, 0.15);
+            }
+
+            html:not(.dark) .form-heading { color: var(--violet); }
+            html:not(.dark) .form-subtext { color: rgba(30, 0, 40, 0.55); }
+            html:not(.dark) .field-label { color: rgba(30, 0, 40, 0.75); }
+
+            html:not(.dark) .field-input {
+                background: rgba(245, 235, 255, 0.8);
+                border-color: rgba(180, 100, 0, 0.2);
+                color: var(--ink);
+            }
+            html:not(.dark) .field-input:focus {
+                background: #fff;
+                border-color: var(--gold-dk);
+            }
+
+            html:not(.dark) .role-toggle {
+                background: rgba(245, 235, 255, 0.8);
+                border-color: rgba(180, 100, 0, 0.18);
+            }
+
+            html:not(.dark) .login-side {
+                background: linear-gradient(160deg, #e8d0f0 0%, #d4b8e8 55%, #c4a0d8 100%);
+            }
+
+            html:not(.dark) footer {
+                background: rgba(245, 235, 255, 0.95);
+                border-top-color: rgba(180, 100, 0, 0.15);
+            }
+            html:not(.dark) footer p { color: rgba(30, 0, 40, 0.45); }
 
             body {
                 background: var(--violet-xl);
@@ -394,7 +472,7 @@
             @keyframes faderight { to { opacity:1; transform:translateX(0) } }
         </style>
     </head>
-    <body class="antialiased">
+    <body class="antialiased" x-data>
 
         <div class="orb orb-1"></div>
         <div class="orb orb-2"></div>
@@ -569,4 +647,29 @@
 
         </div>
     </body>
+    <script>
+    // Apply saved theme immediately to prevent flash
+    if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+        document.documentElement.classList.add('dark');
+    } else {
+        document.documentElement.classList.remove('dark');
+    }
+
+    document.addEventListener('alpine:init', () => {
+        Alpine.store('darkMode', {
+            init() {
+                const theme = localStorage.getItem('theme');
+                const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+                this.on = theme === 'dark' || (!theme && prefersDark);
+                document.documentElement.classList.toggle('dark', this.on);
+            },
+            on: false,
+            toggle() {
+                this.on = !this.on;
+                localStorage.setItem('theme', this.on ? 'dark' : 'light');
+                document.documentElement.classList.toggle('dark', this.on);
+            }
+        });
+    });
+</script>
 </html>

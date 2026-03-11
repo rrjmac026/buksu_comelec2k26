@@ -15,10 +15,9 @@
         -webkit-backdrop-filter: blur(4px);
         animation: backdrop-in 0.2s ease;
     }
-    @keyframes backdrop-in {
-        from { opacity: 0; }
-        to   { opacity: 1; }
-    }
+    @keyframes backdrop-in { from { opacity: 0; } to { opacity: 1; } }
+
+    html:not(.dark) .sidebar-backdrop { background: rgba(80, 0, 100, 0.35); }
 
     /* ── Sidebar shell ── */
     .sidebar-shell {
@@ -26,16 +25,21 @@
         width: 18rem;
         z-index: 45;
         display: flex; flex-direction: column;
-
         background: rgba(26, 0, 32, 0.97);
         backdrop-filter: blur(24px) saturate(1.6);
         -webkit-backdrop-filter: blur(24px) saturate(1.6);
         border-right: 1px solid rgba(249, 180, 15, 0.18);
-        box-shadow:
-            4px 0 40px rgba(0, 0, 0, 0.5),
-            0 0 0 0.5px rgba(249, 180, 15, 0.08);
+        box-shadow: 4px 0 40px rgba(0, 0, 0, 0.5), 0 0 0 0.5px rgba(249, 180, 15, 0.08);
+        transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+                    background 0.3s ease,
+                    border-color 0.3s ease,
+                    box-shadow 0.3s ease;
+    }
 
-        transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    html:not(.dark) .sidebar-shell {
+        background: rgba(255, 250, 245, 0.99);
+        border-right-color: rgba(180, 100, 0, 0.2);
+        box-shadow: 4px 0 40px rgba(100, 0, 80, 0.1), 0 0 0 0.5px rgba(180, 100, 0, 0.08);
     }
 
     /* ── Decorative top accent ── */
@@ -54,12 +58,15 @@
         border-bottom: 1px solid rgba(249, 180, 15, 0.15);
         flex-shrink: 0;
         background: linear-gradient(180deg, rgba(56, 0, 65, 0.6) 0%, transparent 100%);
+        transition: background 0.3s, border-color 0.3s;
     }
 
-    .sidebar-brand {
-        display: flex; align-items: center; gap: 10px;
-        text-decoration: none;
+    html:not(.dark) .sidebar-header {
+        background: linear-gradient(180deg, rgba(255, 235, 200, 0.5) 0%, transparent 100%);
+        border-bottom-color: rgba(180, 100, 0, 0.15);
     }
+
+    .sidebar-brand { display: flex; align-items: center; gap: 10px; text-decoration: none; }
     .sidebar-brand-dot {
         width: 8px; height: 8px; border-radius: 50%;
         background: linear-gradient(135deg, #f9b40f, #fcd558);
@@ -76,6 +83,11 @@
         -webkit-background-clip: text; -webkit-text-fill-color: transparent;
     }
 
+    html:not(.dark) .sidebar-brand-label {
+        background: linear-gradient(105deg, #c98a00 0%, #f9b40f 100%);
+        -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    }
+
     /* ── Nav scroll area ── */
     .sidebar-nav {
         flex: 1; overflow-y: auto;
@@ -85,20 +97,26 @@
     }
     .sidebar-nav::-webkit-scrollbar { width: 4px; }
     .sidebar-nav::-webkit-scrollbar-track { background: transparent; }
-    .sidebar-nav::-webkit-scrollbar-thumb {
-        background: rgba(249,180,15,0.15); border-radius: 99px;
-    }
+    .sidebar-nav::-webkit-scrollbar-thumb { background: rgba(249,180,15,0.15); border-radius: 99px; }
+
+    html:not(.dark) .sidebar-nav { scrollbar-color: rgba(180,100,0,0.15) transparent; }
+    html:not(.dark) .sidebar-nav::-webkit-scrollbar-thumb { background: rgba(180,100,0,0.15); }
 
     /* ── Section label ── */
     .nav-section-label {
         font-size: 0.63rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase;
         color: rgba(249, 180, 15, 0.5); padding: 12px 10px 6px;
         display: flex; align-items: center; gap: 6px;
+        transition: color 0.3s;
     }
     .nav-section-label::after {
         content: ''; flex: 1; height: 1px;
         background: linear-gradient(90deg, rgba(249,180,15,0.2) 0%, transparent 100%);
+        transition: background 0.3s;
     }
+
+    html:not(.dark) .nav-section-label { color: rgba(140, 70, 0, 0.6); }
+    html:not(.dark) .nav-section-label::after { background: linear-gradient(90deg, rgba(180,100,0,0.2) 0%, transparent 100%); }
 
     /* ── Nav link base ── */
     .nav-link {
@@ -106,7 +124,7 @@
         padding: 9px 12px; border-radius: 10px;
         text-decoration: none; cursor: pointer;
         position: relative; overflow: hidden;
-        transition: background 0.18s, transform 0.15s, box-shadow 0.18s;
+        transition: background 0.18s, transform 0.15s, box-shadow 0.18s, border-color 0.18s;
         margin-bottom: 2px;
         border: 1px solid transparent;
     }
@@ -114,6 +132,11 @@
         background: rgba(249, 180, 15, 0.07);
         transform: translateX(3px);
         border-color: rgba(249, 180, 15, 0.15);
+    }
+
+    html:not(.dark) .nav-link:hover {
+        background: rgba(180, 100, 0, 0.07);
+        border-color: rgba(180, 100, 0, 0.15);
     }
 
     /* ── Active state ── */
@@ -129,6 +152,15 @@
         background: linear-gradient(180deg, #f9b40f, #fcd558);
     }
 
+    html:not(.dark) .nav-link.active {
+        background: linear-gradient(105deg, rgba(180,100,0,0.12) 0%, rgba(180,100,0,0.06) 100%);
+        border-color: rgba(180, 100, 0, 0.25);
+        box-shadow: 0 2px 12px rgba(180, 100, 0, 0.1), inset 0 0 0 0.5px rgba(180,100,0,0.1);
+    }
+    html:not(.dark) .nav-link.active::before {
+        background: linear-gradient(180deg, #c98a00, #f9b40f);
+    }
+
     /* ── Nav icon ── */
     .nav-link-icon {
         width: 32px; height: 32px; border-radius: 9px;
@@ -137,7 +169,7 @@
         background: rgba(249, 180, 15, 0.08);
         color: rgba(249, 180, 15, 0.7);
         border: 1px solid rgba(249, 180, 15, 0.12);
-        transition: background 0.18s, color 0.18s, transform 0.18s;
+        transition: background 0.18s, color 0.18s, transform 0.18s, border-color 0.18s;
     }
     .nav-link:hover .nav-link-icon {
         background: rgba(249, 180, 15, 0.14);
@@ -151,6 +183,22 @@
         box-shadow: 0 3px 12px rgba(249, 180, 15, 0.4);
     }
 
+    html:not(.dark) .nav-link-icon {
+        background: rgba(180, 100, 0, 0.08);
+        color: rgba(160, 80, 0, 0.75);
+        border-color: rgba(180, 100, 0, 0.14);
+    }
+    html:not(.dark) .nav-link:hover .nav-link-icon {
+        background: rgba(180, 100, 0, 0.14);
+        color: #c98a00;
+    }
+    html:not(.dark) .nav-link.active .nav-link-icon {
+        background: linear-gradient(135deg, #f9b40f, #fcd558);
+        color: #380041;
+        border-color: #f9b40f;
+        box-shadow: 0 3px 12px rgba(249, 180, 15, 0.35);
+    }
+
     /* ── Nav text ── */
     .nav-link-text { flex: 1; }
     .nav-link-label {
@@ -161,12 +209,20 @@
     .nav-link.active .nav-link-label { color: #fcd558; }
     .nav-link:hover .nav-link-label { color: #fffbf0; }
 
+    html:not(.dark) .nav-link-label { color: rgba(30, 0, 40, 0.75); }
+    html:not(.dark) .nav-link.active .nav-link-label { color: #9a4e00; }
+    html:not(.dark) .nav-link:hover .nav-link-label { color: #1a0020; }
+
     .nav-link-sub {
         font-size: 0.68rem; color: rgba(255, 251, 240, 0.3); display: block; margin-top: 0.5px;
         transition: color 0.15s;
     }
     .nav-link.active .nav-link-sub { color: rgba(249, 180, 15, 0.6); }
     .nav-link:hover .nav-link-sub { color: rgba(255, 251, 240, 0.5); }
+
+    html:not(.dark) .nav-link-sub { color: rgba(30, 0, 40, 0.38); }
+    html:not(.dark) .nav-link.active .nav-link-sub { color: rgba(140, 70, 0, 0.65); }
+    html:not(.dark) .nav-link:hover .nav-link-sub { color: rgba(30, 0, 40, 0.55); }
 
     /* ── Badge chip ── */
     .nav-badge {
@@ -201,36 +257,18 @@
         transition: opacity 0s, transform 0s;
     }
 
-    /* ── Collapsible group ── */
-    .nav-group-btn {
-        display: flex; align-items: center; gap: 11px;
-        padding: 9px 12px; border-radius: 10px;
-        cursor: pointer; width: 100%; border: none; background: transparent;
-        margin-bottom: 2px;
-        transition: background 0.15s;
-    }
-    .nav-group-btn:hover { background: rgba(249,180,15,0.07); }
-
-    .nav-group-chevron {
-        font-size: 0.65rem; color: rgba(249, 180, 15, 0.3); margin-left: auto;
-        transition: transform 0.25s cubic-bezier(0.4,0,0.2,1);
-    }
-    .nav-group-chevron.open { transform: rotate(180deg); }
-
-    .nav-group-children {
-        padding-left: 14px;
-        border-left: 2px solid rgba(249, 180, 15, 0.15);
-        margin-left: 22px;
-        margin-bottom: 4px;
-        overflow: hidden;
-    }
-
     /* ── Sidebar footer ── */
     .sidebar-footer {
         padding: 12px 16px;
         border-top: 1px solid rgba(249, 180, 15, 0.12);
         flex-shrink: 0;
         background: linear-gradient(0deg, rgba(56, 0, 65, 0.5) 0%, transparent 100%);
+        transition: background 0.3s, border-color 0.3s;
+    }
+
+    html:not(.dark) .sidebar-footer {
+        background: linear-gradient(0deg, rgba(255, 235, 200, 0.4) 0%, transparent 100%);
+        border-top-color: rgba(180, 100, 0, 0.12);
     }
 
     .sidebar-footer-inner {
@@ -238,6 +276,12 @@
         padding: 10px 12px; border-radius: 10px;
         background: rgba(249, 180, 15, 0.06);
         border: 1px solid rgba(249, 180, 15, 0.12);
+        transition: background 0.3s, border-color 0.3s;
+    }
+
+    html:not(.dark) .sidebar-footer-inner {
+        background: rgba(180, 100, 0, 0.06);
+        border-color: rgba(180, 100, 0, 0.14);
     }
 
     .footer-logo-dot {
@@ -252,10 +296,16 @@
     .footer-app-name {
         font-size: 0.75rem; font-weight: 700;
         color: rgba(255, 251, 240, 0.8); display: block; line-height: 1.2;
+        transition: color 0.3s;
     }
     .footer-version {
         font-size: 0.63rem; color: rgba(249, 180, 15, 0.5); letter-spacing: 0.04em;
+        transition: color 0.3s;
     }
+
+    html:not(.dark) .footer-app-name { color: rgba(30, 0, 40, 0.8); }
+    html:not(.dark) .footer-version { color: rgba(140, 70, 0, 0.6); }
+
     .footer-status {
         width: 7px; height: 7px; border-radius: 50%;
         background: #22c55e;
@@ -271,6 +321,13 @@
     .sidebar-divider {
         margin: 6px 10px;
         border: none; border-top: 1px solid rgba(249,180,15,0.08);
+        transition: border-color 0.3s;
+    }
+    html:not(.dark) .sidebar-divider { border-top-color: rgba(180,100,0,0.1); }
+
+    /* ── app.blade.php body light mode ── */
+    html:not(.dark) body {
+        background-color: #fdf6ff !important;
     }
 </style>
 
