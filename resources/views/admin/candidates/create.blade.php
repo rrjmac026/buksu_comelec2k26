@@ -105,7 +105,8 @@
                                        @error('college_id') border-rose-400 @enderror">
                             <option value="">Select college</option>
                             @foreach($colleges as $college)
-                                <option value="{{ $college->college_id }}" {{ old('college_id') == $college->college_id ? 'selected' : '' }}>
+                                {{-- Use $college->id — the actual PK column from migration --}}
+                                <option value="{{ $college->id }}" {{ old('college_id') == $college->id ? 'selected' : '' }}>
                                     {{ $college->name }} ({{ $college->acronym }})
                                 </option>
                             @endforeach
@@ -160,7 +161,8 @@
                                        @error('partylist_id') border-rose-400 @enderror">
                             <option value="">Select party list</option>
                             @foreach($partylists as $partylist)
-                                <option value="{{ $partylist->partylist_id }}" {{ old('partylist_id') == $partylist->partylist_id ? 'selected' : '' }}>
+                                {{-- Use $partylist->id — the actual PK column from migration --}}
+                                <option value="{{ $partylist->id }}" {{ old('partylist_id') == $partylist->id ? 'selected' : '' }}>
                                     {{ $partylist->name }}
                                 </option>
                             @endforeach
@@ -183,7 +185,8 @@
                                        @error('organization_id') border-rose-400 @enderror">
                             <option value="">Select organization</option>
                             @foreach($organizations as $organization)
-                                <option value="{{ $organization->organization_id }}" {{ old('organization_id') == $organization->organization_id ? 'selected' : '' }}>
+                                {{-- Use $organization->id — the actual PK column from migration --}}
+                                <option value="{{ $organization->id }}" {{ old('organization_id') == $organization->id ? 'selected' : '' }}>
                                     {{ $organization->name }} ({{ $organization->college?->acronym ?? 'N/A' }})
                                 </option>
                             @endforeach
@@ -206,7 +209,8 @@
                                        @error('position_id') border-rose-400 @enderror">
                             <option value="">Select position</option>
                             @foreach($positions as $position)
-                                <option value="{{ $position->position_id }}" {{ old('position_id') == $position->position_id ? 'selected' : '' }}>
+                                {{-- Use $position->id — the actual PK column from migration --}}
+                                <option value="{{ $position->id }}" {{ old('position_id') == $position->id ? 'selected' : '' }}>
                                     {{ $position->name }}
                                 </option>
                             @endforeach

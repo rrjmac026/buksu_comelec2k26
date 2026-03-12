@@ -12,9 +12,6 @@ use Illuminate\Validation\Rules\Password;
 
 class AdminVoterController extends Controller
 {
-    /**
-     * List all voter accounts.
-     */
     public function index(Request $request)
     {
         $query = User::where('role', 'voter')->with('college');
@@ -30,7 +27,8 @@ class AdminVoterController extends Controller
         if ($request->filled('search')) {
             $search = $request->search;
             $query->where(fn($q) =>
-                $q->where('name', 'like', "%{$search}%")
+                $q->where('first_name', 'like', "%{$search}%")
+                  ->orWhere('last_name', 'like', "%{$search}%")
                   ->orWhere('email', 'like', "%{$search}%")
                   ->orWhere('student_number', 'like', "%{$search}%")
             );
@@ -42,9 +40,6 @@ class AdminVoterController extends Controller
         return view('admin.voters.index', compact('voters', 'colleges'));
     }
 
-    /**
-     * Show form to manually create a voter account.
-     */
     public function create()
     {
         $colleges = College::orderBy('name')->get();
@@ -52,20 +47,17 @@ class AdminVoterController extends Controller
         return view('admin.voters.create', compact('colleges'));
     }
 
-    /**
-     * Store a new voter account.
-     */
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'first_name'           => ['required', 'string', 'max:255'],
-            'middle_name'          => ['nullable', 'string', 'max:255'],
-            'last_name'            => ['required', 'string', 'max:255'],
+            'first_name'     => ['required', 'string', 'max:255'],
+            'middle_name'    => ['nullable', 'string', 'max:255'],
+            'last_name'      => ['required', 'string', 'max:255'],
             'email'          => ['required', 'string', 'email', 'max:255', 'unique:users,email'],
             'password'       => ['required', Password::defaults(), 'confirmed'],
             'student_number' => ['required', 'string', 'max:50', 'unique:users,student_number'],
             'sex'            => ['required', 'in:male,female,other'],
-            'college_id'     => ['required', 'exists:colleges,college_id'],
+            'college_id'     => ['required', 'exists:colleges,id'],   // PK is id ✅
             'course'         => ['required', 'string', 'max:100'],
             'year_level'     => ['required', 'integer', 'min:1', 'max:6'],
             'status'         => ['required', 'in:active,inactive'],
@@ -80,9 +72,6 @@ class AdminVoterController extends Controller
             ->with('success', 'Voter account created successfully.');
     }
 
-    /**
-     * Show a voter's full profile and vote history.
-     */
     public function show(User $voter)
     {
         abort_if($voter->role !== 'voter', 404);
@@ -92,9 +81,6 @@ class AdminVoterController extends Controller
         return view('admin.voters.show', compact('voter'));
     }
 
-    /**
-     * Show edit form for a voter.
-     */
     public function edit(User $voter)
     {
         abort_if($voter->role !== 'voter', 404);
@@ -104,21 +90,18 @@ class AdminVoterController extends Controller
         return view('admin.voters.edit', compact('voter', 'colleges'));
     }
 
-    /**
-     * Update a voter's profile.
-     */
     public function update(Request $request, User $voter)
     {
         abort_if($voter->role !== 'voter', 404);
 
         $validated = $request->validate([
-            'first_name'           => ['required', 'string', 'max:255'],
-            'middle_name'          => ['nullable', 'string', 'max:255'],
-            'last_name'            => ['required', 'string', 'max:255'],
+            'first_name'     => ['required', 'string', 'max:255'],
+            'middle_name'    => ['nullable', 'string', 'max:255'],
+            'last_name'      => ['required', 'string', 'max:255'],
             'email'          => ['required', 'string', 'email', 'max:255', Rule::unique('users', 'email')->ignore($voter->id)],
             'student_number' => ['required', 'string', 'max:50', Rule::unique('users', 'student_number')->ignore($voter->id)],
             'sex'            => ['required', 'in:male,female,other'],
-            'college_id'     => ['required', 'exists:colleges,college_id'],
+            'college_id'     => ['required', 'exists:colleges,id'],   // PK is id ✅
             'course'         => ['required', 'string', 'max:100'],
             'year_level'     => ['required', 'integer', 'min:1', 'max:6'],
             'status'         => ['required', 'in:active,inactive'],
@@ -130,9 +113,6 @@ class AdminVoterController extends Controller
             ->with('success', 'Voter updated successfully.');
     }
 
-    /**
-     * Delete a voter account.
-     */
     public function destroy(User $voter)
     {
         abort_if($voter->role !== 'voter', 404);
@@ -143,9 +123,6 @@ class AdminVoterController extends Controller
             ->with('success', 'Voter account deleted successfully.');
     }
 
-    /**
-     * Toggle a voter's active/inactive status.
-     */
     public function toggleStatus(User $voter)
     {
         abort_if($voter->role !== 'voter', 404);

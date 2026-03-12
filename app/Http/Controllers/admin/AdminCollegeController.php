@@ -32,7 +32,7 @@ class AdminCollegeController extends Controller
 
         College::create($validated);
 
-        return redirect()->route('colleges.index')
+        return redirect()->route('admin.colleges.index')
             ->with('success', 'College created successfully.');
     }
 
@@ -51,26 +51,26 @@ class AdminCollegeController extends Controller
     public function update(Request $request, College $college)
     {
         $validated = $request->validate([
-            'name'    => ['required', 'string', 'max:255', Rule::unique('colleges', 'name')->ignore($college->college_id, 'college_id')],
-            'acronym' => ['required', 'string', 'max:20',  Rule::unique('colleges', 'acronym')->ignore($college->college_id, 'college_id')],
+            'name'    => ['required', 'string', 'max:255', Rule::unique('colleges', 'name')->ignore($college->id)],   // PK is id ✅
+            'acronym' => ['required', 'string', 'max:20',  Rule::unique('colleges', 'acronym')->ignore($college->id)], // PK is id ✅
         ]);
 
         $college->update($validated);
 
-        return redirect()->route('colleges.index')
+        return redirect()->route('admin.colleges.index')
             ->with('success', 'College updated successfully.');
     }
 
     public function destroy(College $college)
     {
         if ($college->candidates()->exists() || $college->voters()->exists()) {
-            return redirect()->route('colleges.index')
+            return redirect()->route('admin.colleges.index')
                 ->with('error', 'Cannot delete college — it has associated candidates or voters.');
         }
 
         $college->delete();
 
-        return redirect()->route('colleges.index')
+        return redirect()->route('admin.colleges.index')
             ->with('success', 'College deleted successfully.');
     }
 }

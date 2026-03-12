@@ -14,26 +14,31 @@ class Candidate extends Model
         'college_id', 'course', 'photo', 'platform',
     ];
 
+    // partylist_id on candidates → id on partylists
     public function partylist()
     {
         return $this->belongsTo(Partylist::class, 'partylist_id', 'id');
     }
 
+    // organization_id on candidates → id on organizations
     public function organization()
     {
         return $this->belongsTo(Organization::class, 'organization_id', 'id');
     }
 
+    // position_id on candidates → id on positions
     public function position()
     {
         return $this->belongsTo(Position::class, 'position_id', 'id');
     }
 
+    // college_id on candidates → id on colleges
     public function college()
     {
         return $this->belongsTo(College::class, 'college_id', 'id');
     }
 
+    // candidate_id on casted_votes → candidate_id on candidates
     public function votes()
     {
         return $this->hasMany(CastedVote::class, 'candidate_id', 'candidate_id');
