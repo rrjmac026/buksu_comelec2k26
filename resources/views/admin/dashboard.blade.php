@@ -481,11 +481,11 @@
                 <div class="member-row">
                     <div class="member-avatar"
                          style="background:{{ $memberGradients[$i % count($memberGradients)] }};box-shadow:0 0 10px rgba(249,180,15,0.25);color:{{ $memberTextColors[$i % count($memberTextColors)] }};">
-                        {{ strtoupper(substr($c->name, 0, 1)) }}
+                        {{ strtoupper(substr($c->full_name, 0, 1)) }}
                     </div>
                     <div style="flex:1;min-width:0;">
                         <div style="font-size:0.72rem;font-weight:600;color:#fffbf0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">
-                            {{ $c->name }}
+                            {{ $c->full_name }}
                         </div>
                         <div style="font-size:0.62rem;color:rgba(249,180,15,0.5);">
                             {{ ucfirst($c->role) }}

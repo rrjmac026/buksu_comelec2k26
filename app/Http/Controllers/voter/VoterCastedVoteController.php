@@ -56,9 +56,13 @@ class VoterCastedVoteController extends Controller
         $totalSteps   = $positions->count();
         $ballot       = session('ballot', []); // [position_id => candidate_id]
         $selectedId   = $ballot[$position->id] ?? null;
+        // Don't pass the 'skip' sentinel to the view
+        if ($selectedId === 'skip') {
+            $selectedId = null;
+        }
 
         // Build a small steps map for the progress dots
-        // Each item: ['position' => name, 'status' => 'pending|selected|skipped']
+        // Each item: ['step', 'name', 'status', 'position_id']
         $steps = $positions->map(function ($pos, $idx) use ($ballot, $step) {
             $status = 'pending';
             if (isset($ballot[$pos->id])) {
@@ -69,9 +73,10 @@ class VoterCastedVoteController extends Controller
                 $status = 'current';
             }
             return [
-                'step'     => $idx + 1,
-                'name'     => $pos->name,
-                'status'   => $status,
+                'step'        => $idx + 1,
+                'name'        => $pos->name,
+                'status'      => $status,
+                'position_id' => $pos->id,
             ];
         });
 
@@ -95,7 +100,8 @@ class VoterCastedVoteController extends Controller
                 ->with('info', 'You have already submitted your vote.');
         }
 
-        $positions  = Position::orderBy('name')->get();
+        // ✅ FIX: was orderBy('name') — must match step() which uses sort_order
+        $positions  = Position::orderBy('sort_order')->get();
         $totalSteps = $positions->count();
 
         if ($step < 1 || $step > $totalSteps) {
@@ -156,6 +162,7 @@ class VoterCastedVoteController extends Controller
 
         $ballot = session('ballot', []);
 
+        // Redirect to intro only if the voter hasn't touched the ballot at all
         if (empty($ballot)) {
             return redirect()->route('voter.vote.intro');
         }
@@ -215,27 +222,24 @@ class VoterCastedVoteController extends Controller
                 ->with('error', 'Your ballot was empty. Please start again.');
         }
 
-        // Filter out skips — only real selections
+        // Separate real votes from skips
         $votes = collect($ballot)
             ->filter(fn($v) => $v !== 'skip' && is_numeric($v))
             ->map(fn($v) => (int) $v);
 
-        if ($votes->isEmpty()) {
-            return redirect()->route('voter.vote.review')
-                ->with('error', 'You skipped all positions. Please select at least one candidate.');
-        }
+        // Cross-validate real votes: each candidate must belong to the claimed position
+        if ($votes->isNotEmpty()) {
+            $candidateIds = $votes->values()->toArray();
+            $validPairs   = Candidate::whereIn('candidate_id', $candidateIds)
+                ->pluck('position_id', 'candidate_id');
 
-        // Cross-validate: each candidate must belong to the claimed position
-        $candidateIds = $votes->values()->toArray();
-        $validPairs   = Candidate::whereIn('candidate_id', $candidateIds)
-            ->pluck('position_id', 'candidate_id');
-
-        foreach ($votes as $positionId => $candidateId) {
-            if (($validPairs[$candidateId] ?? null) !== (int) $positionId) {
-                session()->forget('ballot');
-                throw ValidationException::withMessages([
-                    'votes' => "Invalid ballot detected. Please start over.",
-                ]);
+            foreach ($votes as $positionId => $candidateId) {
+                if (($validPairs[$candidateId] ?? null) !== (int) $positionId) {
+                    session()->forget('ballot');
+                    throw ValidationException::withMessages([
+                        'votes' => "Invalid ballot detected. Please start over.",
+                    ]);
+                }
             }
         }
 
@@ -244,14 +248,26 @@ class VoterCastedVoteController extends Controller
         $ip        = $request->ip();
         $userAgent = $request->userAgent();
 
-        DB::transaction(function () use ($voter, $votes, $now, $txn, $ip, $userAgent) {
-            foreach ($votes as $positionId => $candidateId) {
+        // All positions the voter went through (real votes + skipped ones)
+        // We write a row for every position so hasVoted() returns true even
+        // when the voter skipped everything. candidate_id is null for skips.
+        // ⚠️  Requires candidate_id to be nullable in casted_votes table:
+        //     $table->foreignId('candidate_id')->nullable()->...
+        $allPositionIds = Position::orderBy('sort_order')->pluck('id');
+
+        DB::transaction(function () use ($voter, $votes, $ballot, $allPositionIds, $now, $txn, $ip, $userAgent) {
+            foreach ($allPositionIds as $positionId) {
+                $ballotVal   = $ballot[$positionId] ?? null;
+                $candidateId = ($ballotVal && $ballotVal !== 'skip' && is_numeric($ballotVal))
+                    ? (int) $ballotVal
+                    : null;
+
                 CastedVote::create([
                     'transaction_number' => $txn,
                     'voter_id'           => $voter->id,
                     'position_id'        => $positionId,
-                    'candidate_id'       => $candidateId,
-                    'vote_hash'          => $this->generateVoteHash($voter->id, $positionId, $candidateId),
+                    'candidate_id'       => $candidateId,           // null = skipped
+                    'vote_hash'          => $this->generateVoteHash($voter->id, $positionId, $candidateId ?? 0),
                     'voted_at'           => $now,
                     'ip_address'         => $ip,
                     'user_agent'         => $userAgent,
@@ -269,11 +285,9 @@ class VoterCastedVoteController extends Controller
 
     // ─────────────────────────────────────────────────────────────
     // GET /voter/vote/success
-    // Confirmation page shown after successful submission
     // ─────────────────────────────────────────────────────────────
     public function success()
     {
-        // Must come from a flash — otherwise redirect away
         if (! session()->has('txn')) {
             return redirect()->route('voter.dashboard');
         }
@@ -287,32 +301,25 @@ class VoterCastedVoteController extends Controller
     public function details()
     {
         $voter = auth()->user();
-    
+
         if (! $voter->hasVoted()) {
             return redirect()->route('voter.vote.intro');
         }
-    
-        // All positions in sort_order
+
         $allPositions = Position::orderBy('sort_order')->get();
-    
-        // Load this voter's votes with candidate relationships
+
         $myVotes = $voter->votes()
             ->with(['candidate.partylist', 'candidate.college', 'position'])
             ->get();
-    
-        // Key by position_id for easy lookup in the blade
+
         $votesByPosition = $myVotes->keyBy('position_id');
-    
-        // Transaction number (all votes share one txn per our design)
-        $txn = $myVotes->first()?->transaction_number ?? '—';
-    
-        // Time voted
+
+        $txn     = $myVotes->first()?->transaction_number ?? '—';
         $votedAt = $myVotes->first()?->voted_at ?? now();
-    
-        // Counts
-        $totalVoted   = $myVotes->count();
+
+        $totalVoted   = $myVotes->whereNotNull('candidate_id')->count(); // ✅ only change
         $totalSkipped = $allPositions->count() - $totalVoted;
-    
+
         return view('voter.ballot.details', compact(
             'voter',
             'allPositions',

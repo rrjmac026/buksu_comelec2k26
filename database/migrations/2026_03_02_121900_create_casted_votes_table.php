@@ -13,7 +13,7 @@ return new class extends Migration
             $table->string('transaction_number')->nullable()->index();
             $table->unsignedBigInteger('voter_id');
             $table->unsignedBigInteger('position_id');
-            $table->unsignedBigInteger('candidate_id');
+            $table->unsignedBigInteger('candidate_id')->nullable();
             $table->string('vote_hash')->nullable();
             $table->timestamp('voted_at')->nullable();
             $table->string('ip_address', 45)->nullable();
