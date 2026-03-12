@@ -460,8 +460,7 @@
                                 {{ config('app.name') }} · v2.0
                             </div>
                         </div>
-                    </div>
-
+                    </div>  
                 </div>
             </div>
         </div>

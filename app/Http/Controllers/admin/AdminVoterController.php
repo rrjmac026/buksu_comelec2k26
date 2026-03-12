@@ -58,7 +58,9 @@ class AdminVoterController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'name'           => ['required', 'string', 'max:255'],
+            'first_name'           => ['required', 'string', 'max:255'],
+            'middle_name'          => ['nullable', 'string', 'max:255'],
+            'last_name'            => ['required', 'string', 'max:255'],
             'email'          => ['required', 'string', 'email', 'max:255', 'unique:users,email'],
             'password'       => ['required', Password::defaults(), 'confirmed'],
             'student_number' => ['required', 'string', 'max:50', 'unique:users,student_number'],
@@ -110,7 +112,9 @@ class AdminVoterController extends Controller
         abort_if($voter->role !== 'voter', 404);
 
         $validated = $request->validate([
-            'name'           => ['required', 'string', 'max:255'],
+            'first_name'           => ['required', 'string', 'max:255'],
+            'middle_name'          => ['nullable', 'string', 'max:255'],
+            'last_name'            => ['required', 'string', 'max:255'],
             'email'          => ['required', 'string', 'email', 'max:255', Rule::unique('users', 'email')->ignore($voter->id)],
             'student_number' => ['required', 'string', 'max:50', Rule::unique('users', 'student_number')->ignore($voter->id)],
             'sex'            => ['required', 'in:male,female,other'],

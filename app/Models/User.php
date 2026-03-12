@@ -11,7 +11,8 @@ class User extends Authenticatable
     use HasFactory, Notifiable;
 
     protected $fillable = [
-        'name', 'email', 'password', 'google_id',
+        'first_name', 'middle_name', 'last_name',  // ← replaced 'name'
+        'email', 'password', 'google_id',
         'role', 'sex', 'student_number', 'college_id',
         'course', 'year_level', 'status',
     ];
@@ -63,5 +64,11 @@ class User extends Authenticatable
     public function hasVoted(): bool
     {
         return $this->votes()->exists();
+    }
+
+    public function getFullNameAttribute(): string
+    {
+        $middle = $this->middle_name ? ' ' . $this->middle_name[0] . '. ' : ' ';
+        return "{$this->first_name}{$middle}{$this->last_name}";
     }
 }

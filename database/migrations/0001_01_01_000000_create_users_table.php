@@ -11,11 +11,13 @@ return new class extends Migration
         Schema::create('users', function (Blueprint $table) {
             $table->id();
             $table->string('google_id')->nullable()->unique();
-            $table->string('name');
+            $table->string('first_name', 100);
+            $table->string('middle_name', 100)->nullable();
+            $table->string('last_name', 100);
             $table->string('email')->unique();
             $table->timestamp('email_verified_at')->nullable();
-            $table->string('password')->nullable(); // nullable for Google OAuth users
-            $table->string('role')->default('voter'); // admin | voter
+            $table->string('password')->nullable();
+            $table->string('role')->default('voter');
             $table->enum('sex', ['male', 'female', 'other'])->nullable();
             $table->string('student_number', 50)->nullable()->unique();
             $table->unsignedBigInteger('college_id')->nullable();
@@ -24,7 +26,6 @@ return new class extends Migration
             $table->enum('status', ['active', 'inactive'])->default('active');
             $table->rememberToken();
             $table->timestamps();
-            // FK to colleges added in a later migration (after colleges table exists)
         });
 
         Schema::create('password_reset_tokens', function (Blueprint $table) {
