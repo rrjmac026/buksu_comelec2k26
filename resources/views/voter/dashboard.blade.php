@@ -6,7 +6,7 @@
     <div class="vd-gc p-6 mb-6" style="background:linear-gradient(135deg,rgba(56,0,65,0.85),rgba(82,0,96,0.75));border:1px solid rgba(249,180,15,0.2);animation:vd-fadeUp .5s ease both;">
         <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px;">
             <div>
-                <h2 style="font-family:'Playfair Display',serif;font-size:1.5rem;font-weight:900;color:#fffbf0;margin:0 0 8px 0;">Welcome, {{ $voter->name }}! 👋</h2>
+                <h2 style="font-family:'Playfair Display',serif;font-size:1.5rem;font-weight:900;color:#fffbf0;margin:0 0 8px 0;">Welcome, {{ $voter->full_name }}! 👋</h2>
                 <p style="font-size:0.85rem;color:rgba(255,251,240,0.6);margin:0;line-height:1.6;">{{ $hasVoted ? "Thank you for casting your vote! Your participation helps shape the future of our organization." : "You're invited to participate in this important election. Your voice matters—cast your vote now!" }}</p>
             </div>
             <div style="padding:12px 20px;border-radius:12px;background:rgba(249,180,15,0.1);border:1px solid rgba(249,180,15,0.25);text-align:center;flex-shrink:0;">

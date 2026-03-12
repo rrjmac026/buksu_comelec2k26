@@ -33,7 +33,8 @@ class DatabaseSeeder extends Seeder
         User::updateOrCreate(
             ['email' => '1901102366@student.buksu.edu.ph'],
             [
-                'name' => 'Admin Jam Macalutas',
+                'first_name' => 'Admin Jam',
+                'last_name' => 'Macalutas',
                 'password' => Hash::make('password'),
                 'role' => 'admin',
             ]
@@ -42,7 +43,8 @@ class DatabaseSeeder extends Seeder
         User::updateOrCreate(
             ['email' => '2101103309@student.buksu.edu.ph'],
             [
-                'name' => 'Admin Khyle Amacna',
+                'first_name' => 'Admin Khyle',
+                'last_name' => 'Amacna',
                 'password' => Hash::make('gwaposikhyle123'),
                 'role' => 'admin',
             ]
@@ -51,7 +53,8 @@ class DatabaseSeeder extends Seeder
         User::updateOrCreate(
             ['email' => '2001102491@student.buksu.edu.ph'],
             [
-                'name' => 'Admin Bernardo Dela Cerna',
+                'first_name' => 'Admin Bernardo',
+                'last_name' => 'Dela Cerna III',
                 'password' => Hash::make('gwaposibernard123'),
                 'role' => 'admin',
             ]
@@ -60,7 +63,8 @@ class DatabaseSeeder extends Seeder
         User::updateOrCreate(
             ['email' => 'user@student.buksu.edu.ph'],
             [
-                'name' => 'Regular User',
+                'first_name' => 'Regular',
+                'last_name' => 'User',
                 'password' => Hash::make('password'),
                 'role' => 'voter',
             ]
@@ -69,7 +73,8 @@ class DatabaseSeeder extends Seeder
         \DB::table('users')->updateOrInsert(
             ['email' => 'prototypecapstone@gmail.com'],
             [
-                'name'       => 'Putangina Mo',
+                'first_name' => 'Putangina Mo',
+                'last_name' => 'Bobo Ka',
                 'password'   => null,
                 'role'       => 'voter',
                 'status'     => 'active',
