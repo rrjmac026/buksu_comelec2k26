@@ -4,6 +4,7 @@
 
 @php
     $currentRoute = Route::currentRouteName();
+    $hasVoted     = auth()->user()->hasVoted();
 @endphp
 
 {{-- ── Overview ── --}}
@@ -21,8 +22,21 @@
 {{-- ── Voting ── --}}
 <div class="nav-section-label">Voting</div>
 
-<a href="#"
-   class="nav-link {{ $currentRoute === 'voter.vote' ? 'active' : '' }}">
+@if($hasVoted)
+{{-- Already voted — link to results instead, show "Voted" badge --}}
+<a href="{{ route('voter.results') }}"
+   class="nav-link {{ Str::startsWith($currentRoute, 'voter.results') ? 'active' : '' }}">
+    <div class="nav-link-icon"><i class="fas fa-chart-bar"></i></div>
+    <div class="nav-link-text">
+        <span class="nav-link-label">Live Results</span>
+        <span class="nav-link-sub">See current standings</span>
+    </div>
+    <span class="nav-badge green">Live</span>
+</a>
+@else
+{{-- Not yet voted — show ballot entry point --}}
+<a href="{{ route('voter.vote.intro') }}"
+   class="nav-link {{ Str::startsWith($currentRoute, 'voter.vote') ? 'active' : '' }}">
     <div class="nav-link-icon"><i class="fas fa-vote-yea"></i></div>
     <div class="nav-link-text">
         <span class="nav-link-label">Cast My Vote</span>
@@ -30,23 +44,34 @@
     </div>
     <span class="nav-badge">Vote</span>
 </a>
+@endif
 
 {{-- ── Election Info ── --}}
 <div class="nav-section-label">Election Info</div>
 
-<a href="#"
-   class="nav-link {{ $currentRoute === 'voter.candidates' ? 'active' : '' }}">
-    <div class="nav-link-icon"><i class="fas fa-id-card"></i></div>
+<a href="{{ route('voter.results') }}"
+   class="nav-link {{ $currentRoute === 'voter.results' ? 'active' : '' }}">
+    <div class="nav-link-icon"><i class="fas fa-chart-bar"></i></div>
     <div class="nav-link-text">
-        <span class="nav-link-label">View Candidates</span>
-        <span class="nav-link-sub">Browse all candidates</span>
+        <span class="nav-link-label">Election Results</span>
+        <span class="nav-link-sub">Live vote standings</span>
     </div>
+    <span class="nav-badge green">Live</span>
 </a>
 
 <hr class="sidebar-divider">
 
 {{-- ── Account ── --}}
 <div class="nav-section-label">Account</div>
+
+<a href="{{ route('voter.feedback') }}"
+   class="nav-link {{ $currentRoute === 'voter.feedback' ? 'active' : '' }}">
+    <div class="nav-link-icon"><i class="fas fa-comment-dots"></i></div>
+    <div class="nav-link-text">
+        <span class="nav-link-label">Feedback</span>
+        <span class="nav-link-sub">Share your experience</span>
+    </div>
+</a>
 
 <a href="{{ route('profile.edit') }}"
    class="nav-link {{ $currentRoute === 'profile.edit' ? 'active' : '' }}">

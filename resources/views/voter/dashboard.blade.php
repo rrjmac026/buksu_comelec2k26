@@ -218,7 +218,7 @@
                     {{ $myVotes->first()?->voted_at?->format('M d, Y · g:i A') ?? '—' }}
                 </div>
             @else
-                <a href="{{ route('voter.vote') }}" class="vd-cta-btn">
+                <a href="{{ route('voter.vote.intro') }}" class="vd-cta-btn">
                     <i class="fas fa-vote-yea"></i> Cast My Vote Now
                 </a>
             @endif
@@ -395,7 +395,7 @@
             </div>
 
             @if(!$hasVoted)
-            <a href="{{ route('voter.vote') }}" class="vd-cta-btn" style="justify-content:center;margin-top:auto;"
+            <a href="{{ route('voter.vote.intro') }}" class="vd-cta-btn" style="justify-content:center;margin-top:auto;"
                onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='translateY(0)'">
                 <i class="fas fa-vote-yea"></i> Vote Before Time Runs Out
             </a>

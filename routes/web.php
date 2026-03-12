@@ -92,16 +92,21 @@ Route::middleware(['auth', 'admin'])
 */
 
 Route::middleware(['auth', 'voter'])->prefix('voter')->name('voter.')->group(function () {
-
+ 
     // Dashboard
     Route::get('/dashboard',    [VoterDashboardController::class, 'index'])->name('dashboard');
     Route::get('/results',      [VoterDashboardController::class, 'results'])->name('results');
     Route::get('/results/live', [VoterDashboardController::class, 'liveResults'])->name('results.live');
-
-    // CastedVote (Ballot)
-    Route::get('/vote',         [VoterCastedVoteController::class, 'create'])->name('vote');
-    Route::post('/vote',        [VoterCastedVoteController::class, 'store'])->name('vote.store');
-
+ 
+    // ── Multi-step Ballot ──────────────────────────────────────────
+    Route::get('/vote',               [VoterCastedVoteController::class, 'intro'])->name('vote.intro');
+    Route::get('/vote/step/{step}',   [VoterCastedVoteController::class, 'step'])->name('vote.step');
+    Route::post('/vote/step/{step}',  [VoterCastedVoteController::class, 'saveStep'])->name('vote.step.save');
+    Route::get('/vote/review',        [VoterCastedVoteController::class, 'review'])->name('vote.review');
+    Route::post('/vote',              [VoterCastedVoteController::class, 'store'])->name('vote.store');
+    Route::get('/vote/success',       [VoterCastedVoteController::class, 'success'])->name('vote.success');
+    // ──────────────────────────────────────────────────────────────
+ 
     // Feedback
     Route::get('/feedback',     [VoterFeedbackController::class, 'show'])->name('feedback');
     Route::post('/feedback',    [VoterFeedbackController::class, 'submit'])->name('feedback.submit');
