@@ -57,7 +57,7 @@
 
                 <div class="mt-5 pt-4 border-t border-violet-100 dark:border-violet-800/50 space-y-2">
                     <a href="{{ route('admin.candidates.edit', $candidate) }}"
-                       class="w-full py-2 rounded-xl text-sm font-semibold transition-all duration-200
+                       class="block w-full py-2 rounded-xl text-sm font-semibold transition-all duration-200
                               text-sky-700 dark:text-sky-400 border border-sky-200 dark:border-sky-700 hover:bg-sky-50 dark:hover:bg-sky-900/20">
                         <i class="fas fa-pen mr-2"></i> Edit Candidate
                     </a>
@@ -78,17 +78,14 @@
                     <i class="fas fa-graduation-cap text-violet-500"></i> Academic Info
                 </h4>
                 <div class="space-y-3">
-                    @foreach([
-                        ['label' => 'College',   'value' => $candidate->college?->name ?? '—',     'mono' => false],
-                        ['label' => 'Course',    'value' => $candidate->course ?? '—',              'mono' => false],
-                    ] as $item)
                     <div>
-                        <p class="text-xs text-violet-500 dark:text-violet-400 font-semibold uppercase">{{ $item['label'] }}</p>
-                        <p class="text-sm {{ $item['mono'] ? 'font-mono' : 'font-medium' }} text-gray-700 dark:text-gray-300 mt-0.5">
-                            {{ $item['value'] }}
-                        </p>
+                        <p class="text-xs text-violet-500 dark:text-violet-400 font-semibold uppercase">College</p>
+                        <p class="text-sm font-medium text-gray-700 dark:text-gray-300 mt-0.5">{{ $candidate->college?->name ?? '—' }}</p>
                     </div>
-                    @endforeach
+                    <div>
+                        <p class="text-xs text-violet-500 dark:text-violet-400 font-semibold uppercase">Course</p>
+                        <p class="text-sm font-medium text-gray-700 dark:text-gray-300 mt-0.5">{{ $candidate->course ?? '—' }}</p>
+                    </div>
                 </div>
             </div>
 
@@ -98,16 +95,18 @@
                     <i class="fas fa-vote-yea text-emerald-500"></i> Election Info
                 </h4>
                 <div class="space-y-3">
-                    @foreach([
-                        ['label' => 'Position',      'value' => $candidate->position?->name ?? '—'],
-                        ['label' => 'Party List',    'value' => $candidate->partylist?->name ?? '—'],
-                        ['label' => 'Organization',  'value' => $candidate->organization?->name ?? '—'],
-                    ] as $item)
                     <div>
-                        <p class="text-xs text-violet-500 dark:text-violet-400 font-semibold uppercase">{{ $item['label'] }}</p>
-                        <p class="text-sm font-medium text-gray-700 dark:text-gray-300 mt-0.5">{{ $item['value'] }}</p>
+                        <p class="text-xs text-violet-500 dark:text-violet-400 font-semibold uppercase">Position</p>
+                        <p class="text-sm font-medium text-gray-700 dark:text-gray-300 mt-0.5">{{ $candidate->position?->name ?? '—' }}</p>
                     </div>
-                    @endforeach
+                    <div>
+                        <p class="text-xs text-violet-500 dark:text-violet-400 font-semibold uppercase">Party List</p>
+                        <p class="text-sm font-medium text-gray-700 dark:text-gray-300 mt-0.5">{{ $candidate->partylist?->name ?? '—' }}</p>
+                    </div>
+                    <div>
+                        <p class="text-xs text-violet-500 dark:text-violet-400 font-semibold uppercase">Organization</p>
+                        <p class="text-sm font-medium text-gray-700 dark:text-gray-300 mt-0.5">{{ $candidate->organization?->name ?? '—' }}</p>
+                    </div>
                 </div>
             </div>
 
@@ -122,8 +121,9 @@
                     <div class="flex items-center justify-between">
                         <div>
                             <p class="text-xs text-violet-500 dark:text-violet-400 font-semibold uppercase">Total Votes</p>
+                            {{-- Use votes() — that is the correct relationship name --}}
                             <p class="text-3xl font-bold text-gray-800 dark:text-gray-100 mt-1">
-                                {{ $candidate->castedVotes()->count() ?? 0 }}
+                                {{ $candidate->votes()->count() }}
                             </p>
                         </div>
                         <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-sky-100 to-sky-50
@@ -170,31 +170,33 @@
                     </h4>
                 </div>
 
-                @if($candidate->castedVotes()->exists())
+                {{-- Use votes() — the correct relationship name --}}
+                @if($candidate->votes()->exists())
                     <div class="overflow-x-auto">
                         <table class="w-full text-sm">
                             <thead>
                                 <tr class="border-b border-violet-100 dark:border-violet-800/50
                                            bg-gradient-to-r from-violet-50/50 to-transparent
                                            dark:from-violet-900/20">
-                                    <th class="text-left px-6 py-3 text-xs font-bold text-violet-600 dark:text-violet-400 uppercase">Vote ID</th>
+                                    <th class="text-left px-6 py-3 text-xs font-bold text-violet-600 dark:text-violet-400 uppercase">Transaction</th>
                                     <th class="text-left px-6 py-3 text-xs font-bold text-violet-600 dark:text-violet-400 uppercase hidden md:table-cell">Voter</th>
                                     <th class="text-left px-6 py-3 text-xs font-bold text-violet-600 dark:text-violet-400 uppercase">Date</th>
                                 </tr>
                             </thead>
                             <tbody class="divide-y divide-violet-50 dark:divide-violet-800/30">
-                                @foreach($candidate->castedVotes()->latest()->take(10)->get() as $vote)
+                                @foreach($candidate->votes()->with('voter')->latest('voted_at')->take(10)->get() as $vote)
                                 <tr class="hover:bg-violet-50/30 dark:hover:bg-violet-900/10">
                                     <td class="px-6 py-3 font-mono text-xs text-gray-600 dark:text-gray-400">
-                                        {{ substr($vote->id, 0, 8) }}...
+                                        {{ $vote->transaction_number ?? '—' }}
                                     </td>
                                     <td class="px-6 py-3 hidden md:table-cell">
                                         <div class="text-sm font-medium text-gray-700 dark:text-gray-300">
-                                            {{ $vote->voter?->name ?? 'Anonymous' }}
+                                            {{-- User model uses first_name/last_name, not name --}}
+                                            {{ $vote->voter ? $vote->voter->full_name : 'Anonymous' }}
                                         </div>
                                     </td>
                                     <td class="px-6 py-3 text-sm text-gray-600 dark:text-gray-400">
-                                        {{ $vote->created_at->format('M d, Y H:i') }}
+                                        {{ $vote->voted_at?->format('M d, Y H:i') ?? '—' }}
                                     </td>
                                 </tr>
                                 @endforeach
@@ -202,15 +204,15 @@
                         </table>
                     </div>
 
-                    @if($candidate->castedVotes()->count() > 10)
+                    @if($candidate->votes()->count() > 10)
                         <div class="px-6 py-3 bg-violet-50/40 dark:bg-violet-900/10 text-center text-sm text-violet-600 dark:text-violet-400 font-medium">
-                            Showing 10 of {{ $candidate->castedVotes()->count() }} votes
+                            Showing 10 of {{ $candidate->votes()->count() }} votes
                         </div>
                     @endif
                 @else
                     <div class="px-6 py-8 text-center">
                         <div class="flex flex-col items-center gap-2">
-                            <i class="fas fa-ballot text-3xl text-violet-300 dark:text-violet-700"></i>
+                            <i class="fas fa-inbox text-3xl text-violet-300 dark:text-violet-700"></i>
                             <p class="text-sm text-gray-500 dark:text-gray-400">No votes yet</p>
                         </div>
                     </div>

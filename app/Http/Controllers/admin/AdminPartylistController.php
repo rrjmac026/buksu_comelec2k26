@@ -32,7 +32,7 @@ class AdminPartylistController extends Controller
 
         Partylist::create($validated);
 
-        return redirect()->route('partylists.index')
+        return redirect()->route('admin.partylists.index')
             ->with('success', 'Partylist created successfully.');
     }
 
@@ -51,26 +51,27 @@ class AdminPartylistController extends Controller
     public function update(Request $request, Partylist $partylist)
     {
         $validated = $request->validate([
-            'name'        => ['required', 'string', 'max:255', Rule::unique('partylists', 'name')->ignore($partylist->partylist_id, 'partylist_id')],
+            // PK is id ✅ — was wrongly using partylist_id
+            'name'        => ['required', 'string', 'max:255', Rule::unique('partylists', 'name')->ignore($partylist->id)],
             'description' => ['nullable', 'string'],
         ]);
 
         $partylist->update($validated);
 
-        return redirect()->route('partylists.index')
+        return redirect()->route('admin.partylists.index')
             ->with('success', 'Partylist updated successfully.');
     }
 
     public function destroy(Partylist $partylist)
     {
         if ($partylist->candidates()->exists()) {
-            return redirect()->route('partylists.index')
+            return redirect()->route('admin.partylists.index')
                 ->with('error', 'Cannot delete partylist — it has associated candidates.');
         }
 
         $partylist->delete();
 
-        return redirect()->route('partylists.index')
+        return redirect()->route('admin.partylists.index')
             ->with('success', 'Partylist deleted successfully.');
     }
 }

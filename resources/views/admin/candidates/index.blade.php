@@ -49,10 +49,10 @@
         @endphp
 
         @foreach([
-            ['label' => 'Total Candidates', 'value' => $total,      'icon' => 'fa-users',           'color' => 'from-violet-600 to-violet-400'],
-            ['label' => 'Party Lists',      'value' => $partylists, 'icon' => 'fa-list',            'color' => 'from-emerald-600 to-emerald-400'],
-            ['label' => 'Colleges',         'value' => $colleges,   'icon' => 'fa-building',        'color' => 'from-sky-600 to-sky-400'],
-            ['label' => 'Total Votes',      'value' => $votes,      'icon' => 'fa-vote-yea',        'color' => 'from-rose-600 to-rose-400'],
+            ['label' => 'Total Candidates', 'value' => $total,      'icon' => 'fa-users',    'color' => 'from-violet-600 to-violet-400'],
+            ['label' => 'Party Lists',      'value' => $partylists, 'icon' => 'fa-list',     'color' => 'from-emerald-600 to-emerald-400'],
+            ['label' => 'Colleges',         'value' => $colleges,   'icon' => 'fa-building', 'color' => 'from-sky-600 to-sky-400'],
+            ['label' => 'Total Votes',      'value' => $votes,      'icon' => 'fa-vote-yea', 'color' => 'from-rose-600 to-rose-400'],
         ] as $stat)
         <div class="bg-white dark:bg-violet-950/40 rounded-2xl border border-violet-100 dark:border-violet-800/50
                     shadow-sm p-4 flex items-center gap-3">
@@ -96,7 +96,8 @@
                                focus:outline-none focus:ring-2 focus:ring-violet-400">
                     <option value="">All Colleges</option>
                     @foreach(\App\Models\College::orderBy('name')->get() as $college)
-                        <option value="{{ $college->college_id }}" {{ request('college_id') == $college->college_id ? 'selected' : '' }}>
+                        {{-- Use $college->id — the actual PK column --}}
+                        <option value="{{ $college->id }}" {{ request('college_id') == $college->id ? 'selected' : '' }}>
                             {{ $college->acronym }}
                         </option>
                     @endforeach
@@ -113,7 +114,8 @@
                                focus:outline-none focus:ring-2 focus:ring-violet-400">
                     <option value="">All Party Lists</option>
                     @foreach(\App\Models\Partylist::orderBy('name')->get() as $partylist)
-                        <option value="{{ $partylist->partylist_id }}" {{ request('partylist_id') == $partylist->partylist_id ? 'selected' : '' }}>
+                        {{-- Use $partylist->id — the actual PK column --}}
+                        <option value="{{ $partylist->id }}" {{ request('partylist_id') == $partylist->id ? 'selected' : '' }}>
                             {{ $partylist->name }}
                         </option>
                     @endforeach
@@ -199,20 +201,19 @@
                             <span class="text-gray-600 dark:text-gray-400">{{ $candidate->course ?? '—' }}</span>
                         </td>
 
-                        {{-- Votes --}}
+                        {{-- Votes — use votes() not castedVotes() --}}
                         <td class="px-5 py-3.5">
                             <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold
                                          bg-sky-100 dark:bg-sky-900/30 text-sky-700 dark:text-sky-300
                                          border border-sky-200 dark:border-sky-700">
                                 <i class="fas fa-vote-yea text-xs"></i>
-                                {{ $candidate->castedVotes()->count() ?? 0 }}
+                                {{ $candidate->votes()->count() }}
                             </span>
                         </td>
 
                         {{-- Actions --}}
                         <td class="px-5 py-3.5">
                             <div class="flex items-center justify-end gap-1.5">
-                                {{-- View --}}
                                 <a href="{{ route('admin.candidates.show', $candidate) }}"
                                    title="View"
                                    class="w-8 h-8 flex items-center justify-center rounded-lg
@@ -221,7 +222,6 @@
                                     <i class="fas fa-eye text-xs"></i>
                                 </a>
 
-                                {{-- Edit --}}
                                 <a href="{{ route('admin.candidates.edit', $candidate) }}"
                                    title="Edit"
                                    class="w-8 h-8 flex items-center justify-center rounded-lg
@@ -230,10 +230,9 @@
                                     <i class="fas fa-pen text-xs"></i>
                                 </a>
 
-                                {{-- Delete --}}
                                 <button type="button"
                                         title="Delete"
-                                        @click="$dispatch('open-modal', 'delete-candidate-{{ $candidate->id }}')"
+                                        @click="$dispatch('open-modal', 'delete-candidate-{{ $candidate->candidate_id }}')"
                                         class="w-8 h-8 flex items-center justify-center rounded-lg
                                                text-rose-500 dark:text-rose-400
                                                hover:bg-rose-100 dark:hover:bg-rose-800/40 transition-colors">
@@ -242,7 +241,7 @@
                             </div>
 
                             {{-- Delete Modal --}}
-                            <x-modal name="delete-candidate-{{ $candidate->id }}" focusable>
+                            <x-modal name="delete-candidate-{{ $candidate->candidate_id }}" focusable>
                                 <div class="p-6">
                                     <div class="flex items-center gap-4 mb-4">
                                         <div class="w-12 h-12 rounded-2xl bg-rose-100 dark:bg-rose-900/30 flex items-center justify-center flex-shrink-0">
@@ -254,7 +253,7 @@
                                         </div>
                                     </div>
                                     <p class="text-sm text-gray-600 dark:text-gray-300 mb-6">
-                                        Are you sure you want to delete <strong>{{ $candidate->first_name }} {{ $candidate->last_name }}</strong>? All votes for this candidate will be preserved but associated.
+                                        Are you sure you want to delete <strong>{{ $candidate->first_name }} {{ $candidate->last_name }}</strong>?
                                     </p>
                                     <div class="flex justify-end gap-3">
                                         <x-secondary-button x-on:click="$dispatch('close')">Cancel</x-secondary-button>

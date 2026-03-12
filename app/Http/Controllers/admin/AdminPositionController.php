@@ -31,7 +31,7 @@ class AdminPositionController extends Controller
 
         Position::create($validated);
 
-        return redirect()->route('positions.index')
+        return redirect()->route('admin.positions.index')
             ->with('success', 'Position created successfully.');
     }
 
@@ -50,25 +50,26 @@ class AdminPositionController extends Controller
     public function update(Request $request, Position $position)
     {
         $validated = $request->validate([
-            'name' => ['required', 'string', 'max:255', Rule::unique('positions', 'name')->ignore($position->position_id, 'position_id')],
+            // PK is id ✅ — was wrongly using position_id
+            'name' => ['required', 'string', 'max:255', Rule::unique('positions', 'name')->ignore($position->id)],
         ]);
 
         $position->update($validated);
 
-        return redirect()->route('positions.index')
+        return redirect()->route('admin.positions.index')
             ->with('success', 'Position updated successfully.');
     }
 
     public function destroy(Position $position)
     {
         if ($position->candidates()->exists()) {
-            return redirect()->route('positions.index')
+            return redirect()->route('admin.positions.index')
                 ->with('error', 'Cannot delete position — it has associated candidates.');
         }
 
         $position->delete();
 
-        return redirect()->route('positions.index')
+        return redirect()->route('admin.positions.index')
             ->with('success', 'Position deleted successfully.');
     }
 }

@@ -31,7 +31,6 @@ class AdminDashboardController extends Controller
             ->take(10)
             ->get();
 
-        // Fixed: was castedVotes() — correct relationship name is votes()
         $topCandidates = Candidate::with(['position', 'partylist'])
             ->withCount('votes')
             ->orderByDesc('votes_count')
@@ -77,10 +76,10 @@ class AdminDashboardController extends Controller
             ->take(5)
             ->get()
             ->map(fn($c) => [
-                'name'     => $c->first_name . ' ' . $c->last_name,
-                'position' => $c->position?->name ?? '—',
-                'partylist'=> $c->partylist?->name ?? '—',
-                'votes'    => $c->votes_count,
+                'name'      => $c->first_name . ' ' . $c->last_name,
+                'position'  => $c->position?->name ?? '—',
+                'partylist' => $c->partylist?->name ?? '—',
+                'votes'     => $c->votes_count,
             ]);
 
         // Recent votes
@@ -95,33 +94,34 @@ class AdminDashboardController extends Controller
                 'voted_at'    => $v->voted_at?->diffForHumans() ?? '—',
                 'transaction' => $v->transaction_number ?? '—',
             ]);
-        
+
+        // Monthly trend — use CastedVote, not the non-existent Vote model
         $monthlyTrend = collect(range(1, 12))->map(function ($month) {
             return [
-                'month' => date('M', mktime(0,0,0,$month,1)),
-                'voters' => \App\Models\User::where('role','voter')
-                            ->whereMonth('created_at', $month)
-                            ->whereYear('created_at', now()->year)
-                            ->count(),
-                'votes'  => \App\Models\Vote::whereMonth('voted_at', $month)
-                            ->whereYear('voted_at', now()->year)
-                            ->count(),
+                'month'  => date('M', mktime(0, 0, 0, $month, 1)),
+                'voters' => User::where('role', 'voter')
+                                ->whereMonth('created_at', $month)
+                                ->whereYear('created_at', now()->year)
+                                ->count(),
+                'votes'  => CastedVote::whereMonth('voted_at', $month)  // ✅ was \App\Models\Vote (doesn't exist)
+                                ->whereYear('voted_at', now()->year)
+                                ->count(),
             ];
         });
 
-        // Voter turnout: voted vs not voted
-        $totalVoters  = User::where('role', 'voter')->count();
-        $votedCount   = CastedVote::distinct('voter_id')->count('voter_id');
-        $notVoted     = max(0, $totalVoters - $votedCount);
+        // Voter turnout
+        $totalVoters = User::where('role', 'voter')->count();
+        $votedCount  = CastedVote::distinct('voter_id')->count('voter_id');
+        $notVoted    = max(0, $totalVoters - $votedCount);
 
         return response()->json([
-            'stats'            => $stats,
-            'votesByPosition'  => $votesByPosition,
-            'topCandidates'    => $topCandidates,
-            'recentVotes'      => $recentVotes,
-            'turnout'          => ['voted' => $votedCount, 'not_voted' => $notVoted],
-            'timestamp'        => now()->format('H:i:s'),
-            'monthlyTrend' => $monthlyTrend,
+            'stats'           => $stats,
+            'votesByPosition' => $votesByPosition,
+            'topCandidates'   => $topCandidates,
+            'recentVotes'     => $recentVotes,
+            'turnout'         => ['voted' => $votedCount, 'not_voted' => $notVoted],
+            'monthlyTrend'    => $monthlyTrend,
+            'timestamp'       => now()->format('H:i:s'),
         ]);
     }
 }
