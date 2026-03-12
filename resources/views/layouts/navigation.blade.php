@@ -317,65 +317,6 @@
 
                 <!-- Right Side -->
                 <div class="flex items-center gap-2">
-
-                    <!-- Notification Bell -->
-                    <div class="nav-dropdown-wrap">
-                        <button @click="notificationOpen = !notificationOpen; profileOpen = false"
-                                class="nav-icon-btn border-0 bg-transparent cursor-pointer"
-                                :class="{ 'bell-pulse': unreadCount > 0 }">
-                            <i class="fas fa-bell"></i>
-                            <div x-show="unreadCount > 0" x-transition class="notif-badge">
-                                <span x-text="unreadCount > 9 ? '9+' : unreadCount"></span>
-                            </div>
-                        </button>
-
-                        <div x-show="notificationOpen"
-                             @click.away="notificationOpen = false"
-                             x-transition:enter="transition ease-out duration-200"
-                             x-transition:enter-start="opacity-0 scale-95 -translate-y-2"
-                             x-transition:enter-end="opacity-100 scale-100 translate-y-0"
-                             x-transition:leave="transition ease-in duration-150"
-                             x-transition:leave-start="opacity-100 scale-100 translate-y-0"
-                             x-transition:leave-end="opacity-0 scale-95 -translate-y-2"
-                             x-cloak
-                             class="dropdown-panel" style="width:320px;">
-
-                            <div class="notif-header">
-                                <span class="notif-header-title">
-                                    <i class="fas fa-bell"></i> Notifications
-                                </span>
-                                <div style="display:flex;align-items:center;gap:8px;">
-                                    <div x-show="loading" class="spin" style="width:14px;height:14px;border:2px solid rgba(249,180,15,0.3);border-top-color:#f9b40f;border-radius:50%;flex-shrink:0;"></div>
-                                    <span x-show="unreadCount > 0 && !loading" class="notif-header-badge" x-text="unreadCount + ' unread'"></span>
-                                    <span x-show="!loading && allRead" class="notif-header-badge" style="color:#34d399;background:rgba(52,211,153,0.1);border-color:rgba(52,211,153,0.25);">
-                                        <i class="fas fa-check-circle" style="margin-right:3px;"></i>All read
-                                    </span>
-                                </div>
-                            </div>
-
-                            <div class="notif-list">
-                                <template x-for="notif in notifications" :key="notif.id">
-                                    <a :href="notif.link || '#'"
-                                       @click="notif.link ? handleNotificationClick($event, notif) : $event.preventDefault()"
-                                       class="notif-item"
-                                       :style="!notif.is_read ? 'background:rgba(249,180,15,0.04);' : ''">
-                                        <div class="notif-icon"><i class="fas fa-bell"></i></div>
-                                        <div class="notif-content">
-                                            <div class="notif-title" x-text="notif.title"></div>
-                                            <div class="notif-msg" x-text="notif.message"></div>
-                                            <div class="notif-time" x-text="notif.created_at"></div>
-                                        </div>
-                                        <div x-show="!notif.is_read" class="notif-unread-dot"></div>
-                                    </a>
-                                </template>
-                                <div x-show="notifications.length === 0" class="notif-empty">
-                                    <i class="fas fa-bell-slash"></i>
-                                    <p>No notifications yet</p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
                     <!-- Profile Button -->
                     <div class="nav-dropdown-wrap">
                         <button @click="profileOpen = !profileOpen; notificationOpen = false"
@@ -468,58 +409,58 @@
 </div>
 
 <script>
-function navigationComponent() {
-    return {
-        notificationOpen: false,
-        profileOpen: false,
-        loading: false,
-        allRead: false,
+    function navigationComponent() {
+        return {
+            notificationOpen: false,
+            profileOpen: false,
+            loading: false,
+            allRead: false,
 
-        userName: @json(Auth::check() ? Auth::user()->full_name : 'Guest'),
-        userInitial: @json(Auth::check() ? substr(Auth::user()->full_name, 0, 1) : 'G'),
-        unreadCount: 0,
-        notifications: [],
+            userName: @json(Auth::check() ? Auth::user()->full_name : 'Guest'),
+            userInitial: @json(Auth::check() ? substr(Auth::user()->full_name, 0, 1) : 'G'),
+            unreadCount: 0,
+            notifications: [],
 
-        profileEditRoute: '{{ route("profile.edit") }}',
-        logoutRoute: '{{ route("logout") }}',
-        csrfToken: '{{ csrf_token() }}',
+            profileEditRoute: '{{ route("profile.edit") }}',
+            logoutRoute: '{{ route("logout") }}',
+            csrfToken: '{{ csrf_token() }}',
 
-        init() {
-            this.updateUnreadCount();
-            this.updateAllReadStatus();
-        },
-
-        handleNotificationClick(event, notif) {
-            if (!notif.is_read) {
-                notif.is_read = true;
+            init() {
                 this.updateUnreadCount();
                 this.updateAllReadStatus();
-            }
-            this.notificationOpen = false;
-        },
+            },
 
-        updateUnreadCount() {
-            this.unreadCount = this.notifications.filter(n => !n.is_read).length;
-        },
+            handleNotificationClick(event, notif) {
+                if (!notif.is_read) {
+                    notif.is_read = true;
+                    this.updateUnreadCount();
+                    this.updateAllReadStatus();
+                }
+                this.notificationOpen = false;
+            },
 
-        updateAllReadStatus() {
-            this.allRead = this.notifications.length > 0 && this.unreadCount === 0;
-        },
+            updateUnreadCount() {
+                this.unreadCount = this.notifications.filter(n => !n.is_read).length;
+            },
 
-        logout() {
-            if (confirm('Are you sure you want to log out?')) {
-                const form = document.createElement('form');
-                form.method = 'POST';
-                form.action = this.logoutRoute;
-                const csrf = document.createElement('input');
-                csrf.type = 'hidden';
-                csrf.name = '_token';
-                csrf.value = this.csrfToken;
-                form.appendChild(csrf);
-                document.body.appendChild(form);
-                form.submit();
+            updateAllReadStatus() {
+                this.allRead = this.notifications.length > 0 && this.unreadCount === 0;
+            },
+
+            logout() {
+                if (confirm('Are you sure you want to log out?')) {
+                    const form = document.createElement('form');
+                    form.method = 'POST';
+                    form.action = this.logoutRoute;
+                    const csrf = document.createElement('input');
+                    csrf.type = 'hidden';
+                    csrf.name = '_token';
+                    csrf.value = this.csrfToken;
+                    form.appendChild(csrf);
+                    document.body.appendChild(form);
+                    form.submit();
+                }
             }
         }
     }
-}
 </script>
