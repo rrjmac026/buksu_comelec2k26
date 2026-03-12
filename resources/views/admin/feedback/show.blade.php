@@ -10,7 +10,7 @@
                 </a>
                 <div>
                     <h2 class="font-bold text-xl text-gray-800 dark:text-gray-100 leading-tight">Feedback Details</h2>
-                    <p class="text-sm text-violet-600 dark:text-violet-400 mt-0.5">From <strong>{{ $feedback->user->name ?? 'Unknown User' }}</strong></p>
+                    <p class="text-sm text-violet-600 dark:text-violet-400 mt-0.5">From <strong>{{ $feedback->user->full_name ?? 'Unknown User' }}</strong></p>
                 </div>
             </div>
             <div class="flex items-center gap-2">
@@ -44,11 +44,11 @@
                 <div class="w-20 h-20 rounded-2xl bg-gradient-to-br from-violet-600 to-violet-400
                             flex items-center justify-center text-white text-2xl font-bold
                             shadow-lg shadow-violet-200 dark:shadow-violet-900/40 mx-auto mb-4">
-                    {{ strtoupper(substr($feedback->user->name ?? 'U', 0, 1)) }}
+                    {{ strtoupper(substr($feedback->user->full_name ?? 'U', 0, 1)) }}
                 </div>
 
                 <h3 class="font-bold text-lg text-gray-800 dark:text-gray-100 text-center">
-                    {{ $feedback->user->name ?? 'Unknown User' }}
+                    {{ $feedback->user->full_name ?? 'Unknown User' }}
                 </h3>
                 <p class="text-sm text-violet-500 dark:text-violet-400 mt-0.5 text-center break-all">
                     {{ $feedback->user->email ?? '—' }}

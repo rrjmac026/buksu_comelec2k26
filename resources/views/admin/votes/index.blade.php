@@ -137,10 +137,10 @@
                                     <div class="flex items-center gap-3">
                                         <div class="w-9 h-9 rounded-lg bg-gradient-to-br from-violet-600 to-violet-400
                                                     flex items-center justify-center text-white font-semibold text-xs">
-                                            {{ strtoupper(substr($vote->voter->name ?? 'U', 0, 1)) }}
+                                            {{ strtoupper(substr($vote->voter->full_name ?? 'U', 0, 1)) }}
                                         </div>
                                         <div>
-                                            <p class="font-medium text-gray-800 dark:text-gray-100">{{ $vote->voter->name ?? 'Unknown' }}</p>
+                                            <p class="font-medium text-gray-800 dark:text-gray-100">{{ $vote->voter->full_name ?? 'Unknown' }}</p>
                                             <p class="text-xs text-violet-500 dark:text-violet-400">{{ $vote->voter->email ?? '—' }}</p>
                                         </div>
                                     </div>

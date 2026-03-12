@@ -44,7 +44,7 @@ class VoterCastedVoteController extends Controller
 
         $positions = Position::with([
             'candidates' => fn($q) => $q->with(['partylist', 'college'])->orderBy('last_name'),
-        ])->orderBy('name')->get();
+        ])->orderBy('sort_order')->get();
 
         // Guard: step out of range → redirect to intro
         if ($step < 1 || $step > $positions->count()) {
@@ -162,7 +162,7 @@ class VoterCastedVoteController extends Controller
 
         $positions = Position::with([
             'candidates' => fn($q) => $q->with(['partylist', 'college'])->orderBy('last_name'),
-        ])->orderBy('name')->get();
+        ])->orderBy('sort_order')->get();
 
         // Build review rows
         $reviewRows = $positions->map(function ($position) use ($ballot) {

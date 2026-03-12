@@ -6,7 +6,7 @@
     <div class="gc p-6 mb-6" style="background:linear-gradient(135deg,rgba(56,0,65,0.85),rgba(82,0,96,0.75));border:1px solid rgba(249,180,15,0.2);animation:fadeInUp .5s ease both;">
         <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px;">
             <div>
-                <h2 style="font-family:'Playfair Display',serif;font-size:1.5rem;font-weight:900;color:#fffbf0;margin:0 0 8px 0;">Welcome back, {{ auth()->user()->name }}!</h2>
+                <h2 style="font-family:'Playfair Display',serif;font-size:1.5rem;font-weight:900;color:#fffbf0;margin:0 0 8px 0;">Welcome back, {{ auth()->user()->full_name }}!</h2>
                 <p style="font-size:0.85rem;color:rgba(255,251,240,0.6);margin:0;line-height:1.6;">Here's an overview of your election management dashboard. Monitor voting activity, manage candidates, and track system performance in real-time.</p>
             </div>
             <div style="padding:12px 20px;border-radius:12px;background:rgba(249,180,15,0.1);border:1px solid rgba(249,180,15,0.25);text-align:center;flex-shrink:0;">
@@ -371,11 +371,11 @@
                 @foreach($recentVotes as $vote)
                 <div class="vote-row">
                     <div style="width:28px;height:28px;border-radius:50%;background:linear-gradient(135deg,#f9b40f,#fcd558);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:0.65rem;font-weight:900;color:#380041;font-family:'Playfair Display',serif;">
-                        {{ strtoupper(substr($vote->voter?->name ?? 'U', 0, 1)) }}
+                        {{ strtoupper(substr($vote->voter?->full_name ?? 'U', 0, 1)) }}
                     </div>
                     <div style="flex:1;min-width:0;">
                         <div style="font-size:0.72rem;font-weight:600;color:#fffbf0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">
-                            {{ $vote->voter?->name ?? 'Unknown' }}
+                            {{ $vote->voter?->full_name ?? 'Unknown' }}
                         </div>
                         <div style="font-size:0.65rem;color:rgba(249,180,15,0.5);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">
                             {{ $vote->candidate ? $vote->candidate->first_name.' '.$vote->candidate->last_name : '—' }}

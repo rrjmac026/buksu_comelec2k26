@@ -39,7 +39,7 @@ class AdminDashboardController extends Controller
             ->get();
 
         $teamMembers = User::where('role', 'admin')
-                       ->orderBy('name')
+                       ->orderBy('first_name')
                        ->get();
 
         return view('admin.dashboard', compact('stats', 'recentVotes', 'topCandidates', 'teamMembers'));
@@ -89,7 +89,7 @@ class AdminDashboardController extends Controller
             ->take(8)
             ->get()
             ->map(fn($v) => [
-                'voter'       => $v->voter?->name ?? 'Unknown',
+                'voter'       => $v->voter ? ($v->voter->first_name . ' ' . $v->voter->last_name) : 'Unknown',
                 'candidate'   => $v->candidate ? ($v->candidate->first_name . ' ' . $v->candidate->last_name) : '—',
                 'position'    => $v->position?->name ?? '—',
                 'voted_at'    => $v->voted_at?->diffForHumans() ?? '—',

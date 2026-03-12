@@ -10,6 +10,13 @@ class Position extends Model
 
     protected $fillable = ['name'];
 
+    protected static function booted(): void
+    {
+        static::addGlobalScope('ordered', function ($query) {
+            $query->orderBy('sort_order');
+        });
+    }
+
     public function candidates()
     {
         return $this->hasMany(Candidate::class, 'position_id', 'id');

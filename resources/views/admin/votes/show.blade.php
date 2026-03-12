@@ -76,7 +76,7 @@
                 </h4>
                 <div class="space-y-3">
                     @foreach([
-                        ['label' => 'Name',      'value' => $castedVote->voter?->name ?? '—',      'mono' => false],
+                        ['label' => 'Name',      'value' => $castedVote->voter?->full_name ?? '—',      'mono' => false],
                         ['label' => 'Email',     'value' => $castedVote->voter?->email ?? '—',     'mono' => false],
                     ] as $item)
                     <div>

@@ -150,11 +150,11 @@
                                 <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-violet-600 to-violet-400
                                             flex items-center justify-center text-white font-bold text-sm flex-shrink-0
                                             shadow-sm">
-                                    {{ strtoupper(substr($feedback->user->name ?? 'U', 0, 1)) }}
+                                    {{ strtoupper(substr($feedback->user->full_name ?? 'U', 0, 1)) }}
                                 </div>
                                 <div>
                                     <div class="font-semibold text-gray-800 dark:text-gray-100">
-                                        {{ $feedback->user->name ?? 'Unknown User' }}
+                                        {{ $feedback->user->full_name ?? 'Unknown User' }}
                                     </div>
                                     <div class="text-xs text-violet-500 dark:text-violet-400">
                                         {{ $feedback->user->email ?? '—' }}
@@ -227,7 +227,7 @@
                                     </div>
 
                                     <p class="text-sm text-gray-600 dark:text-gray-400 mb-6">
-                                        Are you sure you want to delete the feedback from <strong>{{ $feedback->user->name ?? 'Unknown User' }}</strong>?
+                                        Are you sure you want to delete the feedback from <strong>{{ $feedback->user->full_name ?? 'Unknown User' }}</strong>?
                                     </p>
 
                                     <div class="flex gap-3 justify-end">
