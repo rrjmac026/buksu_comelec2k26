@@ -173,12 +173,6 @@
     {{-- ═══════════════════════════════════════════
          SESSION FLASH MESSAGES
     ═══════════════════════════════════════════ --}}
-    @if(session('success'))
-    <div style="display:flex;align-items:center;gap:10px;padding:12px 18px;border-radius:12px;background:rgba(52,211,153,0.1);border:1px solid rgba(52,211,153,0.25);margin-bottom:20px;animation:vd-fadeUp .4s ease both;">
-        <i class="fas fa-circle-check" style="color:#34d399;font-size:.85rem;flex-shrink:0;"></i>
-        <span style="font-size:.75rem;font-weight:600;color:#34d399;">{{ session('success') }}</span>
-    </div>
-    @endif
     @if(session('error'))
     <div style="display:flex;align-items:center;gap:10px;padding:12px 18px;border-radius:12px;background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.25);margin-bottom:20px;animation:vd-fadeUp .4s ease both;">
         <i class="fas fa-circle-xmark" style="color:#f87171;font-size:.85rem;flex-shrink:0;"></i>
@@ -277,10 +271,10 @@
 
             <div style="display:flex;align-items:center;gap:14px;margin-bottom:18px;padding-bottom:16px;border-bottom:1px solid rgba(249,180,15,0.08);">
                 <div style="width:52px;height:52px;border-radius:16px;background:linear-gradient(135deg,#f9b40f,#fcd558);display:flex;align-items:center;justify-content:center;font-size:1.2rem;font-weight:900;color:#380041;flex-shrink:0;box-shadow:0 0 20px rgba(249,180,15,0.4);font-family:'Playfair Display',serif;">
-                    {{ strtoupper(substr($voter->name, 0, 1)) }}
+                    {{ strtoupper(substr($voter->full_name, 0, 1)) }}
                 </div>
                 <div>
-                    <div style="font-size:.88rem;font-weight:700;color:#fffbf0;">{{ $voter->name }}</div>
+                    <div style="font-size:.88rem;font-weight:700;color:#fffbf0;">{{ $voter->full_name }}</div>
                     <div style="font-size:.68rem;color:rgba(255,251,240,0.4);margin-top:2px;">{{ $voter->email }}</div>
                     <div style="display:inline-flex;align-items:center;gap:4px;margin-top:5px;padding:2px 9px;border-radius:20px;background:rgba(52,211,153,0.1);border:1px solid rgba(52,211,153,0.2);">
                         <span style="width:5px;height:5px;border-radius:50%;background:#34d399;display:inline-block;"></span>

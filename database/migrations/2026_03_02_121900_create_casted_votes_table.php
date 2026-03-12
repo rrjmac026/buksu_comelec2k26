@@ -10,7 +10,7 @@ return new class extends Migration
     {
         Schema::create('casted_votes', function (Blueprint $table) {
             $table->id('casted_vote_id');
-            $table->string('transaction_number')->unique()->nullable();
+            $table->string('transaction_number')->nullable()->index();
             $table->unsignedBigInteger('voter_id');
             $table->unsignedBigInteger('position_id');
             $table->unsignedBigInteger('candidate_id');

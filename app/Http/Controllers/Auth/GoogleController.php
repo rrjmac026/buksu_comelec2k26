@@ -58,6 +58,6 @@ class GoogleController extends Controller
         $request->session()->regenerate();
 
         return redirect()->route('voter.dashboard')
-            ->with('success', 'Welcome back, ' . $user->name . '!');
+            ->with('success', 'Welcome back, ' . $user->full_name . '!');
     }
 }

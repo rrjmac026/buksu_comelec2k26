@@ -381,10 +381,10 @@
                         <button @click="profileOpen = !profileOpen; notificationOpen = false"
                                 class="profile-btn border-0 bg-transparent cursor-pointer">
                             <div class="avatar-circle">
-                                <span x-text="userInitial">{{ Auth::check() ? substr(Auth::user()->name, 0, 1) : 'G' }}</span>
+                                <span x-text="userInitial">{{ Auth::check() ? substr(Auth::user()->full_name, 0, 1) : 'G' }}</span>
                             </div>
                             <div class="hidden sm:block">
-                                <span class="profile-name" x-text="userName">{{ Auth::check() ? Auth::user()->name : 'Guest' }}</span>
+                                <span class="profile-name" x-text="userName">{{ Auth::check() ? Auth::user()->full_name : 'Guest' }}</span>
                                 <span class="profile-role">{{ Auth::check() ? ucfirst(Auth::user()->role) : '' }}</span>
                             </div>
                             <i class="fas fa-chevron-down chevron-icon"
@@ -405,10 +405,10 @@
                             <!-- Hero -->
                             <div class="profile-hero">
                                 <div class="avatar-circle-lg">
-                                    <span x-text="userInitial">{{ Auth::check() ? substr(Auth::user()->name, 0, 1) : 'G' }}</span>
+                                    <span x-text="userInitial">{{ Auth::check() ? substr(Auth::user()->full_name, 0, 1) : 'G' }}</span>
                                 </div>
                                 <div>
-                                    <div class="profile-hero-name" x-text="userName">{{ Auth::check() ? Auth::user()->name : 'Guest' }}</div>
+                                    <div class="profile-hero-name" x-text="userName">{{ Auth::check() ? Auth::user()->full_name : 'Guest' }}</div>
                                     <div class="profile-hero-badge">
                                         <i class="fas fa-shield-halved"></i>
                                         {{ Auth::check() ? ucfirst(Auth::user()->role) : '' }}
@@ -475,8 +475,8 @@ function navigationComponent() {
         loading: false,
         allRead: false,
 
-        userName: @json(Auth::check() ? Auth::user()->name : 'Guest'),
-        userInitial: @json(Auth::check() ? substr(Auth::user()->name, 0, 1) : 'G'),
+        userName: @json(Auth::check() ? Auth::user()->full_name : 'Guest'),
+        userInitial: @json(Auth::check() ? substr(Auth::user()->full_name, 0, 1) : 'G'),
         unreadCount: 0,
         notifications: [],
 
