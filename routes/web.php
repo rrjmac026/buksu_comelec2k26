@@ -105,6 +105,7 @@ Route::middleware(['auth', 'voter'])->prefix('voter')->name('voter.')->group(fun
     Route::get('/vote/review',        [VoterCastedVoteController::class, 'review'])->name('vote.review');
     Route::post('/vote',              [VoterCastedVoteController::class, 'store'])->name('vote.store');
     Route::get('/vote/success',       [VoterCastedVoteController::class, 'success'])->name('vote.success');
+    Route::get('/vote/details', [VoterCastedVoteController::class, 'details'])->name('vote.details');
     // ──────────────────────────────────────────────────────────────
  
     // Feedback

@@ -299,11 +299,26 @@
             {{-- CTA / Voted date --}}
             <div style="flex-shrink:0;">
                 @if($hasVoted)
-                    <div style="padding:10px 14px;border-radius:var(--radius-sm);background:rgba(52,211,153,0.08);border:1px solid rgba(52,211,153,0.2);text-align:center;">
-                        <div style="font-size:.62rem;color:rgba(255,251,240,0.35);margin-bottom:3px;">Voted on</div>
-                        <div style="font-family:'Playfair Display',serif;font-size:.78rem;color:#34d399;font-weight:700;">
-                            {{ $myVotes->first()?->voted_at?->format('M d, Y · g:i A') ?? '—' }}
+                    <div style="display:flex;flex-direction:column;gap:8px;align-items:flex-end;">
+                        {{-- Voted-on timestamp --}}
+                        <div style="padding:10px 14px;border-radius:var(--radius-sm);background:rgba(52,211,153,0.08);border:1px solid rgba(52,211,153,0.2);text-align:center;">
+                            <div style="font-size:.62rem;color:rgba(255,251,240,0.35);margin-bottom:3px;">Voted on</div>
+                            <div style="font-family:'Playfair Display',serif;font-size:.78rem;color:#34d399;font-weight:700;">
+                                {{ $myVotes->first()?->voted_at?->format('M d, Y · g:i A') ?? '—' }}
+                            </div>
                         </div>
+                        {{-- Voting Details button --}}
+                        <a href="{{ route('voter.vote.details') }}"
+                           style="display:inline-flex;align-items:center;gap:7px;
+                                  padding:9px 18px;border-radius:var(--radius-sm);
+                                  background:linear-gradient(135deg,#f9b40f,#fcd558);
+                                  color:#380041;font-size:.72rem;font-weight:800;
+                                  text-decoration:none;white-space:nowrap;
+                                  box-shadow:0 4px 16px rgba(249,180,15,0.3),inset 0 1px 0 rgba(255,255,255,0.2);
+                                  transition:all .2s;font-family:'DM Sans',sans-serif;">
+                            <i class="fas fa-receipt" style="font-size:.7rem;"></i>
+                            View Voting Details
+                        </a>
                     </div>
                 @else
                     <a href="{{ route('voter.vote.intro') }}" class="vd-cta-btn vd-cta-btn-full">
@@ -368,6 +383,7 @@
             </div>
             @endforeach
         </div>
+
 
     {{-- ═══════════════════════════════════════════
          COUNTDOWN SCRIPT

@@ -284,6 +284,46 @@ class VoterCastedVoteController extends Controller
         return view('voter.ballot.success', compact('txn', 'votedCount'));
     }
 
+    public function details()
+    {
+        $voter = auth()->user();
+    
+        if (! $voter->hasVoted()) {
+            return redirect()->route('voter.vote.intro');
+        }
+    
+        // All positions in sort_order
+        $allPositions = Position::orderBy('sort_order')->get();
+    
+        // Load this voter's votes with candidate relationships
+        $myVotes = $voter->votes()
+            ->with(['candidate.partylist', 'candidate.college', 'position'])
+            ->get();
+    
+        // Key by position_id for easy lookup in the blade
+        $votesByPosition = $myVotes->keyBy('position_id');
+    
+        // Transaction number (all votes share one txn per our design)
+        $txn = $myVotes->first()?->transaction_number ?? '—';
+    
+        // Time voted
+        $votedAt = $myVotes->first()?->voted_at ?? now();
+    
+        // Counts
+        $totalVoted   = $myVotes->count();
+        $totalSkipped = $allPositions->count() - $totalVoted;
+    
+        return view('voter.ballot.details', compact(
+            'voter',
+            'allPositions',
+            'votesByPosition',
+            'txn',
+            'votedAt',
+            'totalVoted',
+            'totalSkipped',
+        ));
+    }
+
     // ─────────────────────────────────────────────────────────────
     // PRIVATE HELPERS
     // ─────────────────────────────────────────────────────────────

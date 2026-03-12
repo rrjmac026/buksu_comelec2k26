@@ -27,6 +27,7 @@ class DatabaseSeeder extends Seeder
             CollegeSeeder::class,
             PositionSeeder::class,
             OrganizationSeeder::class,
+            PartylistSeeder::class,
         ]);
 
         // Admin Seeders

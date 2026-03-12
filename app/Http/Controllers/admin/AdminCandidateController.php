@@ -9,7 +9,6 @@ use App\Models\Organization;
 use App\Models\Partylist;
 use App\Models\Position;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Storage;
 
 class AdminCandidateController extends Controller
 {
@@ -26,7 +25,7 @@ class AdminCandidateController extends Controller
     {
         $partylists    = Partylist::orderBy('name')->get();
         $organizations = Organization::with('college')->orderBy('name')->get();
-        $positions     = Position::orderBy('name')->get();
+        $positions     = Position::orderBy('sort_order')->get();
         $colleges      = College::orderBy('name')->get();
 
         return view('admin.candidates.create', compact('partylists', 'organizations', 'positions', 'colleges'));
@@ -38,17 +37,17 @@ class AdminCandidateController extends Controller
             'first_name'      => ['required', 'string', 'max:100'],
             'last_name'       => ['required', 'string', 'max:100'],
             'middle_name'     => ['nullable', 'string', 'max:100'],
-            'partylist_id'    => ['required', 'exists:partylists,partylist_id'],
-            'organization_id' => ['required', 'exists:organizations,organization_id'],
-            'position_id'     => ['required', 'exists:positions,position_id'],
-            'college_id'      => ['required', 'exists:colleges,college_id'],
+            'partylist_id'    => ['required', 'exists:partylists,partylist_id'],  // PK is partylist_id ✅
+            'organization_id' => ['required', 'exists:organizations,id'],         // PK is id ✅
+            'position_id'     => ['required', 'exists:positions,id'],             // PK is id ✅
+            'college_id'      => ['required', 'exists:colleges,id'],              // PK is id ✅
             'course'          => ['required', 'string', 'max:100'],
             'platform'        => ['nullable', 'string'],
             'photo'           => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:2048'],
         ]);
 
         if ($request->hasFile('photo')) {
-            $file = $request->file('photo');
+            $file     = $request->file('photo');
             $filename = time() . '_' . $file->getClientOriginalName();
             $file->move(public_path('images/candidates'), $filename);
             $validated['photo'] = $filename;
@@ -56,13 +55,13 @@ class AdminCandidateController extends Controller
 
         Candidate::create($validated);
 
-        return redirect()->route('candidates.index')
+        return redirect()->route('admin.candidates.index')
             ->with('success', 'Candidate created successfully.');
     }
 
     public function show(Candidate $candidate)
     {
-        $candidate->load(['partylist', 'organization', 'position', 'college', 'castedVotes']);
+        $candidate->load(['partylist', 'organization', 'position', 'college', 'votes']);
 
         return view('admin.candidates.show', compact('candidate'));
     }
@@ -71,7 +70,7 @@ class AdminCandidateController extends Controller
     {
         $partylists    = Partylist::orderBy('name')->get();
         $organizations = Organization::with('college')->orderBy('name')->get();
-        $positions     = Position::orderBy('name')->get();
+        $positions     = Position::orderBy('sort_order')->get();
         $colleges      = College::orderBy('name')->get();
 
         return view('admin.candidates.edit', compact('candidate', 'partylists', 'organizations', 'positions', 'colleges'));
@@ -83,25 +82,22 @@ class AdminCandidateController extends Controller
             'first_name'      => ['required', 'string', 'max:100'],
             'last_name'       => ['required', 'string', 'max:100'],
             'middle_name'     => ['nullable', 'string', 'max:100'],
-            'partylist_id'    => ['required', 'exists:partylists,partylist_id'],
-            'organization_id' => ['required', 'exists:organizations,organization_id'],
-            'position_id'     => ['required', 'exists:positions,position_id'],
-            'college_id'      => ['required', 'exists:colleges,college_id'],
+            'partylist_id'    => ['required', 'exists:partylists,partylist_id'],  // PK is partylist_id ✅
+            'organization_id' => ['required', 'exists:organizations,id'],         // PK is id ✅
+            'position_id'     => ['required', 'exists:positions,id'],             // PK is id ✅
+            'college_id'      => ['required', 'exists:colleges,id'],              // PK is id ✅
             'course'          => ['required', 'string', 'max:100'],
             'platform'        => ['nullable', 'string'],
             'photo'           => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:2048'],
         ]);
 
         if ($request->hasFile('photo')) {
-            // Delete old photo if it exists
             if ($candidate->photo) {
                 $oldPath = public_path('images/candidates/' . $candidate->photo);
-                if (file_exists($oldPath)) {
-                    unlink($oldPath);
-                }
+                if (file_exists($oldPath)) unlink($oldPath);
             }
 
-            $file = $request->file('photo');
+            $file     = $request->file('photo');
             $filename = time() . '_' . $file->getClientOriginalName();
             $file->move(public_path('images/candidates'), $filename);
             $validated['photo'] = $filename;
@@ -109,22 +105,20 @@ class AdminCandidateController extends Controller
 
         $candidate->update($validated);
 
-        return redirect()->route('candidates.index')
+        return redirect()->route('admin.candidates.index')
             ->with('success', 'Candidate updated successfully.');
     }
 
     public function destroy(Candidate $candidate)
     {
         if ($candidate->photo) {
-            $photoPath = public_path('images/candidates/' . $candidate->photo);
-            if (file_exists($photoPath)) {
-                unlink($photoPath);
-            }
+            $path = public_path('images/candidates/' . $candidate->photo);
+            if (file_exists($path)) unlink($path);
         }
 
         $candidate->delete();
 
-        return redirect()->route('candidates.index')
+        return redirect()->route('admin.candidates.index')
             ->with('success', 'Candidate deleted successfully.');
     }
 }
