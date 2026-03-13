@@ -116,7 +116,7 @@
 
 <a href="{{ route('admin.votes.index') }}"
    class="nav-link {{ $currentRoute === 'admin.votes.index' ? 'active' : '' }}">
-    <div class="nav-link-icon"><i class="fas fa-ballot-check"></i></div>
+    <div class="nav-link-icon"><i class="fas fa-scroll"></i></div>
     <div class="nav-link-text">
         <span class="nav-link-label">Vote Logs</span>
         <span class="nav-link-sub">All casted vote records</span>

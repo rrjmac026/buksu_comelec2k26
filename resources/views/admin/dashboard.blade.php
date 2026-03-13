@@ -1,540 +1,1032 @@
 <x-app-layout>
-    {{-- Google Fonts --}}
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;800;900&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,800;0,900;1,700&family=Barlow+Condensed:wght@300;400;500;600;700;800&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
 
-    {{-- Welcome Section --}}
-    <div class="gc p-6 mb-6" style="background:linear-gradient(135deg,rgba(56,0,65,0.85),rgba(82,0,96,0.75));border:1px solid rgba(249,180,15,0.2);animation:fadeInUp .5s ease both;">
-        <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px;">
-            <div>
-                <h2 style="font-family:'Playfair Display',serif;font-size:1.5rem;font-weight:900;color:#fffbf0;margin:0 0 8px 0;">Welcome back, {{ auth()->user()->full_name }}!</h2>
-                <p style="font-size:0.85rem;color:rgba(255,251,240,0.6);margin:0;line-height:1.6;">Here's an overview of your election management dashboard. Monitor voting activity, manage candidates, and track system performance in real-time.</p>
-            </div>
-            <div style="padding:12px 20px;border-radius:12px;background:rgba(249,180,15,0.1);border:1px solid rgba(249,180,15,0.25);text-align:center;flex-shrink:0;">
-                <div style="font-family:'Playfair Display',serif;font-size:0.95rem;font-weight:800;background:linear-gradient(135deg,#f9b40f,#fcd558);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;">{{ now()->format('l, F j, Y') }}</div>
-            </div>
-        </div>
+<style>
+/* ═══════════════════════════════════════════
+   DESIGN TOKENS
+═══════════════════════════════════════════ */
+:root {
+  --g:        #f9b40f;   /* gold */
+  --g-lt:     #fcd558;   /* gold light */
+  --g-dk:     #c98a00;   /* gold dark */
+  --g-pale:   #fef3c7;
+  --v:        #380041;   /* violet */
+  --v-md:     #520060;
+  --v-lt:     #6b0080;
+  --v-xl:     #1e0025;   /* deepest */
+  --ink:      #0e0013;   /* near-black */
+  --cream:    #fffbf0;
+  --glass:    rgba(22,0,28,0.72);
+  --glass2:   rgba(30,0,38,0.82);
+  --b:        rgba(249,180,15,0.14);   /* border */
+  --b2:       rgba(249,180,15,0.07);
+  --b3:       rgba(249,180,15,0.04);
+  --muted:    rgba(255,251,240,0.50);
+  --dim:      rgba(255,251,240,0.24);
+  --green:    #22c55e;
+  --red:      #ef4444;
+}
+
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+
+/* ═══════════════════════════════════════════
+   PAGE SHELL + ATMOSPHERE
+═══════════════════════════════════════════ */
+.wrap{
+  font-family:'DM Sans',sans-serif;
+  color:var(--cream);
+  min-height:100vh;
+  position:relative;
+  padding:0 0 60px;
+  background:var(--ink);
+  overflow-x:hidden;
+}
+
+/* Layered ambient background */
+.wrap::before{
+  content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
+  background:
+    radial-gradient(ellipse 800px 600px at 0% 0%, rgba(56,0,65,.9) 0%, transparent 60%),
+    radial-gradient(ellipse 600px 500px at 100% 100%, rgba(82,0,96,.7) 0%, transparent 55%),
+    radial-gradient(ellipse 400px 300px at 55% 30%, rgba(249,180,15,.04) 0%, transparent 60%),
+    radial-gradient(ellipse 300px 400px at 15% 70%, rgba(56,0,65,.5) 0%, transparent 60%);
+}
+
+/* Noise grain */
+.wrap::after{
+  content:'';position:fixed;inset:0;pointer-events:none;z-index:0;opacity:.03;
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size:220px;
+}
+
+/* Fine grid */
+.grid-bg{
+  position:fixed;inset:0;z-index:0;pointer-events:none;
+  background-image:
+    linear-gradient(rgba(249,180,15,.03) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(249,180,15,.03) 1px,transparent 1px);
+  background-size:52px 52px;
+}
+
+/* Diagonal accent lines (decorative) */
+.diag-lines{
+  position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden;
+}
+.diag-lines::before{
+  content:'';position:absolute;top:-200px;right:-100px;
+  width:1px;height:800px;
+  background:linear-gradient(180deg,transparent,rgba(249,180,15,.12),transparent);
+  transform:rotate(25deg);transform-origin:top center;
+}
+.diag-lines::after{
+  content:'';position:absolute;bottom:-200px;left:-100px;
+  width:1px;height:800px;
+  background:linear-gradient(180deg,transparent,rgba(249,180,15,.08),transparent);
+  transform:rotate(25deg);transform-origin:bottom center;
+}
+
+.z1{position:relative;z-index:1;}
+
+/* ═══════════════════════════════════════════
+   ANIMATIONS
+═══════════════════════════════════════════ */
+@keyframes fadeUp   {from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
+@keyframes fadeIn   {from{opacity:0}to{opacity:1}}
+@keyframes glow     {0%,100%{box-shadow:0 0 8px rgba(249,180,15,.4)}50%{box-shadow:0 0 20px rgba(249,180,15,1),0 0 40px rgba(249,180,15,.3)}}
+@keyframes gpulse   {0%,100%{opacity:1}50%{opacity:.3}}
+@keyframes tick     {from{transform:translateX(0)}to{transform:translateX(-50%)}}
+@keyframes shimmer  {from{transform:translateX(-200%)}to{transform:translateX(200%)}}
+@keyframes orb1     {from{transform:translate(0,0)scale(1)}to{transform:translate(60px,40px)scale(1.06)}}
+@keyframes orb2     {from{transform:translate(0,0)scale(1)}to{transform:translate(-50px,-40px)scale(1.08)}}
+@keyframes countIn  {from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+@keyframes borderPulse{0%,100%{border-color:rgba(249,180,15,.14)}50%{border-color:rgba(249,180,15,.35)}}
+@keyframes slideIn  {from{opacity:0;transform:translateX(-10px)}to{opacity:1;transform:translateX(0)}}
+
+.fu{opacity:0;animation:fadeUp .7s cubic-bezier(.22,1,.36,1) forwards}
+.d0{animation-delay:.04s}.d1{animation-delay:.10s}.d2{animation-delay:.17s}
+.d3{animation-delay:.24s}.d4{animation-delay:.31s}.d5{animation-delay:.38s}
+.d6{animation-delay:.45s}.d7{animation-delay:.52s}.d8{animation-delay:.59s}
+
+/* ═══════════════════════════════════════════
+   FLOATING ORBS
+═══════════════════════════════════════════ */
+.orb{position:fixed;border-radius:50%;pointer-events:none;z-index:0;filter:blur(90px);}
+.orb1{width:700px;height:700px;top:-250px;left:-200px;background:radial-gradient(circle,rgba(56,0,65,.85),rgba(82,0,96,.5),transparent 70%);animation:orb1 20s ease-in-out infinite alternate;opacity:.6;}
+.orb2{width:500px;height:500px;bottom:-150px;right:-150px;background:radial-gradient(circle,rgba(249,180,15,.10),rgba(82,0,96,.35),transparent 70%);animation:orb2 25s ease-in-out infinite alternate;opacity:.55;}
+.orb3{width:350px;height:350px;top:45%;left:58%;background:radial-gradient(circle,rgba(249,180,15,.07),rgba(56,0,65,.2),transparent 70%);animation:orb1 18s ease-in-out 5s infinite alternate;opacity:.5;}
+
+/* ═══════════════════════════════════════════
+   GLASS SURFACE (base card DNA)
+═══════════════════════════════════════════ */
+.gs{
+  background:var(--glass);
+  backdrop-filter:blur(24px) saturate(1.4);
+  -webkit-backdrop-filter:blur(24px) saturate(1.4);
+  border:1px solid var(--b);
+  border-radius:20px;
+  position:relative;overflow:hidden;
+}
+.gs::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:1px;pointer-events:none;
+  background:linear-gradient(90deg,transparent 0%,rgba(249,180,15,.6) 40%,rgba(249,180,15,.3) 60%,transparent 100%);
+}
+/* Shimmer on hover */
+.gs::after{
+  content:'';position:absolute;top:0;left:0;width:40%;height:100%;
+  background:linear-gradient(90deg,transparent,rgba(249,180,15,.03),transparent);
+  transform:translateX(-200%);pointer-events:none;transition:none;
+}
+.gs:hover::after{animation:shimmer 1s ease forwards;}
+.gs:hover{border-color:rgba(249,180,15,.30);box-shadow:0 20px 60px rgba(0,0,0,.5),0 0 0 1px rgba(249,180,15,.08) inset;}
+
+/* ═══════════════════════════════════════════
+   LIVE TICKER
+═══════════════════════════════════════════ */
+.ticker-bar{
+  background:rgba(14,0,19,.9);
+  border-bottom:1px solid var(--b);
+  height:36px;overflow:hidden;display:flex;align-items:center;
+  position:relative;
+}
+.ticker-label{
+  flex-shrink:0;padding:0 18px;
+  font-family:'Barlow Condensed',sans-serif;
+  font-size:.65rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;
+  color:var(--g);background:rgba(249,180,15,.1);border-right:1px solid var(--b);
+  height:100%;display:flex;align-items:center;gap:8px;white-space:nowrap;
+}
+.ticker-dot{width:6px;height:6px;border-radius:50%;background:var(--green);animation:gpulse 1.2s infinite;box-shadow:0 0 8px var(--green);}
+.ticker-track{overflow:hidden;flex:1;}
+.ticker-inner{
+  display:flex;align-items:center;gap:48px;
+  animation:tick 28s linear infinite;
+  white-space:nowrap;width:max-content;
+}
+.ticker-item{
+  font-family:'Barlow Condensed',sans-serif;
+  font-size:.72rem;font-weight:500;letter-spacing:.04em;color:var(--muted);
+  display:flex;align-items:center;gap:10px;
+}
+.ticker-item .ti-val{color:var(--g);font-weight:700;font-size:.78rem;}
+.ticker-sep{color:rgba(249,180,15,.2);font-size:.8rem;}
+
+/* ═══════════════════════════════════════════
+   PAGE HEADER — asymmetric hero layout
+═══════════════════════════════════════════ */
+.page-header{
+  padding:36px 40px 32px;
+  display:grid;
+  grid-template-columns:1fr auto;
+  align-items:end;
+  gap:32px;
+  border-bottom:1px solid var(--b2);
+}
+.eyebrow{
+  display:inline-flex;align-items:center;gap:10px;
+  font-family:'Barlow Condensed',sans-serif;
+  font-size:.65rem;font-weight:700;letter-spacing:.15em;text-transform:uppercase;
+  color:var(--g);margin-bottom:14px;
+}
+.eyebrow-line{width:32px;height:1px;background:linear-gradient(90deg,var(--g),transparent);}
+.eyebrow-dot{width:5px;height:5px;border-radius:50%;background:var(--g);animation:glow 2s ease-in-out infinite;flex-shrink:0;}
+.page-h1{
+  font-family:'Playfair Display',serif;
+  font-size:clamp(2.4rem,4vw,3.6rem);font-weight:900;
+  line-height:.95;letter-spacing:-.03em;color:var(--cream);
+}
+.page-h1 em{
+  font-style:italic;
+  background:linear-gradient(110deg,var(--g) 0%,var(--g-lt) 50%,#fff6c8 100%);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+}
+.header-sub{
+  font-size:.8rem;color:var(--muted);font-weight:300;margin-top:12px;
+  line-height:1.6;max-width:460px;
+}
+
+/* Header right — big turnout focal number */
+.turnout-hero{
+  text-align:right;
+  padding:24px 28px;
+  background:rgba(249,180,15,.05);
+  border:1px solid var(--b);
+  border-radius:16px;
+  position:relative;overflow:hidden;
+  min-width:240px;
+}
+.turnout-hero::before{
+  content:'TURNOUT';
+  position:absolute;bottom:-8px;right:16px;
+  font-family:'Barlow Condensed',sans-serif;
+  font-size:3.5rem;font-weight:800;letter-spacing:.06em;
+  color:rgba(249,180,15,.04);line-height:1;pointer-events:none;
+}
+.th-label{
+  font-family:'Barlow Condensed',sans-serif;
+  font-size:.6rem;font-weight:700;letter-spacing:.15em;text-transform:uppercase;
+  color:rgba(249,180,15,.5);margin-bottom:6px;
+}
+.th-number{
+  font-family:'Playfair Display',serif;
+  font-size:3.8rem;font-weight:900;line-height:1;
+  background:linear-gradient(135deg,var(--g),var(--g-lt),#fff3c4);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+  letter-spacing:-.04em;
+}
+.th-sub{font-size:.72rem;color:var(--muted);margin-top:8px;line-height:1.4;}
+.th-bar{height:3px;background:rgba(249,180,15,.1);border-radius:99px;margin-top:14px;}
+.th-fill{height:100%;border-radius:99px;background:linear-gradient(90deg,var(--g),var(--g-lt));transition:width 1s cubic-bezier(.4,0,.2,1);}
+.live-chip{
+  display:inline-flex;align-items:center;gap:6px;
+  background:rgba(34,197,94,.1);border:1px solid rgba(34,197,94,.25);
+  border-radius:999px;padding:3px 12px;margin-bottom:10px;
+  font-family:'Barlow Condensed',sans-serif;
+  font-size:.62rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;
+  color:var(--green);
+}
+.live-dot2{width:6px;height:6px;border-radius:50%;background:var(--green);animation:gpulse 1.3s infinite;box-shadow:0 0 6px var(--green);}
+
+/* ═══════════════════════════════════════════
+   CONTENT AREA
+═══════════════════════════════════════════ */
+.content{padding:28px 40px 0;}
+
+/* ═══════════════════════════════════════════
+   BENTO STAT GRID
+═══════════════════════════════════════════ */
+.bento{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  grid-template-rows:auto auto;
+  gap:12px;
+  margin-bottom:20px;
+}
+
+/* Individual stat tile */
+.tile{
+  padding:22px 22px 18px;
+  cursor:default;
+  transition:transform .22s cubic-bezier(.4,0,.2,1),box-shadow .22s;
+}
+.tile:hover{transform:translateY(-4px);box-shadow:0 24px 60px rgba(0,0,0,.5),0 0 0 1px rgba(249,180,15,.2) inset;}
+
+/* Featured large tile */
+.tile-lg{
+  grid-column:span 2;
+  display:grid;grid-template-columns:1fr 1fr;
+  gap:0;padding:0;overflow:hidden;
+}
+.tile-lg-l{padding:26px 26px 22px;border-right:1px solid var(--b2);}
+.tile-lg-r{padding:26px 26px 22px;display:flex;flex-direction:column;justify-content:space-between;}
+
+.tile-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:16px;}
+.tile-icon{
+  width:40px;height:40px;border-radius:12px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:.9rem;
+  background:rgba(249,180,15,.09);color:var(--g);
+  border:1px solid rgba(249,180,15,.18);
+  transition:all .22s;
+}
+.tile:hover .tile-icon{
+  background:linear-gradient(135deg,var(--g),var(--g-lt));
+  color:var(--v);border-color:var(--g);
+  box-shadow:0 4px 20px rgba(249,180,15,.4);
+}
+.tile-badge{
+  font-family:'Barlow Condensed',sans-serif;
+  font-size:.58rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;
+  padding:3px 10px;border-radius:999px;
+  color:rgba(249,180,15,.7);background:rgba(249,180,15,.09);border:1px solid rgba(249,180,15,.18);
+}
+.tile-num{
+  font-family:'Playfair Display',serif;
+  font-size:2.4rem;font-weight:900;line-height:1;letter-spacing:-.04em;
+  background:linear-gradient(135deg,var(--g),var(--g-lt),#fff3c4);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+  margin-bottom:5px;
+}
+.tile-label{
+  font-family:'Barlow Condensed',sans-serif;
+  font-size:.65rem;font-weight:600;letter-spacing:.08em;text-transform:uppercase;
+  color:var(--muted);
+}
+.tile-sub{
+  font-size:.62rem;color:var(--dim);
+  margin-top:10px;padding-top:10px;border-top:1px solid var(--b2);
+  display:flex;align-items:center;gap:6px;
+}
+.tile-sub-dot{width:4px;height:4px;border-radius:50%;background:var(--g);opacity:.5;flex-shrink:0;}
+
+/* Mini sparkline placeholder bars */
+.sparkline{display:flex;align-items:flex-end;gap:3px;height:28px;margin-top:10px;}
+.spark-bar{
+  flex:1;border-radius:3px 3px 0 0;
+  background:rgba(249,180,15,.2);
+  transition:height .4s,background .2s;
+  min-height:3px;
+}
+.spark-bar.active{background:var(--g);}
+
+/* ═══════════════════════════════════════════
+   MAIN ANALYTICS PANEL
+═══════════════════════════════════════════ */
+.analytics-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr 280px;
+  gap:12px;
+  margin-bottom:20px;
+}
+
+.panel-head{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:18px 22px 14px;
+  border-bottom:1px solid var(--b2);
+}
+.panel-title{
+  font-family:'Playfair Display',serif;
+  font-size:.92rem;font-weight:800;color:var(--cream);
+}
+.panel-eye{
+  font-family:'Barlow Condensed',sans-serif;
+  font-size:.58rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;
+  color:rgba(249,180,15,.4);margin-bottom:2px;
+}
+
+/* Charts */
+.chart-wrap{padding:16px 20px 18px;}
+.chart-label{
+  font-family:'Barlow Condensed',sans-serif;
+  font-size:.6rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;
+  color:rgba(249,180,15,.4);margin-bottom:10px;
+}
+
+/* KPI row inside analytics */
+.kpi-strip{
+  display:grid;grid-template-columns:repeat(3,1fr);
+  border-bottom:1px solid var(--b2);
+}
+.kpi-cell{padding:14px 20px;border-right:1px solid var(--b2);position:relative;}
+.kpi-cell:last-child{border-right:none;}
+.kpi-num{
+  font-family:'Playfair Display',serif;
+  font-size:1.7rem;font-weight:900;line-height:1;letter-spacing:-.04em;
+  background:linear-gradient(135deg,var(--g),var(--g-lt));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+}
+.kpi-lbl{
+  font-family:'Barlow Condensed',sans-serif;
+  font-size:.62rem;font-weight:600;letter-spacing:.08em;text-transform:uppercase;
+  color:var(--dim);margin-top:3px;
+}
+.kpi-chip{
+  position:absolute;top:12px;right:12px;
+  font-family:'Barlow Condensed',sans-serif;
+  font-size:.55rem;font-weight:700;letter-spacing:.05em;
+  padding:2px 7px;border-radius:999px;
+  color:var(--green);background:rgba(34,197,94,.10);border:1px solid rgba(34,197,94,.22);
+}
+
+/* ═══════════════════════════════════════════
+   DOUGHNUT PANEL (right of charts)
+═══════════════════════════════════════════ */
+.donut-panel{
+  display:flex;flex-direction:column;
+  align-items:center;justify-content:center;
+  padding:18px 16px;gap:16px;
+}
+.donut-wrap{position:relative;width:130px;height:130px;flex-shrink:0;}
+.donut-center{
+  position:absolute;inset:0;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  pointer-events:none;
+}
+.donut-pct{
+  font-family:'Playfair Display',serif;
+  font-size:1.25rem;font-weight:900;line-height:1;
+  background:linear-gradient(135deg,var(--g),var(--g-lt));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+}
+.donut-sub{
+  font-family:'Barlow Condensed',sans-serif;
+  font-size:.58rem;font-weight:600;letter-spacing:.08em;text-transform:uppercase;
+  color:var(--dim);margin-top:3px;
+}
+.donut-legend{width:100%;display:flex;flex-direction:column;gap:8px;}
+.dl-row{display:flex;align-items:center;justify-content:space-between;}
+.dl-label{
+  font-family:'Barlow Condensed',sans-serif;
+  font-size:.65rem;font-weight:600;letter-spacing:.05em;
+  color:var(--muted);display:flex;align-items:center;gap:8px;
+}
+.dl-dot{width:8px;height:8px;border-radius:2px;flex-shrink:0;}
+.dl-val{
+  font-family:'Playfair Display',serif;
+  font-size:.75rem;font-weight:700;color:var(--g);
+}
+.still-box{
+  width:100%;background:rgba(249,180,15,.05);
+  border:1px solid var(--b);border-radius:10px;
+  padding:8px 12px;text-align:center;
+}
+.still-lbl{
+  font-family:'Barlow Condensed',sans-serif;
+  font-size:.57rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;
+  color:var(--dim);
+}
+.still-val{
+  font-family:'Playfair Display',serif;
+  font-size:.95rem;font-weight:900;
+  background:linear-gradient(135deg,var(--g),var(--g-lt));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+  margin-top:2px;display:block;
+}
+
+/* ═══════════════════════════════════════════
+   BOTTOM ROW
+═══════════════════════════════════════════ */
+.bottom-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr 1fr;
+  gap:12px;
+}
+
+/* Activity feed */
+.feed-head{padding:18px 20px 14px;border-bottom:1px solid var(--b2);display:flex;align-items:center;justify-content:space-between;flex-shrink:0;}
+.feed-scroll{overflow-y:auto;max-height:310px;padding:10px 14px;scrollbar-width:thin;scrollbar-color:rgba(249,180,15,.18) transparent;}
+.feed-scroll::-webkit-scrollbar{width:3px;}
+.feed-scroll::-webkit-scrollbar-thumb{background:rgba(249,180,15,.2);border-radius:99px;}
+
+.feed-item{
+  display:flex;align-items:flex-start;gap:12px;
+  padding:10px 10px;border-radius:12px;
+  background:rgba(249,180,15,.025);
+  border:1px solid rgba(249,180,15,.06);
+  margin-bottom:7px;
+  transition:all .2s;position:relative;overflow:hidden;
+}
+.feed-item::before{
+  content:'';position:absolute;left:0;top:0;bottom:0;width:2px;
+  background:linear-gradient(180deg,var(--g),rgba(249,180,15,.2));
+  border-radius:0 1px 1px 0;
+}
+.feed-item:hover{background:rgba(249,180,15,.06);border-color:rgba(249,180,15,.2);transform:translateX(2px);}
+.feed-av{
+  width:34px;height:34px;border-radius:10px;flex-shrink:0;
+  background:linear-gradient(135deg,var(--v-md),var(--v-lt));
+  border:1px solid rgba(249,180,15,.22);
+  display:flex;align-items:center;justify-content:center;
+  font-family:'Playfair Display',serif;font-size:.75rem;font-weight:900;color:var(--g);
+}
+.feed-name{font-size:.72rem;font-weight:600;color:var(--cream);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:160px;}
+.feed-txn{font-family:monospace;font-size:.58rem;color:rgba(249,180,15,.45);margin-top:2px;}
+.feed-time{font-size:.6rem;color:var(--dim);margin-top:2px;}
+.feed-status{width:7px;height:7px;border-radius:50%;background:var(--green);box-shadow:0 0 8px rgba(34,197,94,.7);flex-shrink:0;margin-top:4px;}
+
+.feed-footer{border-top:1px solid var(--b2);padding:10px 14px;flex-shrink:0;}
+.btn-all{
+  display:flex;align-items:center;justify-content:center;gap:6px;
+  width:100%;padding:9px;border-radius:10px;text-decoration:none;
+  background:rgba(249,180,15,.07);border:1px solid rgba(249,180,15,.2);
+  color:var(--g);
+  font-family:'Barlow Condensed',sans-serif;
+  font-size:.68rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;
+  transition:all .22s;
+}
+.btn-all:hover{background:rgba(249,180,15,.15);border-color:rgba(249,180,15,.4);transform:translateY(-1px);}
+
+/* Team card */
+.team-panel{padding:18px 20px 14px;}
+.m-item{display:flex;align-items:center;gap:12px;padding:9px 8px;border-radius:12px;transition:background .2s;cursor:default;}
+.m-item:hover{background:rgba(249,180,15,.05);}
+.m-av{
+  width:36px;height:36px;border-radius:11px;flex-shrink:0;
+  display:flex;align-items:center;justify-content:center;
+  font-family:'Playfair Display',serif;font-size:.78rem;font-weight:900;
+  background:linear-gradient(135deg,var(--v-md),var(--v-lt));
+  border:1px solid rgba(249,180,15,.22);color:var(--g);
+  position:relative;
+}
+.m-av::after{
+  content:'';position:absolute;bottom:-2px;right:-2px;
+  width:9px;height:9px;border-radius:50%;
+  background:var(--green);border:2px solid var(--ink);
+  box-shadow:0 0 6px rgba(34,197,94,.6);
+}
+.m-name{font-size:.73rem;font-weight:600;color:var(--cream);}
+.m-role{font-family:'Barlow Condensed',sans-serif;font-size:.6rem;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:rgba(249,180,15,.45);margin-top:1px;}
+
+/* Leaderboard */
+.lb-panel{padding:18px 20px 14px;}
+.lb-item{
+  display:flex;align-items:center;gap:12px;
+  padding:12px 10px;border-radius:12px;
+  transition:all .2s;position:relative;overflow:hidden;
+}
+.lb-item:hover{background:rgba(249,180,15,.04);}
+.lb-item + .lb-item{border-top:1px solid var(--b2);}
+.lb-rank{
+  font-family:'Playfair Display',serif;
+  font-size:.9rem;font-weight:900;width:22px;text-align:center;flex-shrink:0;
+  color:var(--dim);
+}
+.lb-rank.r1{
+  background:linear-gradient(135deg,var(--g),var(--g-lt));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+  font-size:1.1rem;
+}
+.lb-rank.r2{color:rgba(255,251,240,.4);}
+.lb-rank.r3{color:#c97d3a;}
+.lb-av{
+  width:40px;height:40px;border-radius:12px;flex-shrink:0;
+  background:linear-gradient(135deg,var(--v-md),var(--v-lt));
+  border:1px solid rgba(249,180,15,.18);
+  display:flex;align-items:center;justify-content:center;
+  font-family:'Playfair Display',serif;font-size:.85rem;font-weight:900;color:var(--g);
+}
+.lb-name{font-size:.73rem;font-weight:600;color:var(--cream);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.lb-pos{font-family:'Barlow Condensed',sans-serif;font-size:.6rem;font-weight:600;letter-spacing:.05em;text-transform:uppercase;color:var(--dim);margin-top:2px;}
+.lb-prog{height:2px;border-radius:99px;background:rgba(249,180,15,.08);margin-top:6px;}
+.lb-fill{height:100%;border-radius:99px;background:linear-gradient(90deg,var(--g),rgba(249,180,15,.3));transition:width 1s;}
+.lb-votes{
+  font-family:'Playfair Display',serif;
+  font-size:1.05rem;font-weight:900;flex-shrink:0;text-align:right;
+  background:linear-gradient(135deg,var(--g),var(--g-lt));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+}
+.lb-pct{font-family:'Barlow Condensed',sans-serif;font-size:.58rem;color:var(--dim);text-align:right;margin-top:2px;}
+
+/* System health */
+.sys-panel{padding:18px 20px;}
+.sys-ring-wrap{width:100px;height:100px;margin:14px auto 10px;position:relative;}
+.sys-ring-wrap svg{transform:rotate(-90deg);}
+.sys-center{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;}
+.sys-pct{font-family:'Playfair Display',serif;font-size:1.1rem;font-weight:900;background:linear-gradient(135deg,var(--g),var(--g-lt));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.sys-word{font-family:'Barlow Condensed',sans-serif;font-size:.58rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--green);margin-top:2px;}
+.sys-row{display:flex;align-items:center;gap:8px;margin-top:9px;}
+.sys-lbl{font-family:'Barlow Condensed',sans-serif;font-size:.62rem;font-weight:600;letter-spacing:.05em;text-transform:uppercase;color:var(--dim);flex:none;width:62px;}
+.sys-track{flex:1;height:3px;background:rgba(249,180,15,.08);border-radius:99px;}
+.sys-fill{height:100%;border-radius:99px;background:linear-gradient(90deg,var(--g),var(--g-lt));transition:width .8s;}
+.sys-val{font-family:'Barlow Condensed',sans-serif;font-size:.65rem;font-weight:700;color:var(--g);flex:none;}
+
+/* Divider util */
+.hdiv{border-top:1px solid var(--b2);margin-top:10px;padding-top:10px;display:flex;justify-content:space-between;align-items:center;}
+.link-gold{font-family:'Barlow Condensed',sans-serif;font-size:.65rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--g);text-decoration:none;transition:color .2s;}
+.link-gold:hover{color:var(--g-lt);}
+</style>
+
+{{-- FLOATING ORBS --}}
+<div class="orb orb1"></div>
+<div class="orb orb2"></div>
+<div class="orb orb3"></div>
+<div class="grid-bg"></div>
+<div class="diag-lines"></div>
+
+<div class="wrap">
+
+  {{-- ══ LIVE TICKER ══ --}}
+  <div class="ticker-bar z1">
+    <div class="ticker-label">
+      <span class="ticker-dot"></span>
+      LIVE FEED
+    </div>
+    <div class="ticker-track">
+      <div class="ticker-inner" id="ticker-inner">
+        <div class="ticker-item">Election Status <span class="ti-val" id="tk-status">—</span></div>
+        <span class="ticker-sep">·</span>
+        <div class="ticker-item">Total Voters <span class="ti-val" id="tk-voters">{{ $stats['total_voters'] }}</span></div>
+        <span class="ticker-sep">·</span>
+        <div class="ticker-item">Votes Cast <span class="ti-val" id="tk-votes">{{ $stats['total_votes'] }}</span></div>
+        <span class="ticker-sep">·</span>
+        <div class="ticker-item">Turnout <span class="ti-val" id="tk-turnout">{{ $turnoutPct }}%</span></div>
+        <span class="ticker-sep">·</span>
+        <div class="ticker-item">Candidates <span class="ti-val">{{ $stats['total_candidates'] }}</span></div>
+        <span class="ticker-sep">·</span>
+        <div class="ticker-item">Positions <span class="ti-val">{{ $stats['total_positions'] }}</span></div>
+        <span class="ticker-sep">·</span>
+        <div class="ticker-item">Party Lists <span class="ti-val">{{ $stats['total_partylists'] }}</span></div>
+        <span class="ticker-sep">·</span>
+        <div class="ticker-item">Colleges <span class="ti-val">{{ $stats['total_colleges'] }}</span></div>
+        <span class="ticker-sep">·</span>
+        {{-- Duplicate for seamless loop --}}
+        <div class="ticker-item">Election Status <span class="ti-val">—</span></div>
+        <span class="ticker-sep">·</span>
+        <div class="ticker-item">Total Voters <span class="ti-val">{{ $stats['total_voters'] }}</span></div>
+        <span class="ticker-sep">·</span>
+        <div class="ticker-item">Votes Cast <span class="ti-val">{{ $stats['total_votes'] }}</span></div>
+        <span class="ticker-sep">·</span>
+        <div class="ticker-item">Turnout <span class="ti-val">{{ $turnoutPct }}%</span></div>
+        <span class="ticker-sep">·</span>
+        <div class="ticker-item">Candidates <span class="ti-val">{{ $stats['total_candidates'] }}</span></div>
+        <span class="ticker-sep">·</span>
+        <div class="ticker-item">Positions <span class="ti-val">{{ $stats['total_positions'] }}</span></div>
+      </div>
+    </div>
+  </div>
+
+  {{-- ══ PAGE HEADER ══ --}}
+  <div class="page-header z1 fu d0">
+    <div>
+      <div class="eyebrow">
+        <span class="eyebrow-line"></span>
+        <span class="eyebrow-dot"></span>
+        Election Management System
+      </div>
+      <h1 class="page-h1">Admin <em>Command</em><br>Dashboard</h1>
+      <p class="header-sub">
+        Welcome back, <strong style="color:var(--g);font-weight:600;">{{ auth()->user()->full_name }}</strong>.
+        Here's your live election overview for {{ now()->format('l, F j, Y') }}.
+      </p>
     </div>
 
-    <style>
-        * { box-sizing: border-box; }
-        :root {
-            --glass:        rgba(30, 0, 37, 0.7);
-            --glass-border: rgba(249, 180, 15, 0.15);
-            --glass-bright: rgba(30, 0, 37, 0.85);
-            --text-primary: #fffbf0;
-            --text-muted:   rgba(255, 251, 240, 0.35);
-            --gold:         #f9b40f;
-        }
-        @keyframes pulse    { 0%,100%{opacity:1} 50%{opacity:.4} }
-        @keyframes fadeInUp { from{opacity:0;transform:translateY(16px)} to{opacity:1;transform:translateY(0)} }
+    {{-- Big focal turnout number --}}
+    <div class="turnout-hero">
+      <div class="live-chip"><span class="live-dot2"></span>Live · Auto-refresh 10s</div>
+      <div class="th-label">Voter Turnout</div>
+      <div id="th-pct" class="th-number">{{ $turnoutPct }}%</div>
+      <div class="th-sub">
+        <span id="th-voted">{{ number_format($votedCount) }}</span> of
+        <span id="th-total">{{ number_format($stats['total_voters']) }}</span> voters
+      </div>
+      <div class="th-bar">
+        <div id="th-bar-fill" class="th-fill" style="width:{{ $turnoutPct }}%"></div>
+      </div>
+    </div>
+  </div>
 
-        body, .dashboard-wrap { font-family: 'DM Sans', sans-serif; }
+  <div class="content z1">
 
-        .gc {
-            background: var(--glass);
-            backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
-            border: 1px solid var(--glass-border);
-            border-radius: 16px;
-            box-shadow: 0 4px 30px rgba(0,0,0,0.3), inset 0 1px 0 rgba(249,180,15,0.05);
-            animation: fadeInUp .5s ease both;
-            position: relative;
-        }
-        .gc::before {
-            content:''; position:absolute; top:0; left:0; right:0; height:1px;
-            background:linear-gradient(90deg,transparent,rgba(249,180,15,0.3),transparent);
-            border-radius:16px 16px 0 0; pointer-events:none;
-        }
+  {{-- ══ BENTO STAT TILES ══ --}}
+  @php
+  $tiles = [
+    ['id'=>'st-voters',    'n'=>$stats['total_voters'],     'lbl'=>'Total Voters',   'icon'=>'fa-users',            'badge'=>'Registered', 'sub'=>'Registered accounts', 'delay'=>'d1'],
+    ['id'=>'st-votes',     'n'=>$stats['total_votes'],      'lbl'=>'Votes Cast',     'icon'=>'fa-check-to-slot',    'badge'=>'Ballots',    'sub'=>'Submitted ballots',   'delay'=>'d2'],
+    ['id'=>'st-cands',     'n'=>$stats['total_candidates'], 'lbl'=>'Candidates',     'icon'=>'fa-user-tie',         'badge'=>'Running',    'sub'=>'Active candidates',   'delay'=>'d3'],
+    ['id'=>'st-pos',       'n'=>$stats['total_positions'],  'lbl'=>'Positions',      'icon'=>'fa-list-check',       'badge'=>'Open',       'sub'=>'Elected positions',   'delay'=>'d4'],
+    ['id'=>'st-party',     'n'=>$stats['total_partylists'], 'lbl'=>'Party Lists',    'icon'=>'fa-flag',             'badge'=>'Parties',    'sub'=>'Competing parties',   'delay'=>'d5'],
+    ['id'=>'st-colleges',  'n'=>$stats['total_colleges'],   'lbl'=>'Colleges',       'icon'=>'fa-building-columns', 'badge'=>'Units',      'sub'=>'Academic units',      'delay'=>'d6'],
+    ['id'=>'st-orgs',      'n'=>$stats['total_orgs'],       'lbl'=>'Organizations',  'icon'=>'fa-sitemap',          'badge'=>'Active',     'sub'=>'Student orgs',        'delay'=>'d7'],
+  ];
+  @endphp
 
-        .section-label { font-size:0.65rem; font-weight:700; letter-spacing:.1em; text-transform:uppercase; color:rgba(249,180,15,0.5); }
-        .card-title { font-family:'Playfair Display',serif; font-size:0.88rem; font-weight:800; color:var(--text-primary); }
-        .stat-number {
-            font-family:'Playfair Display',serif; font-size:1.55rem; font-weight:900;
-            background:linear-gradient(135deg,#f9b40f 0%,#fcd558 60%,#fff3c4 100%);
-            -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; line-height:1;
-        }
-        .stat-delta { font-size:0.65rem; font-weight:700; color:#34d399; display:flex; align-items:center; gap:2px; }
-        .stat-delta.neg { color:#f87171; }
-        .icon-box { width:40px; height:40px; border-radius:12px; display:flex; align-items:center; justify-content:center; font-size:0.9rem; flex-shrink:0; color:#fff; }
-        .prog-bar  { height:5px; border-radius:99px; background:rgba(249,180,15,0.08); }
-        .prog-fill { height:100%; border-radius:99px; background:linear-gradient(90deg,#f9b40f,#fcd558); transition:width .8s cubic-bezier(.4,0,.2,1); }
+  <div class="bento fu d1">
+    @foreach($tiles as $t)
+    <div class="gs tile {{ $t['delay'] }}">
+      <div class="tile-top">
+        <div class="tile-icon"><i class="fas {{ $t['icon'] }}"></i></div>
+        <div class="tile-badge">{{ $t['badge'] }}</div>
+      </div>
+      <div id="{{ $t['id'] }}" class="tile-num">{{ $t['n'] }}</div>
+      <div class="tile-label">{{ $t['lbl'] }}</div>
+      <div class="tile-sub"><span class="tile-sub-dot"></span>{{ $t['sub'] }}</div>
+      {{-- Mini sparkline --}}
+      <div class="sparkline">
+        @for($s=0;$s<8;$s++)
+        <div class="spark-bar {{ $s===7?'active':'' }}" style="height:{{ rand(20,100) }}%;"></div>
+        @endfor
+      </div>
+    </div>
+    @endforeach
 
-        .vote-row  { display:flex; align-items:flex-start; gap:10px; padding:9px; border-radius:12px; background:rgba(249,180,15,0.03); border:1px solid rgba(249,180,15,0.07); transition:background .2s; }
-        .vote-row:hover { background:rgba(249,180,15,0.07); }
-        .member-row { display:flex; align-items:center; gap:10px; padding:8px 10px; border-radius:12px; transition:background .2s; cursor:pointer; }
-        .member-row:hover { background:rgba(249,180,15,0.06); }
-        .member-avatar { width:34px; height:34px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:0.75rem; font-weight:900; flex-shrink:0; font-family:'Playfair Display',serif; }
-        .gauge-needle { position:absolute; bottom:8px; left:50%; width:2px; height:50px; background:linear-gradient(to top,#f9b40f,rgba(249,180,15,0)); transform-origin:bottom center; border-radius:2px; transform:translateX(-50%) rotate(-30deg); transition:transform 1.5s cubic-bezier(.4,0,.2,1); }
-        .dot-menu { color:rgba(249,180,15,0.3); cursor:pointer; font-size:1rem; transition:color .2s; }
-        .dot-menu:hover { color:rgba(249,180,15,0.7); }
-        ::-webkit-scrollbar { width:4px; }
-        ::-webkit-scrollbar-thumb { background:rgba(249,180,15,0.2); border-radius:99px; }
-    </style>
+    {{-- Large votes+voters featured tile --}}
+    <div class="gs tile-lg fu d2">
+      <div class="tile-lg-l">
+        <div class="tile-top">
+          <div class="tile-icon"><i class="fas fa-chart-pie"></i></div>
+          <div class="tile-badge">Live</div>
+        </div>
+        <div id="st-remaining" class="tile-num">{{ number_format($notVoted) }}</div>
+        <div class="tile-label">Still to Vote</div>
+        <div class="tile-sub"><span class="tile-sub-dot"></span>Pending ballots</div>
+      </div>
+      <div class="tile-lg-r">
+        <div>
+          <div class="tile-label" style="margin-bottom:8px;">Participation</div>
+          <div style="height:5px;background:rgba(249,180,15,.08);border-radius:99px;margin-bottom:6px;">
+            <div id="part-bar" style="height:100%;border-radius:99px;background:linear-gradient(90deg,var(--g),var(--g-lt));transition:width 1s;width:{{ $turnoutPct }}%"></div>
+          </div>
+          <div style="display:flex;justify-content:space-between;">
+            <span style="font-family:'Barlow Condensed',sans-serif;font-size:.6rem;color:var(--muted);">Voted</span>
+            <span style="font-family:'Barlow Condensed',sans-serif;font-size:.6rem;color:var(--g);font-weight:700;" id="part-pct">{{ $turnoutPct }}%</span>
+          </div>
+        </div>
+        <div>
+          <div style="font-family:'Barlow Condensed',sans-serif;font-size:.58rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--dim);margin-bottom:6px;">Recent activity</div>
+          <div id="mini-feed" style="display:flex;flex-direction:column;gap:4px;"></div>
+        </div>
+      </div>
+    </div>
+  </div>
 
-    {{-- ══ STAT CARDS ══ --}}
-    @php
-        $cards = [
-            ['id'=>'stat-voters',     'label'=>'Total Voters',  'icon'=>'fa-users',            'glow'=>'rgba(249,180,15,.5)',  'bg'=>'linear-gradient(135deg,#f9b40f,#fcd558)', 'color'=>'#380041', 'value'=> $stats['total_voters'],     'delta'=>'registered'],
-            ['id'=>'stat-votes',      'label'=>'Votes Cast',    'icon'=>'fa-check-to-slot',    'glow'=>'rgba(16,185,129,.5)', 'bg'=>'linear-gradient(135deg,#059669,#0891b2)', 'color'=>'#fff',    'value'=> $stats['total_votes'],      'delta'=>'ballots'],
-            ['id'=>'stat-candidates', 'label'=>'Candidates',    'icon'=>'fa-user-tie',         'glow'=>'rgba(249,180,15,.4)', 'bg'=>'linear-gradient(135deg,#c98a00,#f9b40f)', 'color'=>'#1a0020', 'value'=> $stats['total_candidates'], 'delta'=>'running'],
-            ['id'=>'stat-positions',  'label'=>'Positions',     'icon'=>'fa-list-check',       'glow'=>'rgba(252,213,88,.4)', 'bg'=>'linear-gradient(135deg,#fcd558,#f9b40f)', 'color'=>'#380041', 'value'=> $stats['total_positions'],  'delta'=>'positions'],
-            ['id'=>'stat-partylists', 'label'=>'Partylists',    'icon'=>'fa-flag',             'glow'=>'rgba(239,68,68,.4)',  'bg'=>'linear-gradient(135deg,#ef4444,#ec4899)', 'color'=>'#fff',    'value'=> $stats['total_partylists'], 'delta'=>'parties'],
-            ['id'=>'stat-colleges',   'label'=>'Colleges',      'icon'=>'fa-building-columns', 'glow'=>'rgba(249,180,15,.3)', 'bg'=>'linear-gradient(135deg,#380041,#520060)', 'color'=>'#f9b40f', 'value'=> $stats['total_colleges'],  'delta'=>'colleges'],
-            ['id'=>'stat-orgs',       'label'=>'Organizations', 'icon'=>'fa-sitemap',          'glow'=>'rgba(20,184,166,.4)', 'bg'=>'linear-gradient(135deg,#14b8a6,#0ea5e9)', 'color'=>'#fff',    'value'=> $stats['total_orgs'],      'delta'=>'orgs'],
-            ['id'=>'stat-turnout',    'label'=>'Voter Turnout', 'icon'=>'fa-percent',          'glow'=>'rgba(249,180,15,.5)', 'bg'=>'linear-gradient(135deg,#f9b40f,#c98a00)', 'color'=>'#1a0020', 'value'=> $turnoutPct . '%',         'delta'=>'Live'],
-        ];
-    @endphp
+  {{-- ══ ANALYTICS ROW ══ --}}
+  <div class="analytics-grid fu d3">
 
-    <div class="grid gap-4 mb-5" style="grid-template-columns:repeat(4,1fr);">
-        @foreach($cards as $i => $card)
-        <div class="gc p-4 flex items-center gap-3 hover:scale-[1.02] transition-transform duration-200" style="animation-delay:{{ $i * 0.05 }}s">
-            <div class="icon-box" style="background:{{ $card['bg'] }};box-shadow:0 0 20px {{ $card['glow'] }};color:{{ $card['color'] }};">
-                <i class="fas {{ $card['icon'] }}"></i>
-            </div>
-            <div class="min-w-0">
-                <div id="{{ $card['id'] }}" class="stat-number tabular-nums">{{ $card['value'] }}</div>
-                <div class="section-label mt-1">{{ $card['label'] }}</div>
-                <div class="stat-delta mt-0.5">
-                    <i class="fas fa-circle" style="font-size:0.4rem;"></i>
-                    {{ $card['delta'] }}
-                </div>
-            </div>
+    {{-- Line chart --}}
+    <div class="gs" style="overflow:hidden;">
+      <div class="panel-head">
+        <div><div class="panel-eye">Today</div><div class="panel-title">Voters per Hour</div></div>
+        <span style="font-size:.6rem;color:var(--dim);">UTC+8</span>
+      </div>
+      <div class="chart-wrap">
+        <div style="height:140px;position:relative;"><canvas id="chartLine"></canvas></div>
+      </div>
+    </div>
+
+    {{-- Bar chart --}}
+    <div class="gs" style="overflow:hidden;">
+      <div class="panel-head">
+        <div><div class="panel-eye">Breakdown</div><div class="panel-title">Votes by Position</div></div>
+      </div>
+      <div class="chart-wrap">
+        <div style="height:140px;position:relative;"><canvas id="chartBar"></canvas></div>
+      </div>
+    </div>
+
+    {{-- Doughnut + legend --}}
+    <div class="gs" style="overflow:hidden;">
+      <div class="panel-head">
+        <div><div class="panel-eye">Summary</div><div class="panel-title">Turnout</div></div>
+      </div>
+      <div class="donut-panel">
+        <div class="donut-wrap">
+          <canvas id="chartDonut" width="130" height="130" style="display:block;"></canvas>
+          <div class="donut-center">
+            <div id="donut-pct" class="donut-pct">{{ $turnoutPct }}%</div>
+            <div class="donut-sub">turnout</div>
+          </div>
+        </div>
+        <div class="donut-legend">
+          <div class="dl-row">
+            <div class="dl-label"><div class="dl-dot" style="background:var(--g);"></div>Voted</div>
+            <div class="dl-val" id="dl-voted">{{ $turnoutPct }}%</div>
+          </div>
+          <div class="dl-row">
+            <div class="dl-label"><div class="dl-dot" style="background:rgba(56,0,65,.9);border:1px solid var(--b);"></div>Pending</div>
+            <div class="dl-val" id="dl-pend" style="color:var(--muted);">{{ round(100-$turnoutPct,1) }}%</div>
+          </div>
+          <div class="still-box">
+            <div class="still-lbl">Still to vote</div>
+            <span id="still-val" class="still-val">{{ number_format($notVoted) }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  {{-- ══ BOTTOM ROW ══ --}}
+  <div class="bottom-grid fu d4">
+
+    {{-- Activity Feed --}}
+    <div class="gs" style="display:flex;flex-direction:column;overflow:hidden;">
+      <div class="feed-head">
+        <div><div class="panel-eye">Real-time</div><div class="panel-title">Ballot Activity</div></div>
+        <span style="font-family:'Barlow Condensed',sans-serif;font-size:.6rem;font-weight:700;letter-spacing:.08em;color:rgba(34,197,94,.7);">● LIVE</span>
+      </div>
+      <div id="feed-list" class="feed-scroll" style="flex:1;">
+        @foreach($recentVotes as $vote)
+        <div class="feed-item">
+          <div class="feed-av">{{ strtoupper(substr($vote->voter?->full_name ?? 'U',0,1)) }}</div>
+          <div style="flex:1;min-width:0;">
+            <div class="feed-name">{{ $vote->voter?->full_name ?? 'Unknown' }}</div>
+            <div class="feed-txn">{{ Str::limit($vote->transaction_number ?? '—',20) }}</div>
+            <div class="feed-time">{{ $vote->voted_at?->diffForHumans() ?? '—' }}</div>
+          </div>
+          <div class="feed-status"></div>
         </div>
         @endforeach
+      </div>
+      <div class="feed-footer">
+        <a href="{{ route('admin.votes.index') }}" class="btn-all">
+          All ballots <i class="fas fa-arrow-right" style="font-size:.6rem;"></i>
+        </a>
+      </div>
     </div>
 
-    {{-- ══ ROW 2 — ANALYTICS + RECENT ACTIVITY ══ --}}
-    <div class="grid gap-5 mb-5" style="grid-template-columns:1fr 320px;">
-
-        <div style="background:rgba(30,0,37,0.8);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);border:1px solid rgba(249,180,15,0.2);border-radius:18px;box-shadow:0 4px 40px rgba(0,0,0,0.35),inset 0 1px 0 rgba(249,180,15,0.07);padding:20px;animation:fadeInUp .5s ease both;animation-delay:.1s;position:relative;">
-            <div style="position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(249,180,15,0.45),transparent);border-radius:18px 18px 0 0;pointer-events:none;"></div>
-
-            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">
-                <h3 style="font-family:'Playfair Display',serif;font-size:0.92rem;font-weight:800;color:#fffbf0;margin:0;">Data Analytics</h3>
-                <div style="display:flex;align-items:center;gap:6px;">
-                    <span style="font-size:0.62rem;color:rgba(249,180,15,0.4);">Refreshes every <span id="refresh-label">10s</span></span>
-                    <span style="width:6px;height:6px;border-radius:50%;background:#34d399;display:inline-block;animation:pulse 1.5s infinite;box-shadow:0 0 6px #34d399;"></span>
-                </div>
-            </div>
-
-            {{-- 3 METRICS --}}
-            <div style="display:grid;grid-template-columns:repeat(3,1fr);margin-bottom:14px;border-bottom:1px solid rgba(249,180,15,0.1);padding-bottom:14px;">
-                <div>
-                    <div style="font-size:0.6rem;color:rgba(249,180,15,0.5);font-weight:700;margin-bottom:2px;text-transform:uppercase;letter-spacing:.06em;">Total Voters</div>
-                    <div id="analytic-voters" style="font-family:'Playfair Display',serif;font-size:1.35rem;font-weight:900;background:linear-gradient(135deg,#f9b40f,#fcd558);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;line-height:1.1;">{{ number_format($stats['total_voters']) }}</div>
-                    <div style="font-size:0.65rem;color:rgba(249,180,15,0.35);margin-top:3px;">registered</div>
-                </div>
-                <div>
-                    <div style="font-size:0.6rem;color:rgba(249,180,15,0.5);font-weight:700;margin-bottom:2px;text-transform:uppercase;letter-spacing:.06em;">Votes Cast</div>
-                    <div id="analytic-votes" style="font-family:'Playfair Display',serif;font-size:1.35rem;font-weight:900;background:linear-gradient(135deg,#f9b40f,#fcd558);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;line-height:1.1;">{{ number_format($stats['total_votes']) }}</div>
-                    <div style="display:flex;align-items:center;gap:3px;margin-top:3px;">
-                        <i class="fas fa-check-circle" style="font-size:0.5rem;color:#34d399;"></i>
-                        <span id="analytic-votes-sub" style="font-size:0.65rem;color:#34d399;font-weight:600;">of {{ number_format($stats['total_voters']) }}</span>
-                    </div>
-                </div>
-                <div>
-                    <div style="font-size:0.6rem;color:rgba(249,180,15,0.5);font-weight:700;margin-bottom:2px;text-transform:uppercase;letter-spacing:.06em;">Turnout Rate</div>
-                    <div id="analytic-turnout" style="font-family:'Playfair Display',serif;font-size:1.35rem;font-weight:900;background:linear-gradient(135deg,#f9b40f,#fcd558);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;line-height:1.1;">{{ $turnoutPct }}%</div>
-                    <div style="display:flex;align-items:center;gap:3px;margin-top:3px;">
-                        <i class="fas fa-circle" style="font-size:0.4rem;color:#34d399;animation:pulse 1.5s infinite;"></i>
-                        <span style="font-size:0.65rem;font-weight:700;color:#34d399;">Live</span>
-                    </div>
-                </div>
-            </div>
-
-            {{-- CHARTS --}}
-            <div style="display:grid;grid-template-columns:1fr 1fr 200px;gap:16px;align-items:start;">
-
-                {{-- Hourly votes line chart --}}
-                <div>
-                    <div style="font-size:0.6rem;color:rgba(249,180,15,0.4);margin-bottom:6px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;">Voters per Hour · Today</div>
-                    <div style="position:relative;height:130px;">
-                        <canvas id="chartLine"></canvas>
-                    </div>
-                </div>
-
-                {{-- Votes by position bar chart --}}
-                <div>
-                    <div style="font-size:0.6rem;color:rgba(249,180,15,0.4);margin-bottom:6px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;">Votes by Position</div>
-                    <div style="position:relative;height:130px;">
-                        <canvas id="chartBar"></canvas>
-                    </div>
-                </div>
-
-                {{-- Doughnut --}}
-                <div style="display:flex;flex-direction:column;align-items:center;gap:10px;">
-                    <div style="position:relative;width:130px;height:130px;">
-                        <canvas id="chartTurnout" style="position:absolute;top:0;left:0;width:130px!important;height:130px!important;"></canvas>
-                        <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;pointer-events:none;">
-                            <div id="turnout-center-pct" style="font-family:'Playfair Display',serif;font-size:1rem;font-weight:900;background:linear-gradient(135deg,#f9b40f,#fcd558);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;">{{ $turnoutPct }}%</div>
-                        </div>
-                    </div>
-                    <div style="width:100%;display:flex;flex-direction:column;gap:5px;">
-                        <div style="display:flex;align-items:center;justify-content:space-between;">
-                            <span style="display:flex;align-items:center;gap:5px;font-size:0.67rem;color:rgba(255,251,240,0.6);">
-                                <span style="width:9px;height:9px;border-radius:50%;background:#f9b40f;flex-shrink:0;box-shadow:0 0 5px rgba(249,180,15,0.5);"></span> Voted
-                            </span>
-                            <span id="pct-voted" style="font-size:0.72rem;font-weight:700;color:#f9b40f;">{{ $turnoutPct }}%</span>
-                        </div>
-                        <div style="display:flex;align-items:center;justify-content:space-between;">
-                            <span style="display:flex;align-items:center;gap:5px;font-size:0.67rem;color:rgba(255,251,240,0.6);">
-                                <span style="width:9px;height:9px;border-radius:50%;background:rgba(249,180,15,0.2);border:1px solid rgba(249,180,15,0.3);flex-shrink:0;"></span> Not yet
-                            </span>
-                            <span id="pct-not" style="font-size:0.72rem;font-weight:700;color:rgba(249,180,15,0.45);">{{ round(100 - $turnoutPct, 1) }}%</span>
-                        </div>
-                        <div style="padding:5px 8px;border-radius:8px;background:rgba(249,180,15,0.06);border:1px solid rgba(249,180,15,0.14);text-align:center;">
-                            <div style="font-size:0.58rem;color:rgba(249,180,15,0.4);">Still to vote</div>
-                            <div id="remaining-voters" style="font-family:'Playfair Display',serif;font-size:0.75rem;font-weight:800;color:#f9b40f;margin-top:1px;">{{ number_format($notVoted) }}</div>
-                        </div>
-                    </div>
-                </div>
-
-            </div>
+    {{-- Team + System --}}
+    <div class="gs" style="overflow:hidden;">
+      <div class="panel-head">
+        <div><div class="panel-eye">Administrators</div><div class="panel-title">Team</div></div>
+        <div style="display:flex;align-items:center;gap:5px;">
+          <span style="width:7px;height:7px;border-radius:50%;background:var(--green);box-shadow:0 0 6px var(--green);display:inline-block;"></span>
+          <span style="font-family:'Barlow Condensed',sans-serif;font-size:.6rem;color:var(--dim);">{{ $teamMembers->count() }} online</span>
         </div>
-
-        {{-- RECENT ACTIVITY --}}
-        <div class="gc p-5" style="animation-delay:.15s">
-            <div class="flex items-center justify-between mb-4">
-                <h3 class="card-title">Recent Activity</h3>
-                <span class="dot-menu">···</span>
-            </div>
-            <div id="recent-votes-list" class="space-y-2 overflow-y-auto" style="max-height:340px;">
-                @foreach($recentVotes as $vote)
-                <div class="vote-row">
-                    <div style="width:28px;height:28px;border-radius:50%;background:linear-gradient(135deg,#f9b40f,#fcd558);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:0.65rem;font-weight:900;color:#380041;font-family:'Playfair Display',serif;">
-                        {{ strtoupper(substr($vote->voter?->full_name ?? 'U', 0, 1)) }}
-                    </div>
-                    <div style="flex:1;min-width:0;">
-                        <div style="font-size:0.72rem;font-weight:600;color:#fffbf0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">{{ $vote->voter?->full_name ?? 'Unknown' }}</div>
-                        <div style="font-size:0.62rem;color:rgba(249,180,15,0.45);font-family:monospace;">{{ $vote->transaction_number ?? '—' }}</div>
-                        <div style="font-size:0.62rem;color:rgba(255,251,240,0.25);margin-top:1px;">{{ $vote->voted_at?->diffForHumans() ?? '—' }}</div>
-                    </div>
-                    <div style="width:7px;height:7px;border-radius:50%;background:#34d399;flex-shrink:0;margin-top:4px;box-shadow:0 0 6px #34d399;"></div>
-                </div>
-                @endforeach
-            </div>
-            <a href="{{ route('admin.votes.index') }}"
-               style="display:flex;align-items:center;justify-content:center;gap:5px;margin-top:14px;font-size:0.7rem;font-weight:700;color:#f9b40f;text-decoration:none;padding:8px;border-radius:10px;background:rgba(249,180,15,0.08);border:1px solid rgba(249,180,15,0.18);transition:background .2s;"
-               onmouseover="this.style.background='rgba(249,180,15,0.14)'" onmouseout="this.style.background='rgba(249,180,15,0.08)'">
-                View all activity <i class="fas fa-arrow-right" style="font-size:0.65rem;"></i>
-            </a>
+      </div>
+      <div class="team-panel">
+        @foreach($teamMembers->take(5) as $m)
+        <div class="m-item">
+          <div class="m-av">{{ strtoupper(substr($m->full_name,0,1)) }}</div>
+          <div style="flex:1;min-width:0;">
+            <div class="m-name">{{ $m->full_name }}</div>
+            <div class="m-role">{{ $m->role }}</div>
+          </div>
         </div>
+        @endforeach
+        <div class="hdiv">
+          <span style="font-family:'Barlow Condensed',sans-serif;font-size:.62rem;color:var(--dim);">{{ $teamMembers->count() }} member{{ $teamMembers->count()!=1?'s':'' }}</span>
+          <a href="#" class="link-gold">Manage →</a>
+        </div>
+      </div>
+      {{-- System mini metrics --}}
+      <div style="padding:0 20px 18px;border-top:1px solid var(--b2);margin-top:0;padding-top:14px;">
+        <div class="panel-eye" style="margin-bottom:10px;">System Health</div>
+        @php $sys=[['l'=>'Uptime','v'=>'99.9%','p'=>99],['l'=>'Response','v'=>'42ms','p'=>85],['l'=>'CPU','v'=>'23%','p'=>23]]; @endphp
+        @foreach($sys as $s)
+        <div class="sys-row">
+          <span class="sys-lbl">{{ $s['l'] }}</span>
+          <div class="sys-track"><div class="sys-fill" style="width:{{ $s['p'] }}%;"></div></div>
+          <span class="sys-val">{{ $s['v'] }}</span>
+        </div>
+        @endforeach
+      </div>
     </div>
 
-    {{-- ══ ROW 3 — SYSTEM STATUS + TEAM + TOP CANDIDATES ══ --}}
-    <div class="grid gap-5 mb-5" style="grid-template-columns:220px 260px 1fr;">
-
-        {{-- SYSTEM STATUS --}}
-        <div class="gc p-5 flex flex-col" style="animation-delay:.2s">
-            <div class="flex items-center justify-between mb-3">
-                <h3 class="card-title">System Status</h3>
-                <span class="dot-menu">···</span>
-            </div>
-            <div style="position:relative;width:140px;height:90px;margin:8px auto 4px;">
-                <svg viewBox="0 0 140 80" width="140" height="80" style="display:block;">
-                    <path d="M 15 75 A 55 55 0 0 1 125 75" fill="none" stroke="rgba(249,180,15,0.1)" stroke-width="14" stroke-linecap="round"/>
-                    <path d="M 15 75 A 55 55 0 0 1 52 23"  fill="none" stroke="#34d399" stroke-width="14" stroke-linecap="round" opacity=".7"/>
-                    <path d="M 52 23 A 55 55 0 0 1 88 23"  fill="none" stroke="#f9b40f" stroke-width="14" stroke-linecap="round" opacity=".8"/>
-                    <path d="M 88 23 A 55 55 0 0 1 125 75" fill="none" stroke="#f472b6" stroke-width="14" stroke-linecap="round" opacity=".7"/>
-                    <path d="M 15 75 A 55 55 0 0 1 125 75" fill="none" stroke="url(#gaugeGrad)" stroke-width="6" stroke-linecap="round" opacity=".9"/>
-                    <defs>
-                        <linearGradient id="gaugeGrad" x1="0%" y1="0%" x2="100%" y2="0%">
-                            <stop offset="0%" stop-color="#34d399"/>
-                            <stop offset="50%" stop-color="#f9b40f"/>
-                            <stop offset="100%" stop-color="#f472b6"/>
-                        </linearGradient>
-                    </defs>
-                    <circle cx="70" cy="75" r="5" fill="#f9b40f" style="filter:drop-shadow(0 0 6px #f9b40f)"/>
-                </svg>
-                <div id="gauge-needle" class="gauge-needle"></div>
-            </div>
-            <div style="text-align:center;margin-bottom:12px;">
-                <div id="system-status-label" style="font-family:'Playfair Display',serif;font-size:0.82rem;font-weight:800;color:#34d399;">Operational</div>
-                <div style="font-size:0.62rem;color:rgba(255,251,240,0.3);margin-top:2px;">All systems normal</div>
-            </div>
-            <div class="space-y-2">
-                @php $metrics=[['label'=>'Uptime','val'=>'99.9%','pct'=>99,'color'=>'#34d399'],['label'=>'Response','val'=>'42ms','pct'=>85,'color'=>'#f9b40f'],['label'=>'Load','val'=>'23%','pct'=>23,'color'=>'#f472b6']]; @endphp
-                @foreach($metrics as $m)
-                <div>
-                    <div style="display:flex;justify-content:space-between;margin-bottom:3px;">
-                        <span style="font-size:0.65rem;color:rgba(255,251,240,0.35);">{{ $m['label'] }}</span>
-                        <span style="font-size:0.65rem;font-weight:700;color:{{ $m['color'] }};">{{ $m['val'] }}</span>
-                    </div>
-                    <div class="prog-bar"><div style="height:100%;border-radius:99px;width:{{ $m['pct'] }}%;background:linear-gradient(90deg,{{ $m['color'] }}88,{{ $m['color'] }});transition:width .8s;"></div></div>
-                </div>
-                @endforeach
-            </div>
+    {{-- Leaderboard --}}
+    <div class="gs" style="overflow:hidden;">
+      <div class="panel-head">
+        <div><div class="panel-eye">Rankings</div><div class="panel-title">Top Candidates</div></div>
+        <a href="{{ route('admin.votes.results') }}" class="link-gold">Results →</a>
+      </div>
+      <div class="lb-panel" id="lb-list">
+        @foreach($topCandidates as $i => $c)
+        @php $pct=$stats['total_votes']>0?round(($c->votes_count/$stats['total_votes'])*100,1):0; @endphp
+        <div class="lb-item">
+          <div class="lb-rank {{ $i===0?'r1':($i===1?'r2':($i===2?'r3':'')) }}">{{ $i+1 }}</div>
+          <div class="lb-av">{{ strtoupper(substr($c->first_name,0,1)) }}</div>
+          <div style="flex:1;min-width:0;">
+            <div class="lb-name">{{ $c->first_name }} {{ $c->last_name }}</div>
+            <div class="lb-pos">{{ $c->position?->name ?? '—' }}</div>
+            <div class="lb-prog"><div class="lb-fill" style="width:{{ $pct }}%"></div></div>
+          </div>
+          <div>
+            <div class="lb-votes">{{ $c->votes_count }}</div>
+            <div class="lb-pct">{{ $pct }}%</div>
+          </div>
         </div>
-
-        {{-- TEAM MEMBERS --}}
-        <div class="gc p-5" style="animation-delay:.25s">
-            <div class="flex items-center justify-between mb-3">
-                <h3 class="card-title">Team Members</h3>
-                <span class="dot-menu">···</span>
-            </div>
-            @php $mGrads=['linear-gradient(135deg,#f9b40f,#fcd558)','linear-gradient(135deg,#059669,#0891b2)','linear-gradient(135deg,#d946ef,#f9b40f)','linear-gradient(135deg,#c98a00,#f9b40f)','linear-gradient(135deg,#0ea5e9,#6366f1)']; $mColors=['#380041','#fff','#fff','#1a0020','#fff']; @endphp
-            <div class="space-y-1">
-                @foreach($teamMembers->take(5) as $i => $c)
-                <div class="member-row">
-                    <div class="member-avatar" style="background:{{ $mGrads[$i%5] }};box-shadow:0 0 10px rgba(249,180,15,0.25);color:{{ $mColors[$i%5] }};">{{ strtoupper(substr($c->full_name,0,1)) }}</div>
-                    <div style="flex:1;min-width:0;">
-                        <div style="font-size:0.72rem;font-weight:600;color:#fffbf0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">{{ $c->full_name }}</div>
-                        <div style="font-size:0.62rem;color:rgba(249,180,15,0.5);">{{ ucfirst($c->role) }}</div>
-                    </div>
-                    <div style="width:8px;height:8px;border-radius:50%;background:#34d399;box-shadow:0 0 6px #34d399;flex-shrink:0;"></div>
-                </div>
-                @endforeach
-            </div>
-            <div style="margin-top:14px;padding-top:12px;border-top:1px solid rgba(249,180,15,0.1);">
-                <div style="display:flex;align-items:center;justify-content:space-between;font-size:0.68rem;color:rgba(255,251,240,0.35);">
-                    <span>{{ $teamMembers->count() }} admin{{ $teamMembers->count()!==1?'s':'' }} total</span>
-                    <a href="{{ route('admin.candidates.index') }}" style="color:#f9b40f;font-weight:700;text-decoration:none;" onmouseover="this.style.color='#fcd558'" onmouseout="this.style.color='#f9b40f'">View all <i class="fas fa-arrow-right" style="font-size:0.6rem;"></i></a>
-                </div>
-            </div>
-        </div>
-
-        {{-- TOP CANDIDATES --}}
-        <div class="gc p-5" style="animation-delay:.3s">
-            <div class="flex items-center justify-between mb-4">
-                <div>
-                    <p class="section-label">Leaderboard</p>
-                    <h3 class="card-title mt-1">Top Candidates</h3>
-                </div>
-                <a href="{{ route('admin.votes.results') }}" style="font-size:0.68rem;font-weight:700;color:#f9b40f;text-decoration:none;" onmouseover="this.style.color='#fcd558'" onmouseout="this.style.color='#f9b40f'">View all <i class="fas fa-arrow-right" style="font-size:0.6rem;"></i></a>
-            </div>
-            <div id="top-candidates-list" class="space-y-3">
-                @foreach($topCandidates as $i => $c)
-                @php $pct=$stats['total_votes']>0?round(($c->votes_count/$stats['total_votes'])*100,1):0; @endphp
-                <div style="display:flex;align-items:center;gap:10px;">
-                    <span style="width:18px;font-size:0.7rem;font-weight:700;color:{{ $i===0?'#f9b40f':($i===1?'rgba(255,251,240,0.5)':($i===2?'#c98a00':'rgba(255,251,240,0.2)')) }};text-align:center;flex-shrink:0;">{{ $i+1 }}</span>
-                    <div style="width:32px;height:32px;border-radius:10px;background:linear-gradient(135deg,#f9b40f,#fcd558);display:flex;align-items:center;justify-content:center;color:#380041;font-size:0.7rem;font-weight:900;flex-shrink:0;font-family:'Playfair Display',serif;">{{ strtoupper(substr($c->first_name,0,1)) }}</div>
-                    <div style="flex:1;min-width:0;">
-                        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;">
-                            <span style="font-size:0.72rem;font-weight:600;color:#fffbf0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:140px;">{{ $c->first_name }} {{ $c->last_name }}</span>
-                            <span style="font-size:0.7rem;font-weight:700;color:#f9b40f;margin-left:6px;flex-shrink:0;">{{ $c->votes_count }}</span>
-                        </div>
-                        <div class="prog-bar"><div class="prog-fill" style="width:{{ $pct }}%"></div></div>
-                        <div style="font-size:0.6rem;color:rgba(255,251,240,0.3);margin-top:2px;">{{ $c->position?->name ?? '—' }} · {{ $pct }}%</div>
-                    </div>
-                </div>
-                @endforeach
-            </div>
-        </div>
+        @endforeach
+      </div>
     </div>
 
-    {{-- ══ SCRIPTS ══ --}}
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
-    <script>
-    (() => {
-        Chart.defaults.color = 'rgba(249,180,15,0.4)';
-        Chart.defaults.font.family = "'DM Sans', sans-serif";
+  </div>
+  </div>{{-- /content --}}
+</div>{{-- /wrap --}}
 
-        const tooltip = {
-            backgroundColor:'rgba(22,0,28,.97)', borderColor:'rgba(249,180,15,.25)', borderWidth:1,
-            titleColor:'#f9b40f', bodyColor:'#fffbf0', padding:10,
-        };
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<script>
+(() => {
+  Chart.defaults.color = 'rgba(249,180,15,0.38)';
+  Chart.defaults.font.family = "'DM Sans', sans-serif";
 
-        function grad(ctx, c1, c2, h=130) {
-            const g = ctx.createLinearGradient(0,0,0,h);
-            g.addColorStop(0,c1); g.addColorStop(1,c2); return g;
-        }
+  const tip = {
+    backgroundColor:'rgba(14,0,19,.97)',
+    borderColor:'rgba(249,180,15,.25)',borderWidth:1,
+    titleColor:'rgba(249,180,15,.7)',bodyColor:'#fffbf0',
+    padding:10,cornerRadius:8,
+  };
+  const grd = {color:'rgba(249,180,15,.04)',drawBorder:false};
+  const tck = {font:{size:8},color:'rgba(249,180,15,.35)',maxRotation:0};
 
-        const scales = {
-            x:{ grid:{color:'rgba(249,180,15,.05)',drawBorder:false}, border:{display:false}, ticks:{font:{size:8},color:'rgba(249,180,15,0.35)',maxTicksLimit:8,maxRotation:0} },
-            y:{ grid:{color:'rgba(249,180,15,.05)',drawBorder:false}, border:{display:false}, ticks:{font:{size:9},color:'rgba(249,180,15,0.3)',maxTicksLimit:4}, beginAtZero:true }
-        };
+  // ── Line chart ──
+  const cL = document.getElementById('chartLine').getContext('2d');
+  const lg = cL.createLinearGradient(0,0,0,140);
+  lg.addColorStop(0,'rgba(249,180,15,.28)');
+  lg.addColorStop(1,'rgba(249,180,15,.01)');
+  const lineChart = new Chart(cL,{
+    type:'line',
+    data:{labels:[],datasets:[{label:'Voters',data:[],borderColor:'#f9b40f',backgroundColor:lg,borderWidth:2.5,fill:true,tension:.44,pointBackgroundColor:'#f9b40f',pointBorderColor:'rgba(14,0,19,.9)',pointBorderWidth:2,pointRadius:3.5,pointHoverRadius:6}]},
+    options:{responsive:true,maintainAspectRatio:false,animation:{duration:500},plugins:{legend:{display:false},tooltip:tip},scales:{x:{grid:grd,border:{display:false},ticks:{...tck,maxTicksLimit:8}},y:{grid:grd,border:{display:false},ticks:{...tck,maxTicksLimit:4},beginAtZero:true}}}
+  });
 
-        // ── Hourly line chart ──
-        const ctxLine = document.getElementById('chartLine').getContext('2d');
-        const lineChart = new Chart(ctxLine, {
-            type:'line',
-            data:{ labels:[], datasets:[{
-                label:'Voters', data:[],
-                borderColor:'#f9b40f',
-                backgroundColor: grad(ctxLine,'rgba(249,180,15,0.28)','rgba(249,180,15,0.01)'),
-                borderWidth:2.5, fill:true, tension:0.45,
-                pointBackgroundColor:'#f9b40f', pointBorderColor:'rgba(22,0,28,.9)',
-                pointBorderWidth:1.5, pointRadius:3.5, pointHoverRadius:6,
-            }]},
-            options:{
-                responsive:true, maintainAspectRatio:false,
-                animation:{duration:600, easing:'easeInOutQuart'},
-                plugins:{ legend:{display:false}, tooltip:{...tooltip, callbacks:{label:c=>` ${c.parsed.y} voter${c.parsed.y!==1?'s':''}`}} },
-                scales,
-            }
-        });
+  // ── Bar chart ──
+  const cB = document.getElementById('chartBar').getContext('2d');
+  const barChart = new Chart(cB,{
+    type:'bar',
+    data:{labels:[],datasets:[{label:'Votes',data:[],backgroundColor:'rgba(249,180,15,.55)',borderColor:'rgba(249,180,15,.9)',borderWidth:1,borderRadius:{topLeft:5,topRight:5},borderSkipped:false,barPercentage:.5}]},
+    options:{responsive:true,maintainAspectRatio:false,animation:{duration:500},plugins:{legend:{display:false},tooltip:tip},scales:{x:{grid:grd,border:{display:false},ticks:{...tck,maxTicksLimit:6}},y:{grid:grd,border:{display:false},ticks:{...tck,maxTicksLimit:4},beginAtZero:true}}}
+  });
 
-        // ── Votes by position bar chart ──
-        const ctxBar = document.getElementById('chartBar').getContext('2d');
-        const barChart = new Chart(ctxBar, {
-            type:'bar',
-            data:{ labels:[], datasets:[{
-                label:'Votes', data:[],
-                backgroundColor:'rgba(249,180,15,0.65)', borderColor:'rgba(249,180,15,1)',
-                borderWidth:1, borderRadius:{topLeft:4,topRight:4}, borderSkipped:false, barPercentage:0.55,
-            }]},
-            options:{
-                responsive:true, maintainAspectRatio:false,
-                animation:{duration:600, easing:'easeInOutQuart'},
-                plugins:{ legend:{display:false}, tooltip:{...tooltip, callbacks:{label:c=>` ${c.parsed.y} votes`}} },
-                scales,
-            }
-        });
+  // ── Doughnut ──
+  const cD = document.getElementById('chartDonut').getContext('2d');
+  const donutChart = new Chart(cD,{
+    type:'doughnut',
+    data:{labels:['Voted','Not Yet'],datasets:[{data:[{{ $votedCount }},{{ $notVoted > 0 ? $notVoted : ($votedCount > 0 ? 0 : 1) }}],backgroundColor:['rgba(249,180,15,.88)','rgba(56,0,65,.75)'],borderColor:['rgba(249,180,15,.5)','rgba(249,180,15,.07)'],borderWidth:2,hoverOffset:8}]},
+    options:{responsive:false,maintainAspectRatio:false,cutout:'66%',animation:{duration:900},plugins:{legend:{display:false},tooltip:tip}}
+  });
 
-        // ── Doughnut — pre-seeded with real server values ──
-        const seedVoted  = {{ $votedCount }};
-        const seedNotYet = {{ $notVoted }};
+  // ── Animate counter ──
+  function animN(el,to){
+    if(!el) return;
+    const isF=el.textContent.includes('%');
+    const from=parseFloat(el.textContent.replace(/[^0-9.]/g,''))||0;
+    if(Math.abs(from-to)<.5) return;
+    const steps=22,dur=450;let s=0;
+    const t=setInterval(()=>{s++;const v=from+(to-from)*(s/steps);el.textContent=isF?v.toFixed(1)+'%':Math.round(v).toLocaleString();if(s>=steps){el.textContent=isF?to.toFixed(1)+'%':to.toLocaleString();clearInterval(t);}},dur/steps);
+  }
 
-        const ctxTurn = document.getElementById('chartTurnout').getContext('2d');
-        const turnoutChart = new Chart(ctxTurn, {
-            type:'doughnut',
-            data:{
-                labels:['Voted','Not Yet'],
-                datasets:[{
-                    // If nobody has voted yet keep a tiny sliver so chart renders
-                    data: [seedVoted, seedNotYet > 0 ? seedNotYet : (seedVoted > 0 ? 0 : 1)],
-                    backgroundColor:['rgba(249,180,15,0.85)','rgba(56,0,65,0.6)'],
-                    borderColor:['rgba(249,180,15,0.5)','rgba(249,180,15,0.1)'],
-                    borderWidth:2, hoverOffset:8,
-                }]
-            },
-            options:{
-                responsive:false, maintainAspectRatio:false, cutout:'55%',
-                animation:{duration:900, easing:'easeInOutQuart'},
-                plugins:{ legend:{display:false}, tooltip:{...tooltip, callbacks:{label:c=>` ${c.label}: ${c.parsed.toLocaleString()} voters`}} }
-            }
-        });
+  // ── Mini feed in large tile ──
+  function renderMini(votes){
+    const el=document.getElementById('mini-feed'); if(!el||!votes?.length) return;
+    el.innerHTML=votes.slice(0,3).map(v=>`
+      <div style="display:flex;align-items:center;gap:7px;padding:4px 0;border-bottom:1px solid rgba(249,180,15,.06);">
+        <div style="width:22px;height:22px;border-radius:7px;background:linear-gradient(135deg,var(--v-md),var(--v-lt));display:flex;align-items:center;justify-content:center;font-family:'Playfair Display',serif;font-size:.62rem;font-weight:900;color:var(--g);flex-shrink:0;">${(v.voter||'U')[0].toUpperCase()}</div>
+        <div style="flex:1;min-width:0;">
+          <div style="font-size:.62rem;font-weight:600;color:var(--cream);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${v.voter}</div>
+          <div style="font-size:.56rem;color:var(--dim);">${v.voted_at}</div>
+        </div>
+        <div style="width:5px;height:5px;border-radius:50%;background:var(--green);flex-shrink:0;box-shadow:0 0 6px var(--green);"></div>
+      </div>`).join('');
+  }
 
-        // ── Gauge ──
-        function setGauge(pct) {
-            const angle = -120 + (pct/100)*180;
-            const n = document.getElementById('gauge-needle'); if(!n) return;
-            const color = pct>80?'#34d399':pct>50?'#f9b40f':'#f472b6';
-            n.style.transform=`translateX(-50%) rotate(${angle}deg)`;
-            n.style.background=`linear-gradient(to top,${color},transparent)`;
-            const lbl=document.getElementById('system-status-label');
-            if(lbl){ lbl.style.color=color; lbl.textContent=pct>80?'Operational':pct>50?'Degraded':'Critical'; }
-        }
-        setTimeout(()=>setGauge({{ $turnoutPct }}), 400);
+  // ── Full feed ──
+  function renderFeed(votes){
+    const el=document.getElementById('feed-list'); if(!el||!votes?.length) return;
+    el.innerHTML=votes.map(v=>`
+    <div class="feed-item">
+      <div class="feed-av">${(v.voter||'U')[0].toUpperCase()}</div>
+      <div style="flex:1;min-width:0;">
+        <div class="feed-name">${v.voter}</div>
+        <div class="feed-txn">${(v.transaction||'—').substring(0,20)}</div>
+        <div class="feed-time">${v.voted_at}</div>
+      </div>
+      <div class="feed-status"></div>
+    </div>`).join('');
+  }
 
-        // ── Counter animation ──
-        function animateNum(el, to, isFloat=false) {
-            if(!el) return;
-            const from = parseFloat(el.textContent.replace(/[^0-9.]/g,''))||0;
-            if(from===to) return;
-            const steps=24, dur=500; let s=0;
-            const t=setInterval(()=>{
-                s++; const v=from+(to-from)*(s/steps);
-                el.textContent = isFloat ? v.toFixed(1)+'%' : Math.round(v).toLocaleString();
-                if(s>=steps){ el.textContent=isFloat?to.toFixed(1)+'%':to.toLocaleString(); clearInterval(t); }
-            },dur/steps);
-        }
+  // ── Leaderboard ──
+  function renderLB(cands,total){
+    const el=document.getElementById('lb-list'); if(!el||!cands?.length) return;
+    el.innerHTML=cands.map((c,i)=>{
+      const pct=total>0?((c.votes/total)*100).toFixed(1):0;
+      const rc=i===0?'r1':i===1?'r2':i===2?'r3':'';
+      return `<div class="lb-item">
+        <div class="lb-rank ${rc}">${i+1}</div>
+        <div class="lb-av">${(c.name||'U')[0].toUpperCase()}</div>
+        <div style="flex:1;min-width:0;">
+          <div class="lb-name">${c.name}</div>
+          <div class="lb-pos">${c.position}</div>
+          <div class="lb-prog"><div class="lb-fill" style="width:${pct}%"></div></div>
+        </div>
+        <div>
+          <div class="lb-votes">${c.votes}</div>
+          <div class="lb-pct">${pct}%</div>
+        </div>
+      </div>`;
+    }).join('');
+  }
 
-        // ── Render functions ──
-        function renderRecentVotes(votes) {
-            const list=document.getElementById('recent-votes-list'); if(!list||!votes?.length) return;
-            list.innerHTML=votes.map(v=>`
-                <div class="vote-row">
-                    <div style="width:28px;height:28px;border-radius:50%;background:linear-gradient(135deg,#f9b40f,#fcd558);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:0.65rem;font-weight:900;color:#380041;font-family:'Playfair Display',serif;">${(v.voter||'U')[0].toUpperCase()}</div>
-                    <div style="flex:1;min-width:0;">
-                        <div style="font-size:0.72rem;font-weight:600;color:#fffbf0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${v.voter}</div>
-                        <div style="font-size:0.62rem;color:rgba(249,180,15,0.45);font-family:monospace;">${v.transaction}</div>
-                        <div style="font-size:0.62rem;color:rgba(255,251,240,0.25);margin-top:1px;">${v.voted_at}</div>
-                    </div>
-                    <div style="width:7px;height:7px;border-radius:50%;background:#34d399;flex-shrink:0;margin-top:4px;box-shadow:0 0 6px #34d399;"></div>
-                </div>`).join('');
-        }
+  // ── Live poll ──
+  async function poll(){
+    try{
+      const r=await fetch('{{ route('admin.dashboard.live') }}',{headers:{'Accept':'application/json','X-Requested-With':'XMLHttpRequest'}});
+      if(!r.ok) return;
+      const d=await r.json();
 
-        function renderTopCandidates(candidates, totalVotes) {
-            const list=document.getElementById('top-candidates-list'); if(!list||!candidates?.length) return;
-            const rc=['#f9b40f','rgba(255,251,240,0.5)','#c98a00'];
-            list.innerHTML=candidates.map((c,i)=>{
-                const pct=totalVotes>0?((c.votes/totalVotes)*100).toFixed(1):0;
-                return `<div style="display:flex;align-items:center;gap:10px;">
-                    <span style="width:18px;font-size:0.7rem;font-weight:700;color:${rc[i]||'rgba(255,251,240,0.2)'};text-align:center;flex-shrink:0;">${i+1}</span>
-                    <div style="width:32px;height:32px;border-radius:10px;background:linear-gradient(135deg,#f9b40f,#fcd558);display:flex;align-items:center;justify-content:center;color:#380041;font-size:0.7rem;font-weight:900;flex-shrink:0;font-family:'Playfair Display',serif;">${(c.name||'U')[0].toUpperCase()}</div>
-                    <div style="flex:1;min-width:0;">
-                        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;">
-                            <span style="font-size:0.72rem;font-weight:600;color:#fffbf0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:140px;">${c.name}</span>
-                            <span style="font-size:0.7rem;font-weight:700;color:#f9b40f;margin-left:6px;flex-shrink:0;">${c.votes}</span>
-                        </div>
-                        <div class="prog-bar"><div class="prog-fill" style="width:${pct}%"></div></div>
-                        <div style="font-size:0.6rem;color:rgba(255,251,240,0.3);margin-top:2px;">${c.position} · ${pct}%</div>
-                    </div>
-                </div>`;
-            }).join('');
-        }
+      // Stat tiles
+      const map={'st-voters':d.stats.total_voters,'st-votes':d.stats.total_votes,'st-cands':d.stats.total_candidates,'st-pos':d.stats.total_positions,'st-party':d.stats.total_partylists,'st-colleges':d.stats.total_colleges,'st-orgs':d.stats.total_orgs};
+      Object.entries(map).forEach(([id,v])=>animN(document.getElementById(id),v));
 
-        // ── Live fetch ──
-        async function fetchLive() {
-            try {
-                const res = await fetch('{{ route('admin.dashboard.live') }}', {
-                    headers:{'Accept':'application/json','X-Requested-With':'XMLHttpRequest'}
-                });
-                if(!res.ok) return;
-                const d = await res.json();
+      const {voted,not_voted}=d.turnout;
+      const total=voted+not_voted;
+      const pct=total>0?parseFloat(((voted/total)*100).toFixed(1)):0;
+      const nPct=parseFloat((100-pct).toFixed(1));
 
-                // Stat cards
-                const map={
-                    'stat-voters':d.stats.total_voters,'stat-votes':d.stats.total_votes,
-                    'stat-candidates':d.stats.total_candidates,'stat-positions':d.stats.total_positions,
-                    'stat-partylists':d.stats.total_partylists,'stat-colleges':d.stats.total_colleges,'stat-orgs':d.stats.total_orgs,
-                };
-                Object.entries(map).forEach(([id,v])=>animateNum(document.getElementById(id),v));
-                animateNum(document.getElementById('analytic-voters'),d.stats.total_voters);
-                animateNum(document.getElementById('analytic-votes'), d.stats.total_votes);
+      // Header hero
+      const thEl=document.getElementById('th-pct'); if(thEl) thEl.textContent=pct.toFixed(1)+'%';
+      const thV=document.getElementById('th-voted'); if(thV) thV.textContent=voted.toLocaleString();
+      const thT=document.getElementById('th-total'); if(thT) thT.textContent=d.stats.total_voters.toLocaleString();
+      const thB=document.getElementById('th-bar-fill'); if(thB) thB.style.width=pct+'%';
 
-                // Turnout
-                const {voted,not_voted}=d.turnout;
-                const total=voted+not_voted;
-                const pct=total>0?parseFloat(((voted/total)*100).toFixed(1)):0;
-                const notPct=parseFloat((100-pct).toFixed(1));
+      // Donut panel
+      const dpEl=document.getElementById('donut-pct'); if(dpEl) dpEl.textContent=pct.toFixed(1)+'%';
+      const dlV=document.getElementById('dl-voted'); if(dlV) dlV.textContent=pct.toFixed(1)+'%';
+      const dlP=document.getElementById('dl-pend');  if(dlP) dlP.textContent=nPct.toFixed(1)+'%';
+      const stV=document.getElementById('still-val'); if(stV) stV.textContent=not_voted.toLocaleString();
 
-                document.getElementById('stat-turnout').textContent        = pct.toFixed(1)+'%';
-                document.getElementById('analytic-turnout').textContent    = pct.toFixed(1)+'%';
-                document.getElementById('turnout-center-pct').textContent  = pct.toFixed(1)+'%';
-                document.getElementById('pct-voted').textContent  = pct.toFixed(1)+'%';
-                document.getElementById('pct-not').textContent   = notPct.toFixed(1)+'%';
-                document.getElementById('remaining-voters').textContent = not_voted.toLocaleString();
+      // Large tile
+      animN(document.getElementById('st-remaining'),not_voted);
+      const ppEl=document.getElementById('part-pct'); if(ppEl) ppEl.textContent=pct.toFixed(1)+'%';
+      const pbEl=document.getElementById('part-bar'); if(pbEl) pbEl.style.width=pct+'%';
 
-                const sub = document.getElementById('analytic-votes-sub');
-                if(sub) sub.textContent = 'of '+d.stats.total_voters.toLocaleString();
+      // Ticker
+      const tkS=document.getElementById('tk-status'); if(tkS) tkS.textContent=d.stats.total_votes>0?'Ongoing':'Upcoming';
+      const tkVo=document.getElementById('tk-voters'); if(tkVo) tkVo.textContent=d.stats.total_voters.toLocaleString();
+      const tkVt=document.getElementById('tk-votes');  if(tkVt) tkVt.textContent=d.stats.total_votes.toLocaleString();
+      const tkTu=document.getElementById('tk-turnout');if(tkTu) tkTu.textContent=pct.toFixed(1)+'%';
 
-                // Doughnut — keep sliver if 0 voted
-                turnoutChart.data.datasets[0].data = [voted, not_voted>0?not_voted:(voted>0?0:1)];
-                turnoutChart.update('active');
+      // Charts
+      donutChart.data.datasets[0].data=[voted,not_voted>0?not_voted:(voted>0?0:1)];
+      donutChart.update('active');
+      if(d.hourly?.labels?.length){lineChart.data.labels=d.hourly.labels;lineChart.data.datasets[0].data=d.hourly.data;lineChart.update('active');}
+      if(d.votesByPosition?.length){barChart.data.labels=d.votesByPosition.map(p=>p.label);barChart.data.datasets[0].data=d.votesByPosition.map(p=>p.count);barChart.update('active');}
 
-                // Hourly line chart
-                if(d.hourly?.labels?.length) {
-                    lineChart.data.labels = d.hourly.labels;
-                    lineChart.data.datasets[0].data = d.hourly.data;
-                    lineChart.update('active');
-                }
+      renderFeed(d.recentVotes);
+      renderMini(d.recentVotes);
+      renderLB(d.topCandidates,d.stats.total_votes);
+    }catch(e){console.warn('poll:',e);}
+  }
 
-                // Votes by position bar chart
-                if(d.votesByPosition?.length) {
-                    barChart.data.labels = d.votesByPosition.map(p=>p.label);
-                    barChart.data.datasets[0].data = d.votesByPosition.map(p=>p.count);
-                    barChart.update('active');
-                }
-
-                setGauge(pct);
-                renderRecentVotes(d.recentVotes);
-                renderTopCandidates(d.topCandidates, d.stats.total_votes);
-
-            } catch(e){ console.warn('Poll error:',e); }
-        }
-
-        // ── Polling ──
-        let timer=null;
-        function startPolling(ms){
-            if(timer) clearInterval(timer);
-            if(ms>0) timer=setInterval(fetchLive,ms);
-            const lbl=document.getElementById('refresh-label'); if(lbl) lbl.textContent=ms>0?(ms/1000)+'s':'paused';
-        }
-
-        fetchLive();          // immediate first load
-        startPolling(10000);  // then every 10s
-    })();
-    </script>
+  poll();
+  setInterval(poll,10000);
+})();
+</script>
 
 </x-app-layout>
