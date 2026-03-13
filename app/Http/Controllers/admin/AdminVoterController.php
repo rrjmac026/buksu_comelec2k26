@@ -37,7 +37,15 @@ class AdminVoterController extends Controller
         $voters   = $query->latest()->paginate(20)->withQueryString();
         $colleges = College::orderBy('name')->get();
 
-        return view('admin.voters.index', compact('voters', 'colleges'));
+        // Stats for dashboard
+        $stats = [
+            'total'    => User::where('role', 'voter')->count(),
+            'active'   => User::where('role', 'voter')->where('status', 'active')->count(),
+            'inactive' => User::where('role', 'voter')->where('status', 'inactive')->count(),
+            'voted'    => User::where('role', 'voter')->whereHas('votes')->count(),
+        ];
+
+        return view('admin.voters.index', compact('voters', 'colleges', 'stats'));
     }
 
     public function create()
