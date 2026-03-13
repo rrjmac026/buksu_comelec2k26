@@ -24,6 +24,9 @@
         @keyframes vd-pulse      { 0%,100%{opacity:1} 50%{opacity:.4} }
         @keyframes vd-fadeUp     { from{opacity:0;transform:translateY(16px)} to{opacity:1;transform:translateY(0)} }
         @keyframes vd-checkBounce{ 0%{transform:scale(0)} 60%{transform:scale(1.15)} 100%{transform:scale(1)} }
+        @keyframes vd-quoteSlide { from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:translateY(0)} }
+        @keyframes vd-spin       { to{transform:rotate(360deg)} }
+        @keyframes vd-shimmer    { 0%{background-position:200% 0} 100%{background-position:-200% 0} }
 
         body { font-family: 'DM Sans', sans-serif; }
 
@@ -182,7 +185,7 @@
             margin-bottom:16px;
         }
         @media (min-width:900px) {
-            .vd-main-grid { grid-template-columns: 1fr 220px 240px; gap:20px; margin-bottom:20px; }
+            .vd-main-grid { grid-template-columns: 1fr 1fr; gap:20px; margin-bottom:20px; }
         }
 
         /* ══════════════════════════════════════
@@ -216,6 +219,74 @@
         ══════════════════════════════════════ */
         .countdown-boxes {
             display:flex; gap:6px; margin-bottom:14px;
+        }
+
+        /* ══════════════════════════════════════
+           BIBLE QUOTE CARD
+        ══════════════════════════════════════ */
+        .bible-card {
+            background: linear-gradient(135deg, rgba(26,0,32,0.9), rgba(56,0,65,0.8));
+            border: 1px solid rgba(249,180,15,0.15);
+            border-radius: var(--radius-lg);
+            padding: 18px 20px;
+            position: relative;
+            overflow: hidden;
+            animation: vd-fadeUp .5s ease .2s both;
+        }
+        .bible-card::before {
+            content:'';
+            position:absolute; top:0; left:0; right:0; height:1px;
+            background:linear-gradient(90deg,transparent,rgba(249,180,15,0.3),transparent);
+        }
+        .bible-card::after {
+            content: '\201C';
+            position: absolute; top: -10px; right: 12px;
+            font-family: 'Playfair Display', serif;
+            font-size: 7rem; font-weight: 900;
+            color: rgba(249,180,15,0.04);
+            line-height: 1; pointer-events:none; user-select:none;
+        }
+        .bible-card-header {
+            display:flex; align-items:center; justify-content:space-between;
+            margin-bottom:14px;
+        }
+        .bible-card-label {
+            display:flex; align-items:center; gap:7px;
+            font-size:.78rem; font-weight:700; letter-spacing:.1em;
+            text-transform:uppercase; color:rgba(249,180,15,0.5);
+        }
+        .bible-card-label i { font-size:.72rem; color:rgba(249,180,15,0.65); }
+        .bible-refresh-btn {
+            display:inline-flex; align-items:center; gap:4px;
+            padding:4px 10px; border-radius:6px;
+            border:1px solid rgba(249,180,15,0.18); background:transparent;
+            font-size:.6rem; font-weight:700; color:rgba(249,180,15,0.45);
+            cursor:pointer; transition:all .18s; font-family:'DM Sans',sans-serif;
+        }
+        .bible-refresh-btn:hover {
+            border-color:rgba(249,180,15,0.4); color:#f9b40f;
+            background:rgba(249,180,15,0.06);
+        }
+        .bible-refresh-btn.spinning i { animation:vd-spin .6s linear infinite; }
+        .bible-quote-text {
+            font-family:'Playfair Display',serif;
+            font-size:1.15rem; font-style:italic; font-weight:700;
+            color:rgba(255,251,240,0.75); line-height:1.75;
+            margin-bottom:14px; position:relative; z-index:1;
+        }
+        .bible-quote-ref {
+            display:inline-flex; align-items:center; gap:6px;
+            padding:6px 16px; border-radius:99px;
+            background:rgba(249,180,15,0.08); border:1px solid rgba(249,180,15,0.18);
+            font-size:.85rem; font-weight:700; color:rgba(249,180,15,0.75);
+            letter-spacing:.04em;
+        }
+        .bible-skeleton {
+            height:12px; border-radius:6px;
+            background:linear-gradient(90deg,rgba(249,180,15,0.05) 25%,rgba(249,180,15,0.1) 50%,rgba(249,180,15,0.05) 75%);
+            background-size:200% 100%;
+            animation:vd-shimmer 1.5s infinite;
+            margin-bottom:6px;
         }
 
         /* ══════════════════════════════════════
@@ -384,29 +455,66 @@
             @endforeach
         </div>
 
+        {{-- BIBLE QUOTE CARD --}}
+        <div class="bible-card"
+             x-data="{
+                 quote: '',
+                 reference: '',
+                 loading: true,
+                 spinning: false,
+                 async fetchQuote() {
+                     this.spinning = true;
+                     this.loading  = true;
+                     try {
+                         const res  = await fetch('https://labs.bible.org/api/?passage=random&type=json');
+                         const data = await res.json();
+                         this.quote     = data[0].text;
+                         this.reference = data[0].bookname + ' ' + data[0].chapter + ':' + data[0].verse;
+                     } catch {
+                         this.quote     = 'Choose some wise, understanding and respected men from each of your tribes, and I will set them over you.';
+                         this.reference = 'Deuteronomy 1:13';
+                     }
+                     this.loading  = false;
+                     this.spinning = false;
+                 }
+             }"
+             x-init="fetchQuote(); setInterval(() => fetchQuote(), 20000)">
 
-    {{-- ═══════════════════════════════════════════
-         COUNTDOWN SCRIPT
-    ═══════════════════════════════════════════ --}}
-    <script>
-    (() => {
-        const endTime = new Date('{{ $electionEnd->toIso8601String() }}').getTime();
-        function updateCountdown() {
-            const diff = endTime - Date.now();
-            if (diff <= 0) {
-                ['cd-hours','cd-mins','cd-secs'].forEach(id => document.getElementById(id).textContent = '00');
-                return;
-            }
-            const h = Math.floor(diff / 3600000);
-            const m = Math.floor((diff % 3600000) / 60000);
-            const s = Math.floor((diff % 60000) / 1000);
-            document.getElementById('cd-hours').textContent = String(h).padStart(2,'0');
-            document.getElementById('cd-mins').textContent  = String(m).padStart(2,'0');
-            document.getElementById('cd-secs').textContent  = String(s).padStart(2,'0');
-        }
-        updateCountdown();
-        setInterval(updateCountdown, 1000);
-    })();
-    </script>
+            <div class="bible-card-header">
+                <div class="bible-card-label">
+                    <i class="fas fa-book-bible"></i>
+                    Verse of the Moment
+                </div>
+                <button class="bible-refresh-btn"
+                        :class="{ spinning: spinning }"
+                        @click="fetchQuote()"
+                        :disabled="spinning">
+                    <i class="fas fa-sync-alt"></i>
+                    New Verse
+                </button>
+            </div>
 
+            {{-- Loading skeleton --}}
+            <div x-show="loading"
+                 x-transition:leave="transition ease-in duration-200"
+                 x-transition:leave-end="opacity-0">
+                <div class="bible-skeleton" style="width:100%;"></div>
+                <div class="bible-skeleton" style="width:88%;"></div>
+                <div class="bible-skeleton" style="width:72%;margin-bottom:14px;"></div>
+                <div class="bible-skeleton" style="width:40%;height:22px;border-radius:99px;"></div>
+            </div>
+
+            {{-- Quote --}}
+            <div x-show="!loading"
+                 x-transition:enter="transition ease-out duration-300"
+                 x-transition:enter-start="opacity-0 transform translate-y-2"
+                 x-transition:enter-end="opacity-100 transform translate-y-0">
+                <p class="bible-quote-text" x-text="'\u201C' + quote + '\u201D'"></p>
+                <span class="bible-quote-ref">
+                    <i class="fas fa-bookmark" style="font-size:.55rem;"></i>
+                    <span x-text="reference"></span>
+                </span>
+            </div>
+        </div>
+        {{-- END BIBLE QUOTE CARD --}}
 </x-app-layout>
