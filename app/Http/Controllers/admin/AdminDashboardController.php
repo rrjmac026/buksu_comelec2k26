@@ -26,7 +26,6 @@ class AdminDashboardController extends Controller
             'total_orgs'       => Organization::count(),
         ];
 
-        // ✅ FIX — one row per voter ballot, not one row per position
         $recentVotes = CastedVote::query()
             ->selectRaw('
                 MIN(casted_vote_id)  AS casted_vote_id,
@@ -41,7 +40,6 @@ class AdminDashboardController extends Controller
             ->take(10)
             ->get();
 
-        // Eager-load voters manually (can't use ->with() on aggregate queries)
         $voterIds = $recentVotes->pluck('voter_id')->unique()->filter();
         $voters   = User::whereIn('id', $voterIds)->get()->keyBy('id');
         $recentVotes->each(fn($row) => $row->voter = $voters->get($row->voter_id));
@@ -56,12 +54,22 @@ class AdminDashboardController extends Controller
                        ->orderBy('first_name')
                        ->get();
 
-        return view('admin.dashboard', compact('stats', 'recentVotes', 'topCandidates', 'teamMembers'));
+        // Pre-compute turnout for initial doughnut render (no flash of empty chart)
+        $totalVoters = $stats['total_voters'];
+        $votedCount  = $stats['total_votes'];
+        $notVoted    = max(0, $totalVoters - $votedCount);
+        $turnoutPct  = $totalVoters > 0
+            ? round(($votedCount / $totalVoters) * 100, 1)
+            : 0;
+
+        return view('admin.dashboard', compact(
+            'stats', 'recentVotes', 'topCandidates', 'teamMembers',
+            'votedCount', 'notVoted', 'turnoutPct',
+        ));
     }
 
     /**
-     * Live polling endpoint — called every N seconds by the dashboard JS.
-     * Route: GET /admin/dashboard/live  (name: admin.dashboard.live)
+     * Live polling endpoint — GET /admin/dashboard/live
      */
     public function live(): JsonResponse
     {
@@ -75,7 +83,6 @@ class AdminDashboardController extends Controller
             'total_orgs'       => Organization::count(),
         ];
 
-        // Votes per position for bar chart
         $votesByPosition = Position::withCount('votes')
             ->orderBy('name')
             ->get()
@@ -84,7 +91,6 @@ class AdminDashboardController extends Controller
                 'count' => $p->votes_count,
             ]);
 
-        // Top candidates
         $topCandidates = Candidate::with(['position', 'partylist'])
             ->withCount('votes')
             ->orderByDesc('votes_count')
@@ -97,7 +103,6 @@ class AdminDashboardController extends Controller
                 'votes'     => $c->votes_count,
             ]);
 
-        // ✅ FIX — one row per voter ballot, not one row per position
         $recentRaw = CastedVote::query()
             ->selectRaw('
                 MIN(casted_vote_id)  AS casted_vote_id,
@@ -128,19 +133,25 @@ class AdminDashboardController extends Controller
             ];
         });
 
-        // Monthly trend
-        $monthlyTrend = collect(range(1, 12))->map(function ($month) {
-            return [
-                'month'  => date('M', mktime(0, 0, 0, $month, 1)),
-                'voters' => User::where('role', 'voter')
-                                ->whereMonth('created_at', $month)
-                                ->whereYear('created_at', now()->year)
-                                ->count(),
-                'votes'  => CastedVote::whereMonth('voted_at', $month)
-                                ->whereYear('voted_at', now()->year)
-                                ->count(),
-            ];
+        // ── Hourly vote activity for today ──────────────────────────────
+        // Returns 24 buckets (hour 0–23) counting distinct voters per hour
+        $hourlyRaw = CastedVote::query()
+            ->selectRaw('HOUR(voted_at) AS hour, COUNT(DISTINCT voter_id) AS count')
+            ->whereDate('voted_at', now()->toDateString())
+            ->groupByRaw('HOUR(voted_at)')
+            ->pluck('count', 'hour');
+
+        $hourlyData = collect(range(0, 23))->map(fn($h) => (int) ($hourlyRaw[$h] ?? 0));
+
+        // Rolling 12-hour window: last 12 completed hours up to current hour
+        $currentHour = (int) now()->format('G');
+        $windowStart = max(0, $currentHour - 11);
+        $windowLabels = collect(range($windowStart, $currentHour))->map(function ($h) {
+            $suffix = $h < 12 ? 'AM' : 'PM';
+            $display = $h % 12 ?: 12;
+            return $display . $suffix;
         });
+        $windowData = collect(range($windowStart, $currentHour))->map(fn($h) => $hourlyData[$h]);
 
         // Voter turnout
         $totalVoters = User::where('role', 'voter')->count();
@@ -153,7 +164,10 @@ class AdminDashboardController extends Controller
             'topCandidates'   => $topCandidates,
             'recentVotes'     => $recentVotes,
             'turnout'         => ['voted' => $votedCount, 'not_voted' => $notVoted],
-            'monthlyTrend'    => $monthlyTrend,
+            'hourly'          => [
+                'labels' => $windowLabels->values(),
+                'data'   => $windowData->values(),
+            ],
             'timestamp'       => now()->format('H:i:s'),
         ]);
     }
