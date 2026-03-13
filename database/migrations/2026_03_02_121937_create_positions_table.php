@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->unsignedSmallInteger('sort_order')->default(0);
-            $table->unsignedTinyInteger('max_votes')->default(1);
+            $table->unsignedTinyInteger('max_votes')->default(12);
             $table->timestamps();
         });
     }

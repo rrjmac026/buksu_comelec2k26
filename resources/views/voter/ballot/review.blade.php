@@ -66,8 +66,30 @@
     border-color: rgba(52,211,153,0.15);
     background: rgba(52,211,153,0.03);
 }
-.review-row.is-skipped {
+.review-row.is-skipped { opacity: 0.5; }
+
+/* Multi-vote group wrapper */
+.review-group {
+    border-radius: 12px;
+    border: 1px solid rgba(52,211,153,0.15);
+    background: rgba(52,211,153,0.03);
+    overflow: hidden;
+}
+.review-group.is-skipped {
+    border-color: rgba(249,180,15,0.08);
+    background: rgba(56,0,65,0.4);
     opacity: 0.5;
+}
+.review-group-header {
+    display: flex; align-items: center; gap: 14px;
+    padding: 10px 16px 6px;
+}
+.review-group-item {
+    display: flex; align-items: center; gap: 14px;
+    padding: 6px 16px 10px;
+}
+.review-group-item + .review-group-item {
+    padding-top: 0;
 }
 
 .rv-status-dot {
@@ -80,7 +102,17 @@
 .rv-position { font-size: 0.6rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: rgba(249,180,15,0.5); margin-bottom: 2px; }
 .rv-candidate { font-size: 0.8rem; font-weight: 700; color: #fffbf0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .rv-candidate.skipped-label { color: rgba(255,251,240,0.25); font-style: italic; font-weight: 400; }
+.rv-candidate-sub { font-size: 0.75rem; font-weight: 600; color: rgba(255,251,240,0.75); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .rv-party { font-size: 0.62rem; color: rgba(249,180,15,0.4); margin-top: 1px; }
+
+/* Multi-vote count badge */
+.rv-count-badge {
+    display: inline-flex; align-items: center; gap: 5px;
+    padding: 3px 10px; border-radius: 99px;
+    font-size: 0.6rem; font-weight: 700;
+    background: rgba(52,211,153,0.1); border: 1px solid rgba(52,211,153,0.2);
+    color: #34d399; margin-top: 3px;
+}
 
 .rv-edit-btn {
     flex-shrink: 0; padding: 5px 12px; border-radius: 7px;
@@ -89,6 +121,7 @@
     cursor: pointer; transition: all 0.18s; text-decoration: none;
     font-family: 'DM Sans', sans-serif;
     display: inline-flex; align-items: center; gap: 5px;
+    align-self: flex-start;
 }
 .rv-edit-btn:hover {
     border-color: rgba(249,180,15,0.3); color: #f9b40f;
@@ -232,13 +265,54 @@
         {{-- Review list --}}
         <div class="review-list">
             @foreach($reviewRows as $idx => $row)
+
+            @if($row['is_multi'])
+            {{-- ── MULTI-VOTE ROW (e.g. Senator) ── --}}
+            <div class="review-group {{ $row['skipped'] ? 'is-skipped' : '' }}">
+
+                <div class="review-group-header">
+                    <div class="rv-status-dot {{ !$row['skipped'] ? 'voted' : 'skipped' }}"></div>
+                    <div class="rv-info">
+                        <div class="rv-position">{{ $row['position']->name }}</div>
+                        @if($row['skipped'])
+                            <div class="rv-candidate skipped-label">Skipped — no vote recorded</div>
+                        @else
+                            <div class="rv-count-badge">
+                                <i class="fas fa-check-double" style="font-size:0.5rem;"></i>
+                                {{ count($row['candidates']) }} candidate{{ count($row['candidates']) !== 1 ? 's' : '' }} selected
+                            </div>
+                        @endif
+                    </div>
+                    <a href="{{ route('voter.vote.step', $idx + 1) }}" class="rv-edit-btn">
+                        <i class="fas fa-pen" style="font-size:0.55rem;"></i> Change
+                    </a>
+                </div>
+
+                @if(!$row['skipped'])
+                    @foreach($row['candidates'] as $candidate)
+                    <div class="review-group-item">
+                        <div style="width:8px;flex-shrink:0;"></div>{{-- indent spacer --}}
+                        <div class="rv-info" style="padding-left:4px;border-left:2px solid rgba(52,211,153,0.2);">
+                            <div class="rv-candidate-sub">{{ $candidate->full_name }}</div>
+                            @if($candidate->partylist)
+                                <div class="rv-party">{{ $candidate->partylist->name }}</div>
+                            @endif
+                        </div>
+                    </div>
+                    @endforeach
+                @endif
+
+            </div>
+
+            @else
+            {{-- ── SINGLE-VOTE ROW ── --}}
             <div class="review-row {{ !$row['skipped'] ? 'has-vote' : 'is-skipped' }}">
 
                 <div class="rv-status-dot {{ !$row['skipped'] ? 'voted' : 'skipped' }}"></div>
 
                 <div class="rv-info">
                     <div class="rv-position">{{ $row['position']->name }}</div>
-                    @if(!$row['skipped'] && $row['candidate'])
+                    @if(!$row['skipped'] && isset($row['candidate']) && $row['candidate'])
                         <div class="rv-candidate">{{ $row['candidate']->full_name }}</div>
                         @if($row['candidate']->partylist)
                             <div class="rv-party">{{ $row['candidate']->partylist->name }}</div>
@@ -248,12 +322,13 @@
                     @endif
                 </div>
 
-                {{-- Go back to that specific step to change --}}
                 <a href="{{ route('voter.vote.step', $idx + 1) }}" class="rv-edit-btn">
                     <i class="fas fa-pen" style="font-size:0.55rem;"></i> Change
                 </a>
 
             </div>
+            @endif
+
             @endforeach
         </div>
 

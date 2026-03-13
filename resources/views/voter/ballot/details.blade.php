@@ -52,9 +52,7 @@
     display: flex; align-items: flex-start; justify-content: space-between; gap: 16px;
     flex-wrap: wrap;
 }
-.receipt-seal {
-    display: flex; align-items: center; gap: 14px;
-}
+.receipt-seal { display: flex; align-items: center; gap: 14px; }
 .seal-icon {
     width: 52px; height: 52px; border-radius: 14px; flex-shrink: 0;
     background: rgba(249,180,15,0.1); border: 1px solid rgba(249,180,15,0.25);
@@ -66,10 +64,7 @@
     font-size: 1.1rem; font-weight: 900; color: #fffbf0; margin-bottom: 4px;
 }
 .receipt-sub { font-size: 0.7rem; color: rgba(255,251,240,0.4); line-height: 1.6; }
-
-.txn-badge {
-    display: flex; flex-direction: column; align-items: flex-end; gap: 3px;
-}
+.txn-badge { display: flex; flex-direction: column; align-items: flex-end; gap: 3px; }
 .txn-label { font-size: 0.58rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: rgba(249,180,15,0.45); }
 .txn-value { font-family: monospace; font-size: 0.82rem; font-weight: 700; color: #f9b40f; letter-spacing: 0.06em; }
 
@@ -79,11 +74,7 @@
     border-bottom: 1px solid rgba(249,180,15,0.08);
 }
 @media (min-width: 560px) { .meta-grid { grid-template-columns: repeat(4, 1fr); } }
-
-.meta-cell {
-    padding: 16px 20px;
-    border-right: 1px solid rgba(249,180,15,0.06);
-}
+.meta-cell { padding: 16px 20px; border-right: 1px solid rgba(249,180,15,0.06); }
 .meta-cell:last-child { border-right: none; }
 .meta-cell:nth-child(2) { border-right: 1px solid rgba(249,180,15,0.06); }
 @media (max-width: 559px) {
@@ -100,6 +91,7 @@
     letter-spacing: 0.1em; color: rgba(249,180,15,0.5); margin-bottom: 16px;
 }
 
+/* Single-vote row */
 .vote-row {
     display: flex; align-items: center; gap: 14px;
     padding: 14px 16px; border-radius: 14px;
@@ -109,9 +101,36 @@
     transition: all 0.18s;
     animation: fadeUp 0.4s ease both;
 }
-.vote-row:hover {
-    border-color: rgba(52,211,153,0.22);
-    background: rgba(52,211,153,0.06);
+.vote-row:hover { border-color: rgba(52,211,153,0.22); background: rgba(52,211,153,0.06); }
+
+/* Multi-vote group */
+.vote-group {
+    border-radius: 14px;
+    border: 1px solid rgba(52,211,153,0.12);
+    background: rgba(52,211,153,0.03);
+    margin-bottom: 8px;
+    overflow: hidden;
+    animation: fadeUp 0.4s ease both;
+    transition: all 0.18s;
+}
+.vote-group:hover { border-color: rgba(52,211,153,0.22); background: rgba(52,211,153,0.06); }
+
+.vote-group-header {
+    display: flex; align-items: center; gap: 14px;
+    padding: 12px 16px 8px;
+}
+.vote-group-item {
+    display: flex; align-items: center; gap: 14px;
+    padding: 6px 16px 10px;
+    border-top: 1px solid rgba(52,211,153,0.06);
+}
+
+/* Skipped styles */
+.vote-row.skipped,
+.vote-group.skipped {
+    opacity: 0.45;
+    border-color: rgba(255,255,255,0.06);
+    background: rgba(255,255,255,0.02);
 }
 
 .step-num {
@@ -120,6 +139,7 @@
     display: flex; align-items: center; justify-content: center;
     font-size: 0.62rem; font-weight: 800; color: rgba(249,180,15,0.7);
 }
+.step-num.skipped { border-color: rgba(255,255,255,0.08); color: rgba(255,255,255,0.2); }
 
 .candidate-avatar {
     width: 44px; height: 44px; border-radius: 50%; flex-shrink: 0;
@@ -133,6 +153,21 @@
     font-family: 'Playfair Display', serif;
     font-size: 1.1rem; font-weight: 900; color: #f9b40f;
 }
+.candidate-initial.skipped { border-color: rgba(255,255,255,0.08); }
+
+/* Smaller avatar for group items */
+.candidate-avatar-sm {
+    width: 36px; height: 36px; border-radius: 50%; flex-shrink: 0;
+    object-fit: cover; border: 2px solid rgba(52,211,153,0.2);
+}
+.candidate-initial-sm {
+    width: 36px; height: 36px; border-radius: 50%; flex-shrink: 0;
+    background: linear-gradient(135deg, #380041, #520060);
+    border: 2px solid rgba(52,211,153,0.2);
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Playfair Display', serif;
+    font-size: 0.85rem; font-weight: 900; color: #f9b40f;
+}
 
 .vote-info { flex: 1; min-width: 0; }
 .vote-position {
@@ -140,8 +175,18 @@
     letter-spacing: 0.08em; color: rgba(249,180,15,0.5); margin-bottom: 2px;
 }
 .vote-candidate { font-size: 0.82rem; font-weight: 700; color: #fffbf0; }
+.vote-candidate-sm { font-size: 0.75rem; font-weight: 700; color: #fffbf0; }
 .vote-party { font-size: 0.65rem; color: rgba(249,180,15,0.45); margin-top: 2px; }
 .vote-college { font-size: 0.6rem; color: rgba(255,251,240,0.25); margin-top: 1px; }
+
+/* Multi-vote count badge */
+.multi-count-badge {
+    display: inline-flex; align-items: center; gap: 5px;
+    padding: 3px 10px; border-radius: 99px;
+    font-size: 0.6rem; font-weight: 700;
+    background: rgba(52,211,153,0.1); border: 1px solid rgba(52,211,153,0.2);
+    color: #34d399; margin-top: 3px;
+}
 
 .vote-check {
     flex-shrink: 0; width: 28px; height: 28px; border-radius: 50%;
@@ -151,14 +196,10 @@
 }
 
 /* ── Stats bar ── */
-.stats-bar {
-    margin: 0 32px 24px;
-    display: flex; gap: 10px; flex-wrap: wrap;
-}
+.stats-bar { margin: 0 32px 24px; display: flex; gap: 10px; flex-wrap: wrap; }
 .stat-pill {
     display: inline-flex; align-items: center; gap: 6px;
-    padding: 6px 14px; border-radius: 99px;
-    font-size: 0.65rem; font-weight: 700;
+    padding: 6px 14px; border-radius: 99px; font-size: 0.65rem; font-weight: 700;
 }
 .stat-pill.green  { background: rgba(52,211,153,0.1); border: 1px solid rgba(52,211,153,0.2); color: #34d399; }
 .stat-pill.gold   { background: rgba(249,180,15,0.08); border: 1px solid rgba(249,180,15,0.18); color: rgba(249,180,15,0.8); }
@@ -241,7 +282,7 @@
         <div class="stats-bar" style="margin-top:20px;">
             <span class="stat-pill green">
                 <i class="fas fa-check-circle"></i>
-                {{ $totalVoted }} position{{ $totalVoted !== 1 ? 's' : '' }} voted
+                {{ $totalVoted }} candidate{{ $totalVoted !== 1 ? 's' : '' }} voted
             </span>
             @if($totalSkipped > 0)
             <span class="stat-pill muted">
@@ -261,55 +302,126 @@
 
             @foreach($allPositions as $idx => $position)
             @php
-                $vote = $votesByPosition[$position->id] ?? null;
+                // $votesByPosition is grouped by position_id → Collection of CastedVote rows
+                $votes      = $votesByPosition->get($position->id);          // Collection|null
+                $isMulti    = ($position->max_votes ?? 1) > 1;
+                $hasVotes   = $votes && $votes->whereNotNull('candidate_id')->count() > 0;
+                $votedVotes = $votes ? $votes->whereNotNull('candidate_id') : collect();
             @endphp
 
-            @if($vote && $vote->candidate)
-            <div class="vote-row" style="animation-delay:{{ $idx * 0.04 }}s;">
-                <div class="step-num">{{ $idx + 1 }}</div>
+            @if($isMulti)
+                {{-- ── MULTI-VOTE POSITION (e.g. Senator) ── --}}
+                @if($hasVotes)
+                <div class="vote-group" style="animation-delay:{{ $idx * 0.04 }}s;">
 
-                @if($vote->candidate->photo)
-                    <img src="{{ asset('images/candidates/' . $vote->candidate->photo) }}"
-                         class="candidate-avatar" alt="{{ $vote->candidate->full_name }}">
-                @else
-                    <div class="candidate-initial">
-                        {{ strtoupper(substr($vote->candidate->first_name, 0, 1)) }}
+                    {{-- Group header --}}
+                    <div class="vote-group-header">
+                        <div class="step-num">{{ $idx + 1 }}</div>
+                        <div class="vote-info">
+                            <div class="vote-position">{{ $position->name }}</div>
+                            <div class="multi-count-badge">
+                                <i class="fas fa-check-double" style="font-size:0.5rem;"></i>
+                                {{ $votedVotes->count() }} candidate{{ $votedVotes->count() !== 1 ? 's' : '' }} selected
+                            </div>
+                        </div>
+                        <div class="vote-check"><i class="fas fa-check"></i></div>
                     </div>
+
+                    {{-- Each senator voted for --}}
+                    @foreach($votedVotes as $vote)
+                    <div class="vote-group-item">
+                        <div style="width:28px;flex-shrink:0;"></div>{{-- align with step-num --}}
+                        @if($vote->candidate?->photo)
+                            <img src="{{ asset('images/candidates/' . $vote->candidate->photo) }}"
+                                 class="candidate-avatar-sm" alt="{{ $vote->candidate->full_name }}">
+                        @else
+                            <div class="candidate-initial-sm">
+                                {{ strtoupper(substr($vote->candidate?->first_name ?? '?', 0, 1)) }}
+                            </div>
+                        @endif
+                        <div class="vote-info">
+                            <div class="vote-candidate-sm">{{ $vote->candidate?->full_name ?? '—' }}</div>
+                            @if($vote->candidate?->partylist)
+                                <div class="vote-party">{{ $vote->candidate->partylist->name }}</div>
+                            @endif
+                            @if($vote->candidate?->college)
+                                <div class="vote-college">{{ $vote->candidate->college->acronym ?? $vote->candidate->college->name }}</div>
+                            @endif
+                        </div>
+                    </div>
+                    @endforeach
+
+                </div>
+                @else
+                {{-- Multi-vote skipped --}}
+                <div class="vote-group skipped" style="animation-delay:{{ $idx * 0.04 }}s;">
+                    <div class="vote-group-header">
+                        <div class="step-num skipped">{{ $idx + 1 }}</div>
+                        <div class="candidate-initial skipped">
+                            <i class="fas fa-forward" style="font-size:0.7rem;color:rgba(255,255,255,0.2);"></i>
+                        </div>
+                        <div class="vote-info">
+                            <div class="vote-position">{{ $position->name }}</div>
+                            <div class="vote-candidate" style="color:rgba(255,251,240,0.25);font-style:italic;font-weight:400;">
+                                Skipped — no vote recorded
+                            </div>
+                        </div>
+                        <div class="vote-check" style="background:transparent;border-color:rgba(255,255,255,0.08);">
+                            <i class="fas fa-minus" style="color:rgba(255,255,255,0.15);"></i>
+                        </div>
+                    </div>
+                </div>
                 @endif
 
-                <div class="vote-info">
-                    <div class="vote-position">{{ $position->name }}</div>
-                    <div class="vote-candidate">{{ $vote->candidate->full_name }}</div>
-                    @if($vote->candidate->partylist)
-                        <div class="vote-party">{{ $vote->candidate->partylist->name }}</div>
-                    @endif
-                    @if($vote->candidate->college)
-                        <div class="vote-college">{{ $vote->candidate->college->acronym ?? $vote->candidate->college->name }}</div>
-                    @endif
-                </div>
-
-                <div class="vote-check">
-                    <i class="fas fa-check"></i>
-                </div>
-            </div>
-
             @else
-            {{-- Skipped position --}}
-            <div class="vote-row" style="animation-delay:{{ $idx * 0.04 }}s;opacity:0.45;border-color:rgba(255,255,255,0.06);background:rgba(255,255,255,0.02);">
-                <div class="step-num" style="border-color:rgba(255,255,255,0.08);color:rgba(255,255,255,0.2);">{{ $idx + 1 }}</div>
-                <div class="candidate-initial" style="border-color:rgba(255,255,255,0.08);">
-                    <i class="fas fa-forward" style="font-size:0.7rem;color:rgba(255,255,255,0.2);"></i>
+                {{-- ── SINGLE-VOTE POSITION ── --}}
+                @php $vote = $votedVotes->first(); @endphp
+
+                @if($vote && $vote->candidate)
+                <div class="vote-row" style="animation-delay:{{ $idx * 0.04 }}s;">
+                    <div class="step-num">{{ $idx + 1 }}</div>
+
+                    @if($vote->candidate->photo)
+                        <img src="{{ asset('images/candidates/' . $vote->candidate->photo) }}"
+                             class="candidate-avatar" alt="{{ $vote->candidate->full_name }}">
+                    @else
+                        <div class="candidate-initial">
+                            {{ strtoupper(substr($vote->candidate->first_name, 0, 1)) }}
+                        </div>
+                    @endif
+
+                    <div class="vote-info">
+                        <div class="vote-position">{{ $position->name }}</div>
+                        <div class="vote-candidate">{{ $vote->candidate->full_name }}</div>
+                        @if($vote->candidate->partylist)
+                            <div class="vote-party">{{ $vote->candidate->partylist->name }}</div>
+                        @endif
+                        @if($vote->candidate->college)
+                            <div class="vote-college">{{ $vote->candidate->college->acronym ?? $vote->candidate->college->name }}</div>
+                        @endif
+                    </div>
+
+                    <div class="vote-check"><i class="fas fa-check"></i></div>
                 </div>
-                <div class="vote-info">
-                    <div class="vote-position">{{ $position->name }}</div>
-                    <div class="vote-candidate" style="color:rgba(255,251,240,0.25);font-style:italic;font-weight:400;">
-                        Skipped — no vote recorded
+
+                @else
+                {{-- Single-vote skipped --}}
+                <div class="vote-row skipped" style="animation-delay:{{ $idx * 0.04 }}s;">
+                    <div class="step-num skipped">{{ $idx + 1 }}</div>
+                    <div class="candidate-initial skipped">
+                        <i class="fas fa-forward" style="font-size:0.7rem;color:rgba(255,255,255,0.2);"></i>
+                    </div>
+                    <div class="vote-info">
+                        <div class="vote-position">{{ $position->name }}</div>
+                        <div class="vote-candidate" style="color:rgba(255,251,240,0.25);font-style:italic;font-weight:400;">
+                            Skipped — no vote recorded
+                        </div>
+                    </div>
+                    <div class="vote-check" style="background:transparent;border-color:rgba(255,255,255,0.08);">
+                        <i class="fas fa-minus" style="color:rgba(255,255,255,0.15);"></i>
                     </div>
                 </div>
-                <div class="vote-check" style="background:transparent;border-color:rgba(255,255,255,0.08);">
-                    <i class="fas fa-minus" style="color:rgba(255,255,255,0.15);"></i>
-                </div>
-            </div>
+                @endif
             @endif
 
             @endforeach

@@ -131,6 +131,28 @@
         color: rgba(255,251,240,.35);
         margin-top: 5px;
     }
+
+    /* ══ MULTI-VOTE COUNTER BADGE ══ */
+    .multi-counter {
+        display: inline-flex; align-items: center; gap: 8px;
+        padding: 8px 16px; border-radius: 99px;
+        background: rgba(249,180,15,.1); border: 1px solid rgba(249,180,15,.25);
+        font-size: .72rem; font-weight: 700; color: rgba(249,180,15,.85);
+        margin-top: 8px;
+        transition: all .2s;
+    }
+    .multi-counter.at-max {
+        background: rgba(52,211,153,.1); border-color: rgba(52,211,153,.35);
+        color: #34d399;
+    }
+    .multi-counter-dot {
+        width: 7px; height: 7px; border-radius: 50%;
+        background: rgba(249,180,15,.7);
+        animation: pulse 1.5s ease infinite;
+    }
+    .multi-counter.at-max .multi-counter-dot { background: #34d399; }
+    @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.3} }
+
     .skip-btn {
         display: inline-flex; align-items: center; gap: 6px;
         padding: 8px 18px; border-radius: 9px;
@@ -168,6 +190,7 @@
         position: relative;
         display: flex;
         flex-direction: column;
+        user-select: none;
     }
     .candidate-card:hover {
         border-color: rgba(249,180,15,.4);
@@ -179,6 +202,13 @@
         border-color: #f9b40f;
         background: rgba(249,180,15,.07);
         box-shadow: 0 0 0 1px rgba(249,180,15,.25), 0 12px 32px rgba(249,180,15,.14);
+    }
+    /* When max reached, dim unselected cards — but keep clicks going so Alpine handles it */
+    .candidate-card.is-maxed {
+        opacity: .4;
+        transform: none !important;
+        box-shadow: none !important;
+        cursor: not-allowed;
     }
 
     /* ── Checkmark badge ── */
@@ -228,12 +258,6 @@
         display: flex; align-items: center; justify-content: center;
         font-family: 'Playfair Display', serif;
         font-size: 2.4rem; font-weight: 900; color: #f9b40f;
-    }
-    .candidate-card.is-disabled {
-        opacity: .38;
-        cursor: not-allowed;
-        transform: none !important;
-        box-shadow: none !important;
     }
 
     /* Info block */
@@ -298,7 +322,7 @@
         box-shadow: 0 4px 16px rgba(249,180,15,.3), inset 0 1px 0 rgba(255,255,255,.2);
     }
     .btn-primary:hover { transform: translateY(-1px); box-shadow: 0 6px 24px rgba(249,180,15,.45); }
-    .btn-primary[disabled], .btn-primary:disabled {
+    .btn-primary:disabled {
         opacity: .35; cursor: not-allowed; transform: none; box-shadow: none;
     }
     .btn-ghost {
@@ -324,9 +348,6 @@
         display: flex; align-items: center; justify-content: center;
         padding: 16px;
     }
-    @keyframes vavFadeIn  { from { opacity: 0; }                        to { opacity: 1; } }
-    @keyframes vavSlideUp { from { opacity: 0; transform: translateY(28px) scale(.97); } to { opacity: 1; transform: translateY(0) scale(1); } }
-
     .vav-box {
         background: rgba(22,0,28,.97);
         border: 1px solid rgba(249,180,15,.22);
@@ -338,21 +359,17 @@
         overflow: hidden;
         animation: vavSlideUp .28s cubic-bezier(.34,1.2,.64,1) both;
     }
+    @keyframes vavSlideUp { from { opacity: 0; transform: translateY(28px) scale(.97); } to { opacity: 1; transform: translateY(0) scale(1); } }
     .vav-box::before {
         content: ''; display: block; height: 2px; flex-shrink: 0;
         background: linear-gradient(90deg, transparent, #f9b40f, #fcd558, transparent);
     }
-
-    /* Header */
     .vav-header {
         display: flex; align-items: center; justify-content: space-between;
         padding: 18px 22px 14px; flex-shrink: 0;
         border-bottom: 1px solid rgba(249,180,15,.08);
     }
-    .vav-title {
-        font-family: 'Playfair Display', serif;
-        font-size: 1.05rem; font-weight: 900; color: #fffbf0;
-    }
+    .vav-title { font-family: 'Playfair Display', serif; font-size: 1.05rem; font-weight: 900; color: #fffbf0; }
     .vav-sub { font-size: .62rem; color: rgba(255,251,240,.35); margin-top: 3px; }
     .vav-close {
         width: 32px; height: 32px; border-radius: 50%; flex-shrink: 0;
@@ -361,20 +378,10 @@
         display: flex; align-items: center; justify-content: center;
         cursor: pointer; transition: all .18s;
     }
-    .vav-close:hover {
-        border-color: rgba(249,180,15,.4); color: #f9b40f;
-        background: rgba(249,180,15,.07);
-    }
-
-    /* Scroll body */
-    .vav-body {
-        overflow-y: auto; flex: 1;
-        padding: 14px 20px 6px;
-    }
+    .vav-close:hover { border-color: rgba(249,180,15,.4); color: #f9b40f; background: rgba(249,180,15,.07); }
+    .vav-body { overflow-y: auto; flex: 1; padding: 14px 20px 6px; }
     .vav-body::-webkit-scrollbar { width: 3px; }
     .vav-body::-webkit-scrollbar-thumb { background: rgba(249,180,15,.2); border-radius: 99px; }
-
-    /* Row */
     .vav-row {
         display: flex; align-items: center; gap: 12px;
         padding: 10px 12px; border-radius: 12px; margin-bottom: 6px;
@@ -383,49 +390,30 @@
         transition: background .15s;
     }
     .vav-row:hover { background: rgba(52,211,153,.07); }
-    .vav-row.vav-skipped {
-        border-color: rgba(255,255,255,.05);
-        background: transparent; opacity: .42;
-    }
+    .vav-row.vav-skipped { border-color: rgba(255,255,255,.05); background: transparent; opacity: .42; }
     .vav-num {
         width: 26px; height: 26px; border-radius: 50%; flex-shrink: 0;
         background: rgba(249,180,15,.1); border: 1px solid rgba(249,180,15,.2);
         display: flex; align-items: center; justify-content: center;
         font-size: .58rem; font-weight: 800; color: rgba(249,180,15,.7);
     }
-    .vav-avatar {
-        width: 40px; height: 40px; border-radius: 50%; flex-shrink: 0;
-        object-fit: cover; border: 2px solid rgba(52,211,153,.3);
-    }
+    .vav-avatar { width: 40px; height: 40px; border-radius: 50%; flex-shrink: 0; object-fit: cover; border: 2px solid rgba(52,211,153,.3); }
     .vav-initial {
         width: 40px; height: 40px; border-radius: 50%; flex-shrink: 0;
         background: linear-gradient(135deg, #380041, #520060);
         border: 2px solid rgba(52,211,153,.25);
         display: flex; align-items: center; justify-content: center;
-        font-family: 'Playfair Display', serif;
-        font-size: 1rem; font-weight: 900; color: #f9b40f;
+        font-family: 'Playfair Display', serif; font-size: 1rem; font-weight: 900; color: #f9b40f;
     }
     .vav-info { flex: 1; min-width: 0; }
-    .vav-pos  {
-        font-size: .58rem; font-weight: 700; text-transform: uppercase;
-        letter-spacing: .08em; color: rgba(249,180,15,.45); margin-bottom: 2px;
-    }
+    .vav-pos { font-size: .58rem; font-weight: 700; text-transform: uppercase; letter-spacing: .08em; color: rgba(249,180,15,.45); margin-bottom: 2px; }
     .vav-name { font-size: .78rem; font-weight: 700; color: #fffbf0; }
     .vav-name.vav-empty { color: rgba(255,251,240,.22); font-style: italic; font-weight: 400; }
     .vav-party { font-size: .62rem; color: rgba(249,180,15,.4); margin-top: 1px; }
-    .vav-tick {
-        width: 24px; height: 24px; border-radius: 50%; flex-shrink: 0;
-        display: flex; align-items: center; justify-content: center;
-        font-size: .6rem;
-    }
+    .vav-tick { width: 24px; height: 24px; border-radius: 50%; flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-size: .6rem; }
     .vav-tick.voted   { background: rgba(52,211,153,.1); border: 1px solid rgba(52,211,153,.3); color: #34d399; }
     .vav-tick.skipped { background: transparent; border: 1px solid rgba(255,255,255,.08); color: rgba(255,255,255,.15); }
-
-    /* Footer */
-    .vav-footer {
-        padding: 12px 20px 18px; flex-shrink: 0;
-        border-top: 1px solid rgba(249,180,15,.07);
-    }
+    .vav-footer { padding: 12px 20px 18px; flex-shrink: 0; border-top: 1px solid rgba(249,180,15,.07); }
     .vav-note {
         display: flex; align-items: flex-start; gap: 8px;
         padding: 10px 14px; border-radius: 10px; margin-bottom: 12px;
@@ -458,7 +446,22 @@
 </style>
 @endpush
 
-<div class="ballot-wrap" x-data="stepPage()" x-init="init()" @keydown.escape.window="showVoted = false">
+@php
+    $isMulti  = ($position->max_votes ?? 1) > 1;
+    $maxVotes = (int) ($position->max_votes ?? 1);
+
+    // Normalise pre-selected IDs from session
+    if ($isMulti) {
+        $preSelected = is_array($selectedId) ? array_map('intval', $selectedId) : [];
+    } else {
+        $preSelected = $selectedId ? (int) $selectedId : null;
+    }
+@endphp
+
+<div class="ballot-wrap"
+     x-data="stepPage()"
+     x-init="init()"
+     @keydown.escape.window="showVoted = false">
 
     {{-- Progress bar --}}
     <div class="bw-top-bar">
@@ -505,8 +508,21 @@
                     Position {{ $step }} of {{ $totalSteps }}
                 </div>
                 <div class="pos-title">{{ $position->name }}</div>
-                <div class="pos-hint">Select one candidate below, or skip this position.</div>
+
+                @if($isMulti)
+                    {{-- Multi-vote instructions + live counter --}}
+                    <div class="pos-hint">Select up to <strong style="color:#f9b40f;">{{ $maxVotes }}</strong> candidates. Click again to deselect.</div>
+                    <div class="multi-counter" :class="{ 'at-max': atMax }">
+                        <div class="multi-counter-dot"></div>
+                        <span x-text="chosenCount + ' / {{ $maxVotes }} selected'"></span>
+                        <span x-show="atMax" style="font-size:.65rem;opacity:.8;">&nbsp;— max reached</span>
+                    </div>
+                @else
+                    <div class="pos-hint">Select one candidate below, or skip this position.</div>
+                @endif
             </div>
+
+            {{-- Skip button --}}
             <form method="POST" action="{{ route('voter.vote.step.save', $step) }}">
                 @csrf
                 <input type="hidden" name="action" value="skip">
@@ -516,7 +532,7 @@
             </form>
         </div>
 
-        {{-- Candidates --}}
+        {{-- Candidates grid --}}
         @php
             $count    = $position->candidates->count();
             $colCount = $count === 0 ? 1 : min($count, 4);
@@ -531,19 +547,19 @@
             @else
                 <div class="candidates-grid" style="--col-count: {{ $colCount }};">
                     @foreach($position->candidates as $candidate)
-
                     <div
                         class="candidate-card"
                         :class="{
                             'is-selected': isSelected({{ $candidate->candidate_id }}),
-                            'is-disabled': atMax && !isSelected({{ $candidate->candidate_id }})
+                            'is-maxed':    !isSelected({{ $candidate->candidate_id }}) && atMax
                         }"
-                        @click="select({{ $candidate->candidate_id }})"
+                        @click="toggle({{ $candidate->candidate_id }})"
                     >
+                        {{-- Checkmark badge --}}
                         <div class="check-badge"
-                            x-show="isSelected({{ $candidate->candidate_id }})"
-                            x-cloak
-                            style="display:none;">
+                             x-show="isSelected({{ $candidate->candidate_id }})"
+                             x-cloak
+                             style="display:none;">
                             <i class="fas fa-check"></i>
                         </div>
 
@@ -571,90 +587,83 @@
                             @endif
                         </div>
                     </div>
-
                     @endforeach
                 </div>
             @endif
         </div>
 
-        {{-- Footer --}}
+        {{-- Hidden submission form --}}
         <form method="POST" action="{{ route('voter.vote.step.save', $step) }}" id="step-form">
             @csrf
-            @if(($position->max_votes ?? 1) > 1)
-                <input type="hidden" name="action" value="select">
-                <template x-for="id in chosen" :key="id">
-                    <input type="hidden" name="candidate_ids[]" :value="id">
-                </template>
+            <input type="hidden" name="action" value="select">
+            @if($isMulti)
+                {{-- Multi-vote: hidden inputs injected by JS before submit --}}
+                <div id="multi-vote-inputs"></div>
             @else
-                <input type="hidden" name="action" value="select">
-                <input type="hidden" name="candidate_id" x-model="chosen">
+                {{-- Single-vote: one hidden input bound to Alpine --}}
+                <input type="hidden" name="candidate_id" id="single-vote-input" value="">
             @endif
         </form>
 
+        {{-- Footer --}}
         <div class="card-footer">
             <div>
-                @if(($position->max_votes ?? 1) > 1)
-                <div class="selection-hint" x-show="chosenCount === 0">
-                    <i class="fas fa-hand-pointer" style="font-size:.65rem;"></i>
-                    Select up to {{ $position->max_votes }} candidates
-                </div>
-                <div class="selection-chosen" x-show="chosenCount > 0" x-cloak>
-                    <i class="fas fa-check-circle" style="color:#34d399;"></i>
-                    <span x-text="chosenCount + ' / {{ $position->max_votes }} selected'"></span>
-                </div>
+                @if($isMulti)
+                    <div class="selection-hint" x-show="chosenCount === 0">
+                        <i class="fas fa-hand-pointer" style="font-size:.65rem;"></i>
+                        Tap candidates to select (up to {{ $maxVotes }})
+                    </div>
+                    <div class="selection-chosen" x-show="chosenCount > 0" x-cloak>
+                        <i class="fas fa-check-circle" style="color:#34d399;"></i>
+                        <span x-text="chosenCount + ' candidate' + (chosenCount > 1 ? 's' : '') + ' selected'"></span>
+                    </div>
                 @else
-                <div class="selection-hint" x-show="!chosen">
-                    <i class="fas fa-hand-pointer" style="font-size:.65rem;"></i>
-                    Tap a candidate to select
-                </div>
-                <div class="selection-chosen" x-show="chosen" x-cloak>
-                    <i class="fas fa-check-circle" style="color:#34d399;"></i>
-                    <span x-text="chosenName"></span>
-                </div>
+                    <div class="selection-hint" x-show="!singleChosen">
+                        <i class="fas fa-hand-pointer" style="font-size:.65rem;"></i>
+                        Tap a candidate to select
+                    </div>
+                    <div class="selection-chosen" x-show="singleChosen" x-cloak>
+                        <i class="fas fa-check-circle" style="color:#34d399;"></i>
+                        <span x-text="chosenName"></span>
+                    </div>
                 @endif
             </div>
 
             <div class="btn-group">
+                {{-- Back --}}
+                @if($step > 1)
+                <form method="POST" action="{{ route('voter.vote.step.save', $step) }}" style="margin:0;">
+                    @csrf
+                    <input type="hidden" name="action" value="back">
+                    <button type="submit" class="btn btn-ghost">
+                        <i class="fas fa-arrow-left"></i> Back
+                    </button>
+                </form>
+                @else
+                <a href="{{ route('voter.vote.intro') }}" class="btn btn-ghost">
+                    <i class="fas fa-arrow-left"></i> Back
+                </a>
+                @endif
 
-                    {{-- Back --}}
-                    @if($step > 1)
-                    <form method="POST" action="{{ route('voter.vote.step.save', $step) }}" style="margin:0;">
-                            @csrf
-                            <input type="hidden" name="action" value="back">
-                            <button type="submit" class="btn btn-ghost">
-                                <i class="fas fa-arrow-left"></i> Back
-                            </button>
-                        </form>
-                        @else
-                        <a href="{{ route('voter.vote.intro') }}" class="btn btn-ghost">
-                            <i class="fas fa-arrow-left"></i> Back
-                        </a>
-                        @endif
-
-                        {{-- Next / View All --}}
-                        @if($step === $totalSteps)
-                            <button type="button" class="btn btn-primary" @click="showVoted = true">
-                                <i class="fas fa-list-check"></i> View All Candidates Voted
-                            </button>
-                        @else
-                            <button type="submit" form="step-form" class="btn btn-primary"
-                                :disabled="!hasSelection" x-bind:disabled="!hasSelection">
-                                Next <i class="fas fa-arrow-right"></i>
-                            </button>
-                        @endif
-
-                </div>
+                {{-- Next / View All --}}
+                @if($step === $totalSteps)
+                    <button type="button" class="btn btn-primary" @click="showVoted = true">
+                        <i class="fas fa-list-check"></i> View All Candidates Voted
+                    </button>
+                @else
+                    <button type="button" class="btn btn-primary"
+                            :disabled="!hasSelection"
+                            @click="submitStep()">
+                        Next <i class="fas fa-arrow-right"></i>
+                    </button>
+                @endif
+            </div>
         </div>
 
     </div>{{-- /.ballot-card --}}
 
 
-    {{-- ══════════════════════════════════════════════════
-         VIEW ALL CANDIDATES VOTED — Modal
-         Shows every position + who the voter picked (or skipped).
-         Clicking "Review & Submit" submits the current step first
-         (if a candidate is chosen) then goes to the review page.
-    ══════════════════════════════════════════════════ --}}
+    {{-- ══ VIEW ALL CANDIDATES VOTED MODAL ══ --}}
     <div class="vav-overlay"
          x-show="showVoted"
          x-cloak
@@ -669,7 +678,6 @@
 
         <div class="vav-box" @click.stop>
 
-            {{-- Header --}}
             <div class="vav-header">
                 <div>
                     <div class="vav-title">Your Ballot So Far</div>
@@ -680,7 +688,6 @@
                 </button>
             </div>
 
-            {{-- Rows --}}
             <div class="vav-body">
                 @foreach($steps as $idx => $s)
                 @php
@@ -690,60 +697,106 @@
                     $isVoted     = $ballotVal && $ballotVal !== 'skip';
                     $isLastStep  = $s['step'] === $totalSteps;
 
-                    // For the last step, we don't know yet if user picked someone — Alpine handles that live
-                    // For all prior steps we read from the session ballot
                     $candidate = null;
-                    if ($isVoted && ! $isLastStep) {
-                        // Find candidate across all positions loaded in view
-                        // We use a raw lookup since we only have $position loaded fully
+                    if ($isVoted && !$isLastStep && !is_array($ballotVal)) {
                         $candidate = \App\Models\Candidate::with(['partylist'])
                             ->where('candidate_id', $ballotVal)
                             ->first();
                     }
+                    // Multi-vote (array) for previous steps
+                    $multiCandidates = [];
+                    if ($isVoted && !$isLastStep && is_array($ballotVal)) {
+                        $multiCandidates = \App\Models\Candidate::with(['partylist'])
+                            ->whereIn('candidate_id', $ballotVal)
+                            ->get();
+                    }
                 @endphp
 
                 @if($isLastStep)
-                {{-- Last step row is driven by Alpine (reacts to current selection) --}}
-                <div :class="['vav-row', chosen ? '' : 'vav-skipped']">
-                    <div class="vav-num">{{ $s['step'] }}</div>
-
-                    {{-- Avatar / initial —driven by Alpine --}}
-                    <template x-if="chosen && lastStepCandidates[chosen] && lastStepCandidates[chosen].photo">
-                        <img :src="lastStepCandidates[chosen].photoUrl" class="vav-avatar" :alt="lastStepCandidates[chosen].name">
-                    </template>
-                    <template x-if="!(chosen && lastStepCandidates[chosen] && lastStepCandidates[chosen].photo)">
+                {{-- Last step: driven by Alpine --}}
+                <template x-if="{{ $isMulti ? 'true' : 'false' }}">
+                    {{-- Multi-vote last step --}}
+                    <div>
+                        <template x-if="chosenCount === 0">
+                            <div class="vav-row vav-skipped">
+                                <div class="vav-num">{{ $s['step'] }}</div>
+                                <div class="vav-initial" style="border-color:rgba(255,255,255,0.08);">
+                                    <i class="fas fa-minus" style="font-size:.65rem;color:rgba(255,255,255,0.2);"></i>
+                                </div>
+                                <div class="vav-info">
+                                    <div class="vav-pos">{{ $s['name'] }}</div>
+                                    <div class="vav-name vav-empty">Not yet selected</div>
+                                </div>
+                                <div class="vav-tick skipped"><i class="fas fa-minus"></i></div>
+                            </div>
+                        </template>
+                        <template x-if="chosenCount > 0">
+                            <div>
+                                <template x-for="(id, i) in multiChosen" :key="id">
+                                    <div class="vav-row">
+                                        <div class="vav-num" x-text="i === 0 ? '{{ $s['step'] }}' : ''"></div>
+                                        <div class="vav-initial">
+                                            <span x-text="lastStepCandidates[id] ? lastStepCandidates[id].initial : '?'"></span>
+                                        </div>
+                                        <div class="vav-info">
+                                            <div class="vav-pos" x-show="i === 0">{{ $s['name'] }}</div>
+                                            <div class="vav-name" x-text="lastStepCandidates[id] ? lastStepCandidates[id].name : ''"></div>
+                                            <div class="vav-party" x-text="lastStepCandidates[id] ? lastStepCandidates[id].party : ''"></div>
+                                        </div>
+                                        <div class="vav-tick voted"><i class="fas fa-check"></i></div>
+                                    </div>
+                                </template>
+                            </div>
+                        </template>
+                    </div>
+                </template>
+                <template x-if="{{ $isMulti ? 'false' : 'true' }}">
+                    {{-- Single-vote last step --}}
+                    <div :class="['vav-row', singleChosen ? '' : 'vav-skipped']">
+                        <div class="vav-num">{{ $s['step'] }}</div>
                         <div class="vav-initial">
-                            <span x-text="chosen && lastStepCandidates[chosen] ? lastStepCandidates[chosen].initial : '—'"></span>
+                            <span x-text="singleChosen && lastStepCandidates[singleChosen] ? lastStepCandidates[singleChosen].initial : '—'"></span>
                         </div>
-                    </template>
+                        <div class="vav-info">
+                            <div class="vav-pos">{{ $s['name'] }}</div>
+                            <div :class="['vav-name', singleChosen ? '' : 'vav-empty']"
+                                 x-text="singleChosen && lastStepCandidates[singleChosen] ? lastStepCandidates[singleChosen].name : 'Not yet selected'"></div>
+                            <div class="vav-party"
+                                 x-show="singleChosen && lastStepCandidates[singleChosen]"
+                                 x-text="singleChosen && lastStepCandidates[singleChosen] ? lastStepCandidates[singleChosen].party : ''"></div>
+                        </div>
+                        <div :class="['vav-tick', singleChosen ? 'voted' : 'skipped']">
+                            <i :class="singleChosen ? 'fas fa-check' : 'fas fa-minus'"></i>
+                        </div>
+                    </div>
+                </template>
 
+                @elseif($isVoted && count($multiCandidates) > 0)
+                {{-- Previous multi-vote step with selections --}}
+                @foreach($multiCandidates as $mc)
+                <div class="vav-row">
+                    <div class="vav-num">{{ $loop->first ? $s['step'] : '' }}</div>
+                    @if($mc->photo)
+                        <img src="{{ asset('images/candidates/' . $mc->photo) }}" class="vav-avatar" alt="{{ $mc->full_name }}">
+                    @else
+                        <div class="vav-initial">{{ strtoupper(substr($mc->first_name, 0, 1)) }}</div>
+                    @endif
                     <div class="vav-info">
-                        <div class="vav-pos">{{ $s['name'] }}</div>
-                        <div :class="['vav-name', chosen ? '' : 'vav-empty']"
-                             x-text="chosen && lastStepCandidates[chosen]
-                                ? lastStepCandidates[chosen].name
-                                : 'Not yet selected'">
-                        </div>
-                        <div class="vav-party"
-                             x-show="chosen && lastStepCandidates[chosen] && lastStepCandidates[chosen].party"
-                             x-text="chosen && lastStepCandidates[chosen] ? lastStepCandidates[chosen].party : ''">
-                        </div>
+                        @if($loop->first)<div class="vav-pos">{{ $s['name'] }}</div>@endif
+                        <div class="vav-name">{{ $mc->full_name }}</div>
+                        @if($mc->partylist)<div class="vav-party">{{ $mc->partylist->name }}</div>@endif
                     </div>
-
-                    <div :class="['vav-tick', chosen ? 'voted' : 'skipped']">
-                        <i :class="chosen ? 'fas fa-check' : 'fas fa-minus'"></i>
-                    </div>
+                    <div class="vav-tick voted"><i class="fas fa-check"></i></div>
                 </div>
+                @endforeach
 
                 @else
-                {{-- All previous steps — server-rendered from session --}}
-                <div class="vav-row {{ ! $isVoted ? 'vav-skipped' : '' }}">
+                {{-- Previous single-vote or skipped step --}}
+                <div class="vav-row {{ !$isVoted ? 'vav-skipped' : '' }}">
                     <div class="vav-num">{{ $s['step'] }}</div>
-
                     @if($isVoted && $candidate)
                         @if($candidate->photo)
-                            <img src="{{ asset('images/candidates/' . $candidate->photo) }}"
-                                 class="vav-avatar" alt="{{ $candidate->full_name }}">
+                            <img src="{{ asset('images/candidates/' . $candidate->photo) }}" class="vav-avatar" alt="{{ $candidate->full_name }}">
                         @else
                             <div class="vav-initial">{{ strtoupper(substr($candidate->first_name, 0, 1)) }}</div>
                         @endif
@@ -752,21 +805,15 @@
                             <i class="fas fa-minus" style="font-size:.65rem;color:rgba(255,255,255,0.2);"></i>
                         </div>
                     @endif
-
                     <div class="vav-info">
                         <div class="vav-pos">{{ $s['name'] }}</div>
                         @if($isVoted && $candidate)
                             <div class="vav-name">{{ $candidate->full_name }}</div>
-                            @if($candidate->partylist)
-                                <div class="vav-party">{{ $candidate->partylist->name }}</div>
-                            @endif
+                            @if($candidate->partylist)<div class="vav-party">{{ $candidate->partylist->name }}</div>@endif
                         @else
-                            <div class="vav-name vav-empty">
-                                {{ $ballotVal === 'skip' ? 'Skipped' : 'Not yet voted' }}
-                            </div>
+                            <div class="vav-name vav-empty">{{ $ballotVal === 'skip' ? 'Skipped' : 'Not yet voted' }}</div>
                         @endif
                     </div>
-
                     <div class="vav-tick {{ $isVoted ? 'voted' : 'skipped' }}">
                         <i class="{{ $isVoted ? 'fas fa-check' : 'fas fa-minus' }}"></i>
                     </div>
@@ -776,7 +823,6 @@
                 @endforeach
             </div>
 
-            {{-- Footer --}}
             <div class="vav-footer">
                 <div class="vav-note">
                     <i class="fas fa-circle-info" style="color:rgba(249,180,15,.5);flex-shrink:0;margin-top:1px;"></i>
@@ -785,12 +831,6 @@
                         Click <strong style="color:rgba(249,180,15,.7);">Review &amp; Submit</strong> when you're ready to finalise.
                     </span>
                 </div>
-
-                {{--
-                    If the voter has selected someone on this last step,
-                    submit the step form (which saves to session) before going to review.
-                    If nothing selected, go straight to review (last step stays skipped).
-                --}}
                 <button type="button" class="vav-review-btn" @click="goToReview()">
                     <i class="fas fa-paper-plane"></i> Review &amp; Submit Ballot
                 </button>
@@ -801,87 +841,7 @@
 
 </div>{{-- /.ballot-wrap --}}
 
-@push('scripts')
-<script>
-    function stepPage() {
-        return {
-            maxVotes: {{ $position->max_votes ?? 1 }},
-            chosen: @if(($position->max_votes ?? 1) > 1)
-                        {{ json_encode(is_array($selectedId) ? $selectedId : []) }}
-                    @else
-                        {{ $selectedId ?? 'null' }}
-                    @endif,
-            chosenName: '',
-            showVoted: false,
-
-            candidates: {
-                @foreach($position->candidates as $c)
-                {{ $c->candidate_id }}: '{{ addslashes($c->full_name) }}',
-                @endforeach
-            },
-
-            lastStepCandidates: {
-                @foreach($position->candidates as $c)
-                {{ $c->candidate_id }}: {
-                    name:     '{{ addslashes($c->full_name) }}',
-                    party:    '{{ addslashes($c->partylist?->name ?? '') }}',
-                    initial:  '{{ strtoupper(substr($c->first_name, 0, 1)) }}',
-                    photo:    {{ $c->photo ? 'true' : 'false' }},
-                    photoUrl: '{{ $c->photo ? asset('images/candidates/' . $c->photo) : '' }}',
-                },
-                @endforeach
-            },
-
-            get isMulti() { return this.maxVotes > 1; },
-            get chosenCount() { return this.isMulti ? this.chosen.length : (this.chosen ? 1 : 0); },
-            get hasSelection() { return this.isMulti ? this.chosen.length > 0 : !!this.chosen; },
-            get atMax() { return this.isMulti && this.chosen.length >= this.maxVotes; },
-
-            isSelected(id) {
-                return this.isMulti ? this.chosen.includes(id) : this.chosen === id;
-            },
-
-            init() {
-                if (!this.isMulti && this.chosen) {
-                    this.chosenName = this.candidates[this.chosen] ?? '';
-                }
-            },
-
-            select(id) {
-                if (this.isMulti) {
-                    const idx = this.chosen.indexOf(id);
-                    if (idx > -1) {
-                        this.chosen.splice(idx, 1);       // deselect
-                    } else if (this.chosen.length < this.maxVotes) {
-                        this.chosen.push(id);             // select if under limit
-                    }
-                    // clicking when at max does nothing
-                } else {
-                    if (this.chosen === id) {
-                        this.chosen = null;
-                        this.chosenName = '';
-                    } else {
-                        this.chosen = id;
-                        this.chosenName = this.candidates[id] ?? '';
-                    }
-                }
-            },
-
-            goToReview() {
-                if (this.hasSelection) {
-                    document.getElementById('step-form').submit();
-                } else {
-                    const f = document.getElementById('skip-form-last');
-                    if (f) f.submit();
-                    else window.location = '{{ route('voter.vote.review') }}';
-                }
-            }
-        }
-    }
-</script>
-@endpush
-
-{{-- Hidden skip form used by goToReview() when nothing is chosen on the last step --}}
+{{-- Hidden skip form for last step when nothing chosen --}}
 <form id="skip-form-last"
       method="POST"
       action="{{ route('voter.vote.step.save', $step) }}"
@@ -890,4 +850,129 @@
     <input type="hidden" name="action" value="skip">
 </form>
 
+@push('scripts')
+<script>
+function stepPage() {
+    const IS_MULTI  = {{ $isMulti ? 'true' : 'false' }};
+    const MAX_VOTES = {{ $maxVotes }};
+
+    // Pre-populate from server (session-restored selections)
+    @if($isMulti)
+        const PRE_MULTI  = {{ json_encode($preSelected) }};  // int[]
+    @else
+        const PRE_SINGLE = {{ $preSelected ?? 'null' }};     // int|null
+    @endif
+
+    // Candidate lookup map for the last-step modal
+    const CANDIDATES = {
+        @foreach($position->candidates as $c)
+        {{ $c->candidate_id }}: {
+            name:     '{{ addslashes($c->full_name) }}',
+            party:    '{{ addslashes($c->partylist?->name ?? '') }}',
+            initial:  '{{ strtoupper(substr($c->first_name, 0, 1)) }}',
+            photo:    {{ $c->photo ? 'true' : 'false' }},
+            photoUrl: '{{ $c->photo ? asset('images/candidates/' . $c->photo) : '' }}',
+        },
+        @endforeach
+    };
+
+    return {
+        // ── State ──────────────────────────────────────────────
+        isMulti:   IS_MULTI,
+        maxVotes:  MAX_VOTES,
+        showVoted: false,
+
+        // Multi-vote: array of selected candidate IDs
+        multiChosen: IS_MULTI ? [...PRE_MULTI] : [],
+
+        // Single-vote: one ID or null
+        singleChosen: IS_MULTI ? null : PRE_SINGLE,
+        chosenName: '',
+
+        lastStepCandidates: CANDIDATES,
+
+        // ── Computed ───────────────────────────────────────────
+        get chosenCount() {
+            return this.isMulti ? this.multiChosen.length : (this.singleChosen ? 1 : 0);
+        },
+        get atMax() {
+            return this.isMulti && this.multiChosen.length >= this.maxVotes;
+        },
+        get hasSelection() {
+            return this.isMulti ? this.multiChosen.length > 0 : !!this.singleChosen;
+        },
+
+        // ── Helpers ────────────────────────────────────────────
+        isSelected(id) {
+            if (this.isMulti) {
+                return this.multiChosen.some(v => v === id);
+            }
+            return this.singleChosen === id;
+        },
+
+        // ── Toggle selection ───────────────────────────────────
+        toggle(id) {
+            if (this.isMulti) {
+                const idx = this.multiChosen.findIndex(v => v === id);
+                if (idx > -1) {
+                    // Deselect
+                    this.multiChosen.splice(idx, 1);
+                } else if (this.multiChosen.length < this.maxVotes) {
+                    // Select (only if under limit)
+                    this.multiChosen.push(id);
+                }
+                // If at max and card not selected, click is silently ignored
+            } else {
+                if (this.singleChosen === id) {
+                    this.singleChosen = null;
+                    this.chosenName   = '';
+                } else {
+                    this.singleChosen = id;
+                    this.chosenName   = CANDIDATES[id] ? CANDIDATES[id].name : '';
+                }
+            }
+        },
+
+        // ── Init ───────────────────────────────────────────────
+        init() {
+            if (!this.isMulti && this.singleChosen) {
+                this.chosenName = CANDIDATES[this.singleChosen]?.name ?? '';
+            }
+        },
+
+        // ── Submit the step form ───────────────────────────────
+        submitStep() {
+            if (!this.hasSelection) return;
+
+            if (this.isMulti) {
+                // Inject hidden inputs for each selected candidate
+                const container = document.getElementById('multi-vote-inputs');
+                container.innerHTML = '';
+                this.multiChosen.forEach(id => {
+                    const inp = document.createElement('input');
+                    inp.type  = 'hidden';
+                    inp.name  = 'candidate_ids[]';
+                    inp.value = id;
+                    container.appendChild(inp);
+                });
+            } else {
+                document.getElementById('single-vote-input').value = this.singleChosen;
+            }
+
+            document.getElementById('step-form').submit();
+        },
+
+        // ── "Review & Submit" from last-step modal ─────────────
+        goToReview() {
+            if (this.hasSelection) {
+                this.submitStep();
+            } else {
+                // Nothing selected on last step — skip it and go to review
+                document.getElementById('skip-form-last').submit();
+            }
+        },
+    };
+}
+</script>
+@endpush
 </x-app-layout>
