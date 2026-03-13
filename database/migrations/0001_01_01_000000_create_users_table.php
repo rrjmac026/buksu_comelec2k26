@@ -18,7 +18,7 @@ return new class extends Migration
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password')->nullable();
             $table->string('role')->default('voter');
-            $table->enum('sex', ['male', 'female', 'other'])->nullable();
+            $table->string('sex')->nullable();
             $table->string('student_number', 50)->nullable()->unique();
             $table->unsignedBigInteger('college_id')->nullable();
             $table->string('course', 100)->nullable();

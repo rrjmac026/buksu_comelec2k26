@@ -33,7 +33,7 @@ class DatabaseSeeder extends Seeder
 
         // Admin Seeders
         User::updateOrCreate(
-            ['email' => '1901102366@student.buksu.edu.ph'],
+            ['email' => 'macalutasreyramesesjdueiii@gmail.com'],
             [
                 'first_name' => 'Admin Jam',
                 'last_name' => 'Macalutas',
@@ -43,7 +43,7 @@ class DatabaseSeeder extends Seeder
         );
 
         User::updateOrCreate(
-            ['email' => '2101103309@student.buksu.edu.ph'],
+            ['email' => 'onlinelubong@gmail.com'],
             [
                 'first_name' => 'Admin Khyle',
                 'last_name' => 'Amacna',
@@ -53,7 +53,7 @@ class DatabaseSeeder extends Seeder
         );
 
         User::updateOrCreate(
-            ['email' => '2001102491@student.buksu.edu.ph'],
+            ['email' => 'yudai.bernard@gmail.com'],
             [
                 'first_name' => 'Admin Bernardo',
                 'last_name' => 'Dela Cerna III',

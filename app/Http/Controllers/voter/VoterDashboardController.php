@@ -15,7 +15,7 @@ class VoterDashboardController extends Controller
     // ─────────────────────────────────────────────────────────────
     public function index()
     {
-        $voter = auth()->user();
+        $voter = auth()->user()->load('college');
 
         // Election-wide stats
         $totalCandidates = Candidate::count();

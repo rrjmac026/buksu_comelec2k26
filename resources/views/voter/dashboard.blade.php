@@ -435,11 +435,11 @@
             {{-- Info rows --}}
             @php
                 $infos = [
-                    ['label'=>'Student No.', 'value'=>$voter->student_number ?? '—',                             'icon'=>'fa-id-card'],
-                    ['label'=>'College',     'value'=>$voter->college?->name ?? '—',                             'icon'=>'fa-building-columns'],
-                    ['label'=>'Course',      'value'=>$voter->course ?? '—',                                     'icon'=>'fa-book'],
+                    ['label'=>'Student No.', 'value'=>$voter->student_number ?: '—',                             'icon'=>'fa-id-card'],
+                    ['label'=>'College',     'value'=>$voter->college?->name ?: '—',                             'icon'=>'fa-building-columns'],
+                    ['label'=>'Course',      'value'=>$voter->course ?: '—',                                     'icon'=>'fa-book'],
                     ['label'=>'Year Level',  'value'=>$voter->year_level ? 'Year '.$voter->year_level : '—',     'icon'=>'fa-graduation-cap'],
-                    ['label'=>'Sex',         'value'=>ucfirst($voter->sex ?? '—'),                               'icon'=>'fa-venus-mars'],
+                    ['label'=>'Sex',         'value'=>$voter->sex ? ucfirst($voter->sex) : '—',                  'icon'=>'fa-venus-mars'],
                 ];
             @endphp
             @foreach($infos as $info)
