@@ -18,15 +18,15 @@ class VoterCastedVoteController extends Controller
     // ─────────────────────────────────────────────────────────────
     public function intro()
     {
+        $totalPositions = Position::count();
+
+        // If already voted, just show the "already voted" screen — no redirect
         if (auth()->user()->hasVoted()) {
-            return redirect()->route('voter.dashboard')
-                ->with('info', 'You have already submitted your vote.');
+            return view('voter.ballot.intro', compact('totalPositions'));
         }
 
         // Fresh start — wipe any leftover in-progress ballot
         session()->forget('ballot');
-
-        $totalPositions = Position::count();
 
         return view('voter.ballot.intro', compact('totalPositions'));
     }

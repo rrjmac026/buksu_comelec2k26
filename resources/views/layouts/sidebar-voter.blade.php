@@ -22,29 +22,20 @@
 {{-- ── Voting ── --}}
 <div class="nav-section-label">Voting</div>
 
-@if($hasVoted)
-{{-- Already voted — link to results instead, show "Voted" badge --}}
-<a href="{{ route('voter.results') }}"
-   class="nav-link {{ Str::startsWith($currentRoute, 'voter.results') ? 'active' : '' }}">
-    <div class="nav-link-icon"><i class="fas fa-chart-bar"></i></div>
-    <div class="nav-link-text">
-        <span class="nav-link-label">Live Results</span>
-        <span class="nav-link-sub">See current standings</span>
-    </div>
-    <span class="nav-badge green">Live</span>
-</a>
-@else
-{{-- Not yet voted — show ballot entry point --}}
+{{-- Always show Cast My Vote — the intro page handles already-voted state --}}
 <a href="{{ route('voter.vote.intro') }}"
    class="nav-link {{ Str::startsWith($currentRoute, 'voter.vote') ? 'active' : '' }}">
     <div class="nav-link-icon"><i class="fas fa-vote-yea"></i></div>
     <div class="nav-link-text">
         <span class="nav-link-label">Cast My Vote</span>
-        <span class="nav-link-sub">Submit your ballot</span>
+        <span class="nav-link-sub">{{ $hasVoted ? 'View your ballot' : 'Submit your ballot' }}</span>
     </div>
-    <span class="nav-badge">Vote</span>
+    @if($hasVoted)
+        <span class="nav-badge green">Done</span>
+    @else
+        <span class="nav-badge">Vote</span>
+    @endif
 </a>
-@endif
 
 {{-- ── Election Info ── --}}
 <div class="nav-section-label">Election Info</div>

@@ -19,11 +19,93 @@
     display: block; height: 3px;
     background: linear-gradient(90deg, transparent, #f9b40f, #fcd558, transparent);
 }
+
+/* ── Already Voted card — green accent ── */
+.ballot-card.voted-card {
+    border-color: rgba(52,211,153,0.25);
+    box-shadow: 0 8px 48px rgba(0,0,0,0.5), 0 0 40px rgba(52,211,153,0.06), inset 0 1px 0 rgba(52,211,153,0.08);
+}
+.ballot-card.voted-card::before {
+    background: linear-gradient(90deg, transparent, #34d399, #6ee7b7, transparent);
+}
+
 @keyframes fadeUp {
     from { opacity: 0; transform: translateY(22px); }
     to   { opacity: 1; transform: translateY(0); }
 }
 
+/* ══════════════════════════
+   ALREADY-VOTED STATE
+══════════════════════════ */
+.voted-body { padding: 44px 40px; text-align: center; }
+
+.peace-gif-wrap {
+    width: 160px; height: 160px;
+    margin: 0 auto 24px;
+    border-radius: 20px;
+    overflow: hidden;
+    border: 2px solid rgba(52,211,153,0.2);
+    box-shadow: 0 0 40px rgba(52,211,153,0.15);
+}
+.peace-gif-wrap img {
+    width: 100%; height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+.voted-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.6rem; font-weight: 900;
+    background: linear-gradient(135deg, #6ee7b7 0%, #34d399 100%);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: 10px;
+}
+.voted-sub {
+    font-size: 0.8rem; color: rgba(255,251,240,0.5);
+    line-height: 1.75; max-width: 400px; margin: 0 auto 28px;
+}
+
+.txn-box {
+    display: inline-flex; flex-direction: column; align-items: center;
+    padding: 12px 24px; border-radius: 12px; margin-bottom: 28px;
+    background: rgba(52,211,153,0.06); border: 1px solid rgba(52,211,153,0.18);
+}
+.txn-label { font-size: 0.6rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: rgba(52,211,153,0.5); margin-bottom: 5px; }
+.txn-number { font-family: monospace; font-size: 0.85rem; font-weight: 700; color: #34d399; letter-spacing: 0.06em; }
+
+.voted-actions { display: flex; flex-direction: column; gap: 10px; align-items: center; }
+.btn {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 11px 28px; border-radius: 10px; font-size: 0.78rem; font-weight: 700;
+    cursor: pointer; transition: all 0.18s; text-decoration: none;
+    font-family: 'DM Sans', sans-serif; border: none;
+}
+.btn-primary {
+    background: linear-gradient(135deg, #f9b40f, #fcd558); color: #380041;
+    box-shadow: 0 4px 16px rgba(249,180,15,0.3), inset 0 1px 0 rgba(255,255,255,0.2);
+}
+.btn-primary:hover { transform: translateY(-1px); box-shadow: 0 6px 24px rgba(249,180,15,0.45); }
+.btn-ghost {
+    background: transparent; border: 1px solid rgba(52,211,153,0.25);
+    color: rgba(52,211,153,0.7);
+}
+.btn-ghost:hover { background: rgba(52,211,153,0.07); color: #34d399; border-color: rgba(52,211,153,0.4); }
+
+.voted-meta-row {
+    display: flex; gap: 14px; flex-wrap: wrap; justify-content: center; margin-bottom: 28px;
+}
+.voted-meta-pill {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 6px 14px; border-radius: 99px;
+    font-size: 0.65rem; font-weight: 700;
+}
+.voted-meta-pill.green { background: rgba(52,211,153,0.1); border: 1px solid rgba(52,211,153,0.2); color: #34d399; }
+.voted-meta-pill.gold  { background: rgba(249,180,15,0.08); border: 1px solid rgba(249,180,15,0.18); color: rgba(249,180,15,0.8); }
+
+/* ══════════════════════════
+   NORMAL (not-yet-voted) STATE
+══════════════════════════ */
 .intro-body { padding: 48px 44px; text-align: center; }
 
 .intro-seal {
@@ -101,13 +183,81 @@
 }
 
 @media (max-width: 600px) {
-    .intro-body { padding: 32px 24px; }
+    .intro-body  { padding: 32px 24px; }
     .intro-title { font-size: 1.4rem; }
+    .voted-body  { padding: 32px 24px; }
+    .voted-title { font-size: 1.3rem; }
+    .peace-gif-wrap { width: 130px; height: 130px; }
 }
 </style>
 @endpush
 
 <div class="ballot-wrap">
+
+    @if(auth()->user()->hasVoted())
+    {{-- ══════════════════════════════════════════
+         ALREADY VOTED STATE
+    ══════════════════════════════════════════ --}}
+    @php
+        $lastVote = auth()->user()->votes()->latest('voted_at')->first();
+        $txn      = $lastVote?->transaction_number ?? '—';
+        $votedAt  = $lastVote?->voted_at;
+        $voteCount = auth()->user()->votes()->whereNotNull('candidate_id')->count();
+    @endphp
+
+    <div class="ballot-card voted-card">
+        <div class="voted-body">
+
+            {{-- Peace Out GIF --}}
+            <div class="peace-gif-wrap">
+                <img src="{{ asset('assets/peaceOut.gif') }}" alt="Peace Out">
+            </div>
+
+            <h1 class="voted-title">You've Already Voted!</h1>
+            <p class="voted-sub">
+                Your ballot has been officially recorded and sealed.
+                There's nothing left to do here — sit back and watch the results roll in! ✌️
+            </p>
+
+            {{-- Stats pills --}}
+            <div class="voted-meta-row">
+                <span class="voted-meta-pill green">
+                    <i class="fas fa-check-double"></i>
+                    {{ $voteCount }} position{{ $voteCount !== 1 ? 's' : '' }} voted
+                </span>
+                @if($votedAt)
+                <span class="voted-meta-pill gold">
+                    <i class="fas fa-clock"></i>
+                    {{ $votedAt->format('M d, Y · g:i A') }}
+                </span>
+                @endif
+            </div>
+
+            {{-- Transaction number --}}
+            @if($txn !== '—')
+            <div class="txn-box">
+                <div class="txn-label">Transaction Number</div>
+                <div class="txn-number">{{ $txn }}</div>
+            </div>
+            @endif
+
+            {{-- Actions --}}
+            <div class="voted-actions">
+                <a href="{{ route('voter.vote.details') }}" class="btn btn-primary">
+                    <i class="fas fa-receipt"></i> View My Voting Details
+                </a>
+                <a href="{{ route('voter.results') }}" class="btn btn-ghost">
+                    <i class="fas fa-chart-bar"></i> See Live Results
+                </a>
+            </div>
+
+        </div>
+    </div>
+
+    @else
+    {{-- ══════════════════════════════════════════
+         NORMAL INTRO STATE
+    ══════════════════════════════════════════ --}}
     <div class="ballot-card">
         <div class="intro-body">
 
@@ -149,5 +299,7 @@
 
         </div>
     </div>
+    @endif
+
 </div>
 </x-app-layout>
