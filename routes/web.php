@@ -10,12 +10,14 @@ use App\Http\Controllers\Admin\AdminPositionController;
 use App\Http\Controllers\Admin\AdminCastedVoteController;
 use App\Http\Controllers\Admin\AdminVoterController;
 use App\Http\Controllers\Admin\AdminFeedbackController;
+use App\Http\Controllers\Admin\AdminElectionController;
 
 use App\Http\Controllers\Voter\VoterDashboardController;
 use App\Http\Controllers\Voter\VoterCastedVoteController;
 use App\Http\Controllers\Voter\VoterFeedbackController;
 
 use App\Http\Controllers\Auth\GoogleController;
+use App\Http\Controllers\PublicController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -25,6 +27,8 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', fn() => view('welcome'))->name('home');
+Route::get('/public/stats', [PublicController::class, 'stats'])->name('public.stats');
+
 
 /*
 |--------------------------------------------------------------------------
@@ -69,6 +73,10 @@ Route::middleware(['auth', 'admin'])
         Route::resource('organizations',AdminOrganizationController::class);
         Route::resource('colleges',     AdminCollegeController::class);
         Route::resource('feedback', AdminFeedbackController::class)->only(['index', 'show', 'destroy']);
+
+        Route::get('election',          [AdminElectionController::class, 'index'])->name('election.index');
+        Route::post('election/status',  [AdminElectionController::class, 'updateStatus'])->name('election.status');
+        Route::post('election/name',    [AdminElectionController::class, 'updateName'])->name('election.name');
 
         // Voters
         Route::patch('voters/{voter}/status', [AdminVoterController::class, 'toggleStatus'])

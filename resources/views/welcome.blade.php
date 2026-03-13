@@ -53,7 +53,6 @@
                     linear-gradient(90deg, rgba(100,0,120,0.06) 1px, transparent 1px);
             }
 
-            /* Welcome page light overrides */
             html:not(.dark) .hero-card {
                 background: rgba(255, 250, 245, 0.92);
                 border-color: rgba(180, 100, 0, 0.2);
@@ -75,33 +74,9 @@
                 border-color: rgba(180, 100, 0, 0.15);
             }
 
-            /* Login page light overrides */
             html:not(.dark) .login-form-side {
                 background: rgba(255, 250, 245, 0.97);
                 border-left-color: rgba(180, 100, 0, 0.15);
-            }
-
-            html:not(.dark) .form-heading { color: var(--violet); }
-            html:not(.dark) .form-subtext { color: rgba(30, 0, 40, 0.55); }
-            html:not(.dark) .field-label { color: rgba(30, 0, 40, 0.75); }
-
-            html:not(.dark) .field-input {
-                background: rgba(245, 235, 255, 0.8);
-                border-color: rgba(180, 100, 0, 0.2);
-                color: var(--ink);
-            }
-            html:not(.dark) .field-input:focus {
-                background: #fff;
-                border-color: var(--gold-dk);
-            }
-
-            html:not(.dark) .role-toggle {
-                background: rgba(245, 235, 255, 0.8);
-                border-color: rgba(180, 100, 0, 0.18);
-            }
-
-            html:not(.dark) .login-side {
-                background: linear-gradient(160deg, #e8d0f0 0%, #d4b8e8 55%, #c4a0d8 100%);
             }
 
             html:not(.dark) footer {
@@ -120,7 +95,6 @@
                 overflow-x: hidden;
             }
 
-            /* ── Noise texture overlay ── */
             body::before {
                 content: '';
                 position: fixed; inset: 0; z-index: 0; pointer-events: none;
@@ -152,7 +126,6 @@
             @keyframes orb1 { from{transform:translate(0,0) scale(1)} to{transform:translate(50px,40px) scale(1.05)} }
             @keyframes orb2 { from{transform:translate(0,0) scale(1)} to{transform:translate(-40px,-50px) scale(1.08)} }
 
-            /* ── Decorative grid lines ── */
             .grid-lines {
                 position: fixed; inset: 0; z-index: 0; pointer-events: none;
                 background-image:
@@ -227,7 +200,6 @@
                 .visual-col { display: none; }
             }
 
-            /* ── Gold divider accent ── */
             .gold-rule {
                 width: 56px; height: 3px; border-radius: 2px;
                 background: linear-gradient(90deg, var(--gold), var(--gold-lt));
@@ -253,7 +225,6 @@
                 background: linear-gradient(90deg, transparent, rgba(249,180,15,0.5), transparent);
             }
 
-            /* Eyebrow */
             .eyebrow {
                 display: inline-flex; align-items: center; gap: 8px;
                 padding: 5px 14px; border-radius: 4px; margin-bottom: 18px;
@@ -271,7 +242,6 @@
             }
             @keyframes epulse { 0%,100%{box-shadow:0 0 6px rgba(249,180,15,0.5)} 50%{box-shadow:0 0 16px rgba(249,180,15,1)} }
 
-            /* Heading */
             .hero-h1 {
                 font-family: 'Playfair Display', serif;
                 font-size: clamp(2.2rem, 4.5vw, 3.5rem);
@@ -291,7 +261,6 @@
                 font-weight: 300;
             }
 
-            /* Feature cards */
             .feature-grid {
                 display: grid; grid-template-columns: 1fr 1fr;
                 gap: 12px; margin-bottom: 30px;
@@ -329,7 +298,6 @@
             .feature-title { font-size: 0.82rem; font-weight: 700; color: var(--cream); }
             .feature-desc { font-size: 0.74rem; color: rgba(255,251,240,0.55); line-height: 1.55; }
 
-            /* CTA */
             .cta-row { display: flex; flex-wrap: wrap; gap: 12px; margin-bottom: 28px; }
             .cta-primary {
                 display: inline-flex; align-items: center; gap: 9px;
@@ -346,7 +314,7 @@
                 box-shadow: 0 10px 32px rgba(249,180,15,0.5);
             }
 
-            /* Stats bar */
+            /* ── Stats bar ── */
             .stats-bar {
                 display: flex;
                 background: rgba(56,0,65,0.6);
@@ -410,7 +378,7 @@
             }
             .visual-img:hover { transform: translateY(-6px) scale(1.015); box-shadow: 0 24px 60px rgba(0,0,0,0.6), 0 0 40px rgba(249,180,15,0.2); }
 
-            /* Floating chips */
+            /* ── Floating chips — these are now LIVE ── */
             .stat-chip {
                 position: absolute; display: flex; align-items: center; gap: 9px;
                 padding: 9px 14px; border-radius: 10px; z-index: 3;
@@ -420,6 +388,7 @@
                 box-shadow: 0 4px 20px rgba(0,0,0,0.4), 0 0 12px rgba(249,180,15,0.1);
                 font-size: 0.78rem; font-weight: 700; color: var(--cream);
                 pointer-events: none;
+                transition: all 0.4s ease;
             }
             .sc-1 { top: -14px; left: -14px; animation: chipfloat 3.5s ease-in-out infinite alternate; }
             .sc-2 { bottom: -14px; right: -14px; animation: chipfloat 3.5s ease-in-out 1.5s infinite alternate; }
@@ -431,10 +400,30 @@
                 color: var(--violet); font-size: 0.75rem;
                 box-shadow: 0 2px 10px rgba(249,180,15,0.4);
             }
+            /* Live Now chip — color changes with election status */
+            .chip-icon.status-ongoing  { background: linear-gradient(135deg, #34d399, #6ee7b7); color: #064e3b; }
+            .chip-icon.status-ended    { background: rgba(255,255,255,0.15); color: rgba(255,255,255,0.6); }
+            .chip-icon.status-upcoming { background: linear-gradient(135deg, var(--gold), var(--gold-lt)); color: var(--violet); }
+
             .chip-lbl { font-size: 0.6rem; color: rgba(255,251,240,0.55); display: block; line-height: 1; margin-bottom: 2px; }
             .chip-val { font-size: 0.9rem; color: var(--gold); line-height: 1.2; display: block; font-family: 'Playfair Display', serif; }
+            .chip-val.status-ongoing { color: #34d399; }
+            .chip-val.status-ended   { color: rgba(255,255,255,0.45); }
 
-            /* Info row inside visual card */
+            /* Pulsing live dot */
+            .live-dot {
+                display: inline-block;
+                width: 7px; height: 7px; border-radius: 50%;
+                background: #34d399;
+                margin-right: 4px;
+                animation: livepulse 1.2s ease-in-out infinite;
+                vertical-align: middle;
+            }
+            @keyframes livepulse {
+                0%,100% { box-shadow: 0 0 4px rgba(52,211,153,0.4); }
+                50%      { box-shadow: 0 0 12px rgba(52,211,153,1); }
+            }
+
             .visual-info {
                 display: grid; grid-template-columns: 1fr 1fr;
                 gap: 10px; margin-top: 22px; position: relative; z-index: 1;
@@ -464,12 +453,15 @@
             footer p { color: rgba(255,251,240,0.45); font-size: 0.8rem; margin: 0; }
             .footer-accent { color: var(--gold); font-weight: 700; }
 
-            /* ── Animations ── */
             .fade-up { opacity: 0; transform: translateY(22px); animation: fadeup 0.7s ease forwards; }
             .d1{animation-delay:0.05s}.d2{animation-delay:0.2s}.d3{animation-delay:0.35s}.d4{animation-delay:0.5s}.d5{animation-delay:0.65s}
             .fade-right { opacity: 0; transform: translateX(28px); animation: faderight 0.75s ease 0.25s forwards; }
             @keyframes fadeup { to { opacity:1; transform:translateY(0) } }
             @keyframes faderight { to { opacity:1; transform:translateX(0) } }
+
+            /* Number counter animation */
+            @keyframes countUp { from { opacity:0; transform:translateY(6px); } to { opacity:1; transform:translateY(0); } }
+            .count-updated { animation: countUp 0.35s ease; }
         </style>
     </head>
     <body class="antialiased" x-data>
@@ -583,11 +575,25 @@
                                 @endguest
                             </div>
 
+                            {{-- ── Stats bar — live data ── --}}
                             <div class="stats-bar fade-up d5">
-                                <div class="s-item"><div class="s-num">99.9%</div><div class="s-lbl">Uptime</div></div>
-                                <div class="s-item"><div class="s-num">256-bit</div><div class="s-lbl">Encrypted</div></div>
-                                <div class="s-item"><div class="s-num">Live</div><div class="s-lbl">Results</div></div>
-                                <div class="s-item"><div class="s-num">Anon</div><div class="s-lbl">Ballots</div></div>
+                                <div class="s-item">
+                                    <div class="s-num" id="stat-uptime">99.9%</div>
+                                    <div class="s-lbl">Uptime</div>
+                                </div>
+                                <div class="s-item">
+                                    <div class="s-num">256-bit</div>
+                                    <div class="s-lbl">Encrypted</div>
+                                </div>
+                                <div class="s-item">
+                                    {{-- Live votes cast counter --}}
+                                    <div class="s-num" id="stat-votes-cast">—</div>
+                                    <div class="s-lbl">Votes Cast</div>
+                                </div>
+                                <div class="s-item">
+                                    <div class="s-num">Anon</div>
+                                    <div class="s-lbl">Ballots</div>
+                                </div>
                             </div>
 
                         </div>
@@ -595,13 +601,27 @@
 
                     {{-- Right: Visual --}}
                     <div class="visual-col fade-right">
+
+                        {{-- Chip 1 — Votes Cast (LIVE) --}}
                         <div class="stat-chip sc-1">
-                            <div class="chip-icon"><i class="fas fa-check"></i></div>
-                            <div><span class="chip-lbl">Votes Cast</span><span class="chip-val">0</span></div>
+                            <div class="chip-icon" id="chip-votes-icon">
+                                <i class="fas fa-check"></i>
+                            </div>
+                            <div>
+                                <span class="chip-lbl">Votes Cast</span>
+                                <span class="chip-val" id="chip-votes-val">—</span>
+                            </div>
                         </div>
-                        <div class="stat-chip sc-2">
-                            <div class="chip-icon"><i class="fas fa-bolt"></i></div>
-                            <div><span class="chip-lbl">Live Now</span><span class="chip-val">Election Soon</span></div>
+
+                        {{-- Chip 2 — Election Status (LIVE) --}}
+                        <div class="stat-chip sc-2" id="chip-status-wrap">
+                            <div class="chip-icon status-upcoming" id="chip-status-icon">
+                                <i class="fas fa-bolt" id="chip-status-fa"></i>
+                            </div>
+                            <div>
+                                <span class="chip-lbl" id="chip-status-lbl">Live Now</span>
+                                <span class="chip-val status-upcoming" id="chip-status-val">Loading…</span>
+                            </div>
                         </div>
 
                         <div class="visual-card">
@@ -621,8 +641,8 @@
                                     <div class="v-info-lbl">End-to-End</div>
                                 </div>
                                 <div class="v-info-item">
-                                    <div class="v-info-num">Real‑time</div>
-                                    <div class="v-info-lbl">Vote Tally</div>
+                                    <div class="v-info-num" id="visual-votes">—</div>
+                                    <div class="v-info-lbl">Votes Cast</div>
                                 </div>
                                 <div class="v-info-item">
                                     <div class="v-info-num">Anonymous</div>
@@ -646,30 +666,140 @@
             </footer>
 
         </div>
-    </body>
-    <script>
-    // Apply saved theme immediately to prevent flash
-    if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
-        document.documentElement.classList.add('dark');
-    } else {
-        document.documentElement.classList.remove('dark');
-    }
 
-    document.addEventListener('alpine:init', () => {
-        Alpine.store('darkMode', {
-            init() {
-                const theme = localStorage.getItem('theme');
-                const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-                this.on = theme === 'dark' || (!theme && prefersDark);
-                document.documentElement.classList.toggle('dark', this.on);
-            },
-            on: false,
-            toggle() {
-                this.on = !this.on;
-                localStorage.setItem('theme', this.on ? 'dark' : 'light');
-                document.documentElement.classList.toggle('dark', this.on);
-            }
+        <script>
+        // Apply saved theme immediately to prevent flash
+        if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            document.documentElement.classList.add('dark');
+        } else {
+            document.documentElement.classList.remove('dark');
+        }
+
+        document.addEventListener('alpine:init', () => {
+            Alpine.store('darkMode', {
+                init() {
+                    const theme = localStorage.getItem('theme');
+                    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+                    this.on = theme === 'dark' || (!theme && prefersDark);
+                    document.documentElement.classList.toggle('dark', this.on);
+                },
+                on: false,
+                toggle() {
+                    this.on = !this.on;
+                    localStorage.setItem('theme', this.on ? 'dark' : 'light');
+                    document.documentElement.classList.toggle('dark', this.on);
+                }
+            });
         });
-    });
-</script>
+
+        // ── Live Stats Polling ────────────────────────────────────────────────
+        (function () {
+            const els = {
+                statVotes:    document.getElementById('stat-votes-cast'),
+                chipVotesVal: document.getElementById('chip-votes-val'),
+                chipStatusVal:document.getElementById('chip-status-val'),
+                chipStatusLbl:document.getElementById('chip-status-lbl'),
+                chipStatusIcon:document.getElementById('chip-status-icon'),
+                chipStatusFa: document.getElementById('chip-status-fa'),
+                visualVotes:  document.getElementById('visual-votes'),
+            };
+
+            // Status → visual config map
+            const statusConfig = {
+                upcoming: {
+                    label:      'Election Soon',
+                    chipLbl:    'Coming Up',
+                    icon:       'fas fa-hourglass-start',
+                    iconClass:  'status-upcoming',
+                    valClass:   '',
+                    chipBorder: 'rgba(249,180,15,0.3)',
+                    dot:        false,
+                },
+                ongoing: {
+                    label:      'Election Live',
+                    chipLbl:    'Live Now',
+                    icon:       'fas fa-circle-dot',
+                    iconClass:  'status-ongoing',
+                    valClass:   'status-ongoing',
+                    chipBorder: 'rgba(52,211,153,0.4)',
+                    dot:        true,
+                },
+                ended: {
+                    label:      'Election Ended',
+                    chipLbl:    'Concluded',
+                    icon:       'fas fa-flag-checkered',
+                    iconClass:  'status-ended',
+                    valClass:   'status-ended',
+                    chipBorder: 'rgba(255,255,255,0.12)',
+                    dot:        false,
+                },
+            };
+
+            let prevVotes = null;
+
+            function animateUpdate(el, newText) {
+                el.classList.remove('count-updated');
+                void el.offsetWidth; // force reflow
+                el.textContent = newText;
+                el.classList.add('count-updated');
+            }
+
+            function applyStatus(status) {
+                const cfg = statusConfig[status] || statusConfig.upcoming;
+
+                // Status chip value
+                if (cfg.dot) {
+                    els.chipStatusVal.innerHTML = '<span class="live-dot"></span>' + cfg.label;
+                } else {
+                    els.chipStatusVal.textContent = cfg.label;
+                }
+
+                // Remove all known status classes and apply correct one
+                ['status-upcoming','status-ongoing','status-ended'].forEach(c => {
+                    els.chipStatusVal.classList.remove(c);
+                    els.chipStatusIcon.classList.remove(c);
+                });
+                if (cfg.valClass) els.chipStatusVal.classList.add(cfg.valClass);
+                els.chipStatusIcon.classList.add(cfg.iconClass);
+
+                // Icon
+                els.chipStatusFa.className = cfg.icon;
+
+                // Label above value
+                els.chipStatusLbl.textContent = cfg.chipLbl;
+
+                // Chip border colour (subtle status tint)
+                const wrap = document.getElementById('chip-status-wrap');
+                if (wrap) wrap.style.borderColor = cfg.chipBorder;
+            }
+
+            function fetchStats() {
+                fetch('/public/stats')
+                    .then(r => r.json())
+                    .then(data => {
+                        const votesCast = data.votes_cast ?? 0;
+                        const status    = data.status ?? 'upcoming';
+
+                        // Only animate if value changed
+                        if (votesCast !== prevVotes) {
+                            const display = votesCast.toLocaleString();
+                            animateUpdate(els.statVotes,    display);
+                            animateUpdate(els.chipVotesVal, display);
+                            animateUpdate(els.visualVotes,  display);
+                            prevVotes = votesCast;
+                        }
+
+                        applyStatus(status);
+                    })
+                    .catch(() => {
+                        // Silently fail — don't break the page
+                    });
+            }
+
+            // Initial fetch immediately, then every 15 seconds
+            fetchStats();
+            setInterval(fetchStats, 15000);
+        })();
+        </script>
+    </body>
 </html>

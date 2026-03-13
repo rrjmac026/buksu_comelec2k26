@@ -18,6 +18,26 @@
     </div>
 </a>
 
+{{-- ── Election Control ── --}}
+<div class="nav-section-label">Election Control</div>
+
+<a href="{{ route('admin.election.index') }}"
+   class="nav-link {{ Str::startsWith($currentRoute, 'admin.election') ? 'active' : '' }}">
+    <div class="nav-link-icon"><i class="fas fa-tower-broadcast"></i></div>
+    <div class="nav-link-text">
+        <span class="nav-link-label">Election Status</span>
+        <span class="nav-link-sub">Start, pause, or end election</span>
+    </div>
+    @php $electionStatus = \App\Models\ElectionSetting::status(); @endphp
+    @if($electionStatus === 'ongoing')
+        <span class="nav-badge green">Live</span>
+    @elseif($electionStatus === 'upcoming')
+        <span class="nav-badge" style="background:rgba(249,180,15,0.12);color:#f9b40f;border:1px solid rgba(249,180,15,0.25);">Soon</span>
+    @else
+        <span class="nav-badge" style="background:rgba(255,255,255,0.06);color:rgba(255,255,255,0.35);border:1px solid rgba(255,255,255,0.1);">Done</span>
+    @endif
+</a>
+
 {{-- ── Election Setup ── --}}
 <div class="nav-section-label">Election Setup</div>
 
