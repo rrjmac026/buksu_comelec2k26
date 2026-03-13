@@ -13,12 +13,52 @@ use Illuminate\Validation\ValidationException;
 class VoterCastedVoteController extends Controller
 {
     // ─────────────────────────────────────────────────────────────
+    // PRIVATE HELPER — returns only the positions this voter
+    // is allowed to vote on, based on their year level.
+    //
+    // Algorithm:
+    //   Global positions (IDs 1–3)   → ALL voters
+    //   College officers (IDs 4–11)  → ALL voters
+    //   Representative (IDs 12–14)   → year-dependent:
+    //       1st year → votes for 2nd Year Rep (ID 12)
+    //       2nd year → votes for 3rd Year Rep (ID 13)
+    //       3rd year → votes for 4th Year Rep (ID 14)
+    //       4th year → NO representative ballot
+    // ─────────────────────────────────────────────────────────────
+    private function getVoterPositions(): \Illuminate\Support\Collection
+    {
+        $voter     = auth()->user();
+        $voterYear = (int) $voter->year_level;
+
+        $globalIds         = [1, 2, 3];
+        $collegeOfficerIds = [4, 5, 6, 7, 8, 9, 10, 11];
+
+        // Formula: voterYear + 11 maps to the correct rep position ID
+        // 1st → 12 (2nd Year Rep), 2nd → 13 (3rd Year Rep), 3rd → 14 (4th Year Rep)
+        // 4th year is excluded (>= 4 check)
+        $repId = ($voterYear < 4) ? ($voterYear + 11) : null;
+
+        $allowedIds = array_merge($globalIds, $collegeOfficerIds);
+        if ($repId) {
+            $allowedIds[] = $repId;
+        }
+
+        return Position::with([
+            'candidates' => fn($q) => $q->with(['partylist', 'college'])->orderBy('last_name'),
+        ])
+        ->whereIn('id', $allowedIds)
+        ->orderBy('sort_order')
+        ->get();
+    }
+
+    // ─────────────────────────────────────────────────────────────
     // GET /voter/vote
     // Intro / welcome screen — clears any previous ballot session
     // ─────────────────────────────────────────────────────────────
     public function intro()
     {
-        $totalPositions = Position::count();
+        // Use filtered count so the intro shows the correct number
+        $totalPositions = $this->getVoterPositions()->count();
 
         // If already voted, just show the "already voted" screen — no redirect
         if (auth()->user()->hasVoted()) {
@@ -42,9 +82,8 @@ class VoterCastedVoteController extends Controller
                 ->with('info', 'You have already submitted your vote.');
         }
 
-        $positions = Position::with([
-            'candidates' => fn($q) => $q->with(['partylist', 'college'])->orderBy('last_name'),
-        ])->orderBy('sort_order')->get();
+        // ✅ Use filtered positions — voter only sees their allowed positions
+        $positions = $this->getVoterPositions();
 
         // Guard: step out of range → redirect to intro
         if ($step < 1 || $step > $positions->count()) {
@@ -100,8 +139,8 @@ class VoterCastedVoteController extends Controller
                 ->with('info', 'You have already submitted your vote.');
         }
 
-        // ✅ FIX: was orderBy('name') — must match step() which uses sort_order
-        $positions  = Position::orderBy('sort_order')->get();
+        // ✅ Use filtered positions — must match step() ordering
+        $positions  = $this->getVoterPositions();
         $totalSteps = $positions->count();
 
         if ($step < 1 || $step > $totalSteps) {
@@ -167,9 +206,8 @@ class VoterCastedVoteController extends Controller
             return redirect()->route('voter.vote.intro');
         }
 
-        $positions = Position::with([
-            'candidates' => fn($q) => $q->with(['partylist', 'college'])->orderBy('last_name'),
-        ])->orderBy('sort_order')->get();
+        // ✅ Use filtered positions — review only shows voter's allowed positions
+        $positions = $this->getVoterPositions();
 
         // Build review rows
         $reviewRows = $positions->map(function ($position) use ($ballot) {
@@ -248,12 +286,9 @@ class VoterCastedVoteController extends Controller
         $ip        = $request->ip();
         $userAgent = $request->userAgent();
 
-        // All positions the voter went through (real votes + skipped ones)
-        // We write a row for every position so hasVoted() returns true even
-        // when the voter skipped everything. candidate_id is null for skips.
-        // ⚠️  Requires candidate_id to be nullable in casted_votes table:
-        //     $table->foreignId('candidate_id')->nullable()->...
-        $allPositionIds = Position::orderBy('sort_order')->pluck('id');
+        // ✅ Only write rows for THIS voter's allowed positions (not all 14).
+        // A 4th year voter will NOT get a representative row at all.
+        $allPositionIds = $this->getVoterPositions()->pluck('id');
 
         DB::transaction(function () use ($voter, $votes, $ballot, $allPositionIds, $now, $txn, $ip, $userAgent) {
             foreach ($allPositionIds as $positionId) {
@@ -298,6 +333,9 @@ class VoterCastedVoteController extends Controller
         return view('voter.ballot.success', compact('txn', 'votedCount'));
     }
 
+    // ─────────────────────────────────────────────────────────────
+    // GET /voter/vote/details
+    // ─────────────────────────────────────────────────────────────
     public function details()
     {
         $voter = auth()->user();
@@ -306,7 +344,9 @@ class VoterCastedVoteController extends Controller
             return redirect()->route('voter.vote.intro');
         }
 
-        $allPositions = Position::orderBy('sort_order')->get();
+        // ✅ Use filtered positions so the receipt only shows
+        // positions relevant to this voter's year level
+        $allPositions = $this->getVoterPositions();
 
         $myVotes = $voter->votes()
             ->with(['candidate.partylist', 'candidate.college', 'position'])
@@ -317,7 +357,7 @@ class VoterCastedVoteController extends Controller
         $txn     = $myVotes->first()?->transaction_number ?? '—';
         $votedAt = $myVotes->first()?->voted_at ?? now();
 
-        $totalVoted   = $myVotes->whereNotNull('candidate_id')->count(); // ✅ only change
+        $totalVoted   = $myVotes->whereNotNull('candidate_id')->count();
         $totalSkipped = $allPositions->count() - $totalVoted;
 
         return view('voter.ballot.details', compact(
