@@ -9,6 +9,7 @@ class PositionSeeder extends Seeder
 {
     public function run(): void
     {
+        Position::where('name', 'Senator')->update(['max_votes' => 12]);
         $positions = [
             ['name' => 'President',                  'sort_order' => 1],
             ['name' => 'Vice President',              'sort_order' => 2],

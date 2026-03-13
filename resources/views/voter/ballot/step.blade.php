@@ -229,6 +229,12 @@
         font-family: 'Playfair Display', serif;
         font-size: 2.4rem; font-weight: 900; color: #f9b40f;
     }
+    .candidate-card.is-disabled {
+        opacity: .38;
+        cursor: not-allowed;
+        transform: none !important;
+        box-shadow: none !important;
+    }
 
     /* Info block */
     .c-info {
@@ -528,13 +534,16 @@
 
                     <div
                         class="candidate-card"
-                        :class="{ 'is-selected': chosen === {{ $candidate->candidate_id }} }"
+                        :class="{
+                            'is-selected': isSelected({{ $candidate->candidate_id }}),
+                            'is-disabled': atMax && !isSelected({{ $candidate->candidate_id }})
+                        }"
                         @click="select({{ $candidate->candidate_id }})"
                     >
                         <div class="check-badge"
-                             x-show="chosen === {{ $candidate->candidate_id }}"
-                             x-cloak
-                             style="display:none;">
+                            x-show="isSelected({{ $candidate->candidate_id }})"
+                            x-cloak
+                            style="display:none;">
                             <i class="fas fa-check"></i>
                         </div>
 
@@ -571,55 +580,71 @@
         {{-- Footer --}}
         <form method="POST" action="{{ route('voter.vote.step.save', $step) }}" id="step-form">
             @csrf
-            <input type="hidden" name="action" value="select">
-            <input type="hidden" name="candidate_id" x-model="chosen">
+            @if(($position->max_votes ?? 1) > 1)
+                <input type="hidden" name="action" value="select">
+                <template x-for="id in chosen" :key="id">
+                    <input type="hidden" name="candidate_ids[]" :value="id">
+                </template>
+            @else
+                <input type="hidden" name="action" value="select">
+                <input type="hidden" name="candidate_id" x-model="chosen">
+            @endif
+        </form>
 
-            <div class="card-footer">
-                <div>
-                    <div class="selection-hint" x-show="!chosen">
-                        <i class="fas fa-hand-pointer" style="font-size:.65rem;"></i>
-                        Tap a candidate to select
-                    </div>
-                    <div class="selection-chosen" x-show="chosen" x-cloak>
-                        <i class="fas fa-check-circle" style="color:#34d399;"></i>
-                        <span x-text="chosenName"></span>
-                    </div>
+        <div class="card-footer">
+            <div>
+                @if(($position->max_votes ?? 1) > 1)
+                <div class="selection-hint" x-show="chosenCount === 0">
+                    <i class="fas fa-hand-pointer" style="font-size:.65rem;"></i>
+                    Select up to {{ $position->max_votes }} candidates
                 </div>
+                <div class="selection-chosen" x-show="chosenCount > 0" x-cloak>
+                    <i class="fas fa-check-circle" style="color:#34d399;"></i>
+                    <span x-text="chosenCount + ' / {{ $position->max_votes }} selected'"></span>
+                </div>
+                @else
+                <div class="selection-hint" x-show="!chosen">
+                    <i class="fas fa-hand-pointer" style="font-size:.65rem;"></i>
+                    Tap a candidate to select
+                </div>
+                <div class="selection-chosen" x-show="chosen" x-cloak>
+                    <i class="fas fa-check-circle" style="color:#34d399;"></i>
+                    <span x-text="chosenName"></span>
+                </div>
+                @endif
+            </div>
 
-                <div class="btn-group">
+            <div class="btn-group">
 
                     {{-- Back --}}
                     @if($step > 1)
                     <form method="POST" action="{{ route('voter.vote.step.save', $step) }}" style="margin:0;">
-                        @csrf
-                        <input type="hidden" name="action" value="back">
-                        <button type="submit" class="btn btn-ghost">
+                            @csrf
+                            <input type="hidden" name="action" value="back">
+                            <button type="submit" class="btn btn-ghost">
+                                <i class="fas fa-arrow-left"></i> Back
+                            </button>
+                        </form>
+                        @else
+                        <a href="{{ route('voter.vote.intro') }}" class="btn btn-ghost">
                             <i class="fas fa-arrow-left"></i> Back
-                        </button>
-                    </form>
-                    @else
-                    <a href="{{ route('voter.vote.intro') }}" class="btn btn-ghost">
-                        <i class="fas fa-arrow-left"></i> Back
-                    </a>
-                    @endif
+                        </a>
+                        @endif
 
-                    {{-- Last step: "View All Candidates Voted" opens modal instead of going straight to review --}}
-                    @if($step === $totalSteps)
-                        <button type="button"
-                                class="btn btn-primary"
-                                @click="showVoted = true">
-                            <i class="fas fa-list-check"></i> View All Candidates Voted
-                        </button>
-                    @else
-                        <button type="submit" form="step-form" class="btn btn-primary"
-                                :disabled="!chosen" x-bind:disabled="!chosen">
-                            Next <i class="fas fa-arrow-right"></i>
-                        </button>
-                    @endif
+                        {{-- Next / View All --}}
+                        @if($step === $totalSteps)
+                            <button type="button" class="btn btn-primary" @click="showVoted = true">
+                                <i class="fas fa-list-check"></i> View All Candidates Voted
+                            </button>
+                        @else
+                            <button type="submit" form="step-form" class="btn btn-primary"
+                                :disabled="!hasSelection" x-bind:disabled="!hasSelection">
+                                Next <i class="fas fa-arrow-right"></i>
+                            </button>
+                        @endif
 
                 </div>
-            </div>
-        </form>
+        </div>
 
     </div>{{-- /.ballot-card --}}
 
@@ -780,7 +805,12 @@
 <script>
     function stepPage() {
         return {
-            chosen: {{ $selectedId ?? 'null' }},
+            maxVotes: {{ $position->max_votes ?? 1 }},
+            chosen: @if(($position->max_votes ?? 1) > 1)
+                        {{ json_encode(is_array($selectedId) ? $selectedId : []) }}
+                    @else
+                        {{ $selectedId ?? 'null' }}
+                    @endif,
             chosenName: '',
             showVoted: false,
 
@@ -790,7 +820,6 @@
                 @endforeach
             },
 
-            // Richer map used by the modal's last-step row
             lastStepCandidates: {
                 @foreach($position->candidates as $c)
                 {{ $c->candidate_id }}: {
@@ -803,26 +832,45 @@
                 @endforeach
             },
 
+            get isMulti() { return this.maxVotes > 1; },
+            get chosenCount() { return this.isMulti ? this.chosen.length : (this.chosen ? 1 : 0); },
+            get hasSelection() { return this.isMulti ? this.chosen.length > 0 : !!this.chosen; },
+            get atMax() { return this.isMulti && this.chosen.length >= this.maxVotes; },
+
+            isSelected(id) {
+                return this.isMulti ? this.chosen.includes(id) : this.chosen === id;
+            },
+
             init() {
-                if (this.chosen) this.chosenName = this.candidates[this.chosen] ?? '';
+                if (!this.isMulti && this.chosen) {
+                    this.chosenName = this.candidates[this.chosen] ?? '';
+                }
             },
 
             select(id) {
-                if (this.chosen === id) {
-                    this.chosen    = null;
-                    this.chosenName = '';
+                if (this.isMulti) {
+                    const idx = this.chosen.indexOf(id);
+                    if (idx > -1) {
+                        this.chosen.splice(idx, 1);       // deselect
+                    } else if (this.chosen.length < this.maxVotes) {
+                        this.chosen.push(id);             // select if under limit
+                    }
+                    // clicking when at max does nothing
                 } else {
-                    this.chosen    = id;
-                    this.chosenName = this.candidates[id] ?? '';
+                    if (this.chosen === id) {
+                        this.chosen = null;
+                        this.chosenName = '';
+                    } else {
+                        this.chosen = id;
+                        this.chosenName = this.candidates[id] ?? '';
+                    }
                 }
             },
 
             goToReview() {
-                if (this.chosen) {
-                    // Save current selection then redirect to review
+                if (this.hasSelection) {
                     document.getElementById('step-form').submit();
                 } else {
-                    // Nothing chosen on last step — submit as skip, then review
                     const f = document.getElementById('skip-form-last');
                     if (f) f.submit();
                     else window.location = '{{ route('voter.vote.review') }}';
