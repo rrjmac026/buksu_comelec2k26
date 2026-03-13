@@ -11,6 +11,7 @@ use App\Http\Controllers\Admin\AdminCastedVoteController;
 use App\Http\Controllers\Admin\AdminVoterController;
 use App\Http\Controllers\Admin\AdminFeedbackController;
 use App\Http\Controllers\Admin\AdminElectionController;
+use App\Http\Controllers\Admin\AdminReportController;
 
 use App\Http\Controllers\Voter\VoterDashboardController;
 use App\Http\Controllers\Voter\VoterCastedVoteController;
@@ -91,6 +92,15 @@ Route::middleware(['auth', 'admin'])
         // Feedback (read-only for admins)
         Route::resource('feedback', AdminFeedbackController::class)
             ->only(['index', 'show', 'destroy']);
+
+        Route::prefix('reports')->name('reports.')->group(function () {
+            Route::get('/',           fn() => view('admin.reports.index'))->name('index');
+            Route::get('/results',    [AdminReportController::class, 'results'])->name('results');
+            Route::get('/by-college', [AdminReportController::class, 'byCollege'])->name('by-college');
+            Route::get('/turnout',    [AdminReportController::class, 'turnout'])->name('turnout');
+            Route::get('/ballots',    [AdminReportController::class, 'ballots'])->name('ballots');
+            Route::get('/candidates', [AdminReportController::class, 'candidates'])->name('candidates');
+        });
 
     });
 

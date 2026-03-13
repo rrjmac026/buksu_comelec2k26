@@ -132,6 +132,14 @@
     </div>
 </a>
 
+<a href="{{ route('admin.reports.index') }}"
+   class="nav-link {{ Str::startsWith($currentRoute, 'admin.reports') ? 'active' : '' }}">
+    <div class="nav-link-icon"><i class="fas fa-file-alt"></i></div>
+    <div class="nav-link-text">
+        <span class="nav-link-label">Reports</span>
+        <span class="nav-link-sub">Detailed election reports</span>
+    </div>
+
 <hr class="sidebar-divider">
 
 {{-- ── Account ── --}}
