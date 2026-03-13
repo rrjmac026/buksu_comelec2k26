@@ -377,8 +377,8 @@
                         <div style="font-size:0.72rem;font-weight:600;color:#fffbf0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">
                             {{ $vote->voter?->full_name ?? 'Unknown' }}
                         </div>
-                        <div style="font-size:0.65rem;color:rgba(249,180,15,0.5);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">
-                            {{ $vote->candidate ? $vote->candidate->first_name.' '.$vote->candidate->last_name : '—' }}
+                        <div style="font-size:0.62rem;color:rgba(249,180,15,0.45);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-family:monospace;">
+                            {{ $vote->transaction_number ?? '—' }}
                         </div>
                         <div style="font-size:0.62rem;color:rgba(255,251,240,0.25);margin-top:1px;">{{ $vote->voted_at?->diffForHumans() ?? '—' }}</div>
                     </div>
@@ -711,7 +711,7 @@
                     <div style="width:28px;height:28px;border-radius:50%;background:linear-gradient(135deg,#f9b40f,#fcd558);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:0.65rem;font-weight:900;color:#380041;font-family:'Playfair Display',serif;">${(v.voter||'U')[0].toUpperCase()}</div>
                     <div style="flex:1;min-width:0;">
                         <div style="font-size:0.72rem;font-weight:600;color:#fffbf0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${v.voter}</div>
-                        <div style="font-size:0.65rem;color:rgba(249,180,15,0.5);">${v.candidate}</div>
+                        <div style="font-size:0.62rem;color:rgba(249,180,15,0.45);font-family:monospace;">${v.transaction}</div>
                         <div style="font-size:0.62rem;color:rgba(255,251,240,0.25);margin-top:1px;">${v.voted_at}</div>
                     </div>
                     <div style="width:7px;height:7px;border-radius:50%;background:#34d399;flex-shrink:0;margin-top:4px;box-shadow:0 0 6px #34d399;"></div>

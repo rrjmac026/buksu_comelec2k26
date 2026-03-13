@@ -85,6 +85,7 @@ Route::middleware(['auth', 'admin'])
 
         // Votes & Results
         Route::get('votes/results', [AdminCastedVoteController::class, 'results'])->name('votes.results');
+        Route::delete('votes/transaction/{transaction}', [AdminCastedVoteController::class, 'destroyTransaction'])->name('votes.destroyTransaction');
         Route::resource('votes', AdminCastedVoteController::class);
 
         // Feedback (read-only for admins)

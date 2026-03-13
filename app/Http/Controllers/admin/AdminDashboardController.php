@@ -26,10 +26,25 @@ class AdminDashboardController extends Controller
             'total_orgs'       => Organization::count(),
         ];
 
-        $recentVotes = CastedVote::with(['voter', 'candidate', 'position'])
-            ->latest('voted_at')
+        // ✅ FIX — one row per voter ballot, not one row per position
+        $recentVotes = CastedVote::query()
+            ->selectRaw('
+                MIN(casted_vote_id)  AS casted_vote_id,
+                transaction_number,
+                voter_id,
+                MIN(voted_at)        AS voted_at,
+                COUNT(*)             AS positions_count,
+                SUM(CASE WHEN candidate_id IS NOT NULL THEN 1 ELSE 0 END) AS positions_voted
+            ')
+            ->groupBy('transaction_number', 'voter_id')
+            ->orderByDesc('voted_at')
             ->take(10)
             ->get();
+
+        // Eager-load voters manually (can't use ->with() on aggregate queries)
+        $voterIds = $recentVotes->pluck('voter_id')->unique()->filter();
+        $voters   = User::whereIn('id', $voterIds)->get()->keyBy('id');
+        $recentVotes->each(fn($row) => $row->voter = $voters->get($row->voter_id));
 
         $topCandidates = Candidate::with(['position', 'partylist'])
             ->withCount('votes')
@@ -82,20 +97,38 @@ class AdminDashboardController extends Controller
                 'votes'     => $c->votes_count,
             ]);
 
-        // Recent votes
-        $recentVotes = CastedVote::with(['voter', 'candidate', 'position'])
-            ->latest('voted_at')
+        // ✅ FIX — one row per voter ballot, not one row per position
+        $recentRaw = CastedVote::query()
+            ->selectRaw('
+                MIN(casted_vote_id)  AS casted_vote_id,
+                transaction_number,
+                voter_id,
+                MIN(voted_at)        AS voted_at,
+                COUNT(*)             AS positions_count,
+                SUM(CASE WHEN candidate_id IS NOT NULL THEN 1 ELSE 0 END) AS positions_voted
+            ')
+            ->groupBy('transaction_number', 'voter_id')
+            ->orderByDesc('voted_at')
             ->take(8)
-            ->get()
-            ->map(fn($v) => [
-                'voter'       => $v->voter ? ($v->voter->first_name . ' ' . $v->voter->last_name) : 'Unknown',
-                'candidate'   => $v->candidate ? ($v->candidate->first_name . ' ' . $v->candidate->last_name) : '—',
-                'position'    => $v->position?->name ?? '—',
-                'voted_at'    => $v->voted_at?->diffForHumans() ?? '—',
-                'transaction' => $v->transaction_number ?? '—',
-            ]);
+            ->get();
 
-        // Monthly trend — use CastedVote, not the non-existent Vote model
+        $voterIds2 = $recentRaw->pluck('voter_id')->unique()->filter();
+        $voters2   = User::whereIn('id', $voterIds2)->get()->keyBy('id');
+
+        $recentVotes = $recentRaw->map(function ($v) use ($voters2) {
+            $voter = $voters2->get($v->voter_id);
+            return [
+                'voter'           => $voter ? ($voter->first_name . ' ' . $voter->last_name) : 'Unknown',
+                'positions_voted' => (int) $v->positions_voted,
+                'positions_count' => (int) $v->positions_count,
+                'voted_at'        => $v->voted_at
+                                        ? \Carbon\Carbon::parse($v->voted_at)->diffForHumans()
+                                        : '—',
+                'transaction'     => $v->transaction_number ?? '—',
+            ];
+        });
+
+        // Monthly trend
         $monthlyTrend = collect(range(1, 12))->map(function ($month) {
             return [
                 'month'  => date('M', mktime(0, 0, 0, $month, 1)),
@@ -103,7 +136,7 @@ class AdminDashboardController extends Controller
                                 ->whereMonth('created_at', $month)
                                 ->whereYear('created_at', now()->year)
                                 ->count(),
-                'votes'  => CastedVote::whereMonth('voted_at', $month)  // ✅ was \App\Models\Vote (doesn't exist)
+                'votes'  => CastedVote::whereMonth('voted_at', $month)
                                 ->whereYear('voted_at', now()->year)
                                 ->count(),
             ];
