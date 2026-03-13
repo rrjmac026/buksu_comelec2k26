@@ -37,18 +37,6 @@
     @endif
 </a>
 
-{{-- ── Election Info ── --}}
-<div class="nav-section-label">Election Info</div>
-
-<a href="{{ route('voter.results') }}"
-   class="nav-link {{ $currentRoute === 'voter.results' ? 'active' : '' }}">
-    <div class="nav-link-icon"><i class="fas fa-chart-bar"></i></div>
-    <div class="nav-link-text">
-        <span class="nav-link-label">Election Results</span>
-        <span class="nav-link-sub">Live vote standings</span>
-    </div>
-    <span class="nav-badge green">Live</span>
-</a>
 
 <hr class="sidebar-divider">
 

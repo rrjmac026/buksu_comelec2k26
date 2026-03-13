@@ -246,9 +246,6 @@
                 <a href="{{ route('voter.vote.details') }}" class="btn btn-primary">
                     <i class="fas fa-receipt"></i> View My Voting Details
                 </a>
-                <a href="{{ route('voter.results') }}" class="btn btn-ghost">
-                    <i class="fas fa-chart-bar"></i> See Live Results
-                </a>
             </div>
 
         </div>
