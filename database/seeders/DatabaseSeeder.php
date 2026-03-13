@@ -33,7 +33,7 @@ class DatabaseSeeder extends Seeder
 
         // Admin Seeders
         User::updateOrCreate(
-            ['email' => 'macalutasreyramesesjdueiii@gmail.com'],
+            ['email' => 'macalutasreyramesesjudeiii@gmail.com'],
             [
                 'first_name' => 'Admin Jam',
                 'last_name' => 'Macalutas',
