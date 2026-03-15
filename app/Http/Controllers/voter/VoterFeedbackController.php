@@ -9,32 +9,38 @@ class VoterFeedbackController extends Controller
 {
     // ─────────────────────────────────────────────────────────────
     // GET /voter/feedback
-    // Show the feedback form — pre-fills if voter already submitted
+    // Show the feedback form — pre-fills if voter already submitted.
+    // Append ?edit=1 to force the edit form even after submission.
     // ─────────────────────────────────────────────────────────────
-    public function show()
+    public function show(Request $request)
     {
-        // Retrieve this voter's existing feedback (if any) so the
-        // form can be pre-filled for editing
         $myFeedback = auth()->user()
             ->feedback()
             ->latest()
             ->first();
 
-        return view('voter.feedback', compact('myFeedback'));
+        return view('voter.feedback.feedback', compact('myFeedback'));
     }
 
     // ─────────────────────────────────────────────────────────────
     // POST /voter/feedback
-    // Save or update the voter's feedback (one record per voter)
+    // Save or update the voter's feedback (one record per voter).
     // ─────────────────────────────────────────────────────────────
     public function submit(Request $request)
     {
         $request->validate([
             'feedback' => ['required', 'string', 'min:10', 'max:1000'],
             'rating'   => ['required', 'integer', 'min:1', 'max:5'],
+        ], [
+            'feedback.required' => 'Please write a comment before submitting.',
+            'feedback.min'      => 'Your comment must be at least 10 characters.',
+            'feedback.max'      => 'Your comment must not exceed 1000 characters.',
+            'rating.required'   => 'Please select a star rating.',
+            'rating.min'        => 'Rating must be at least 1 star.',
+            'rating.max'        => 'Rating cannot exceed 5 stars.',
         ]);
 
-        // updateOrCreate so voters can revise their feedback
+        // updateOrCreate so voters can revise their feedback at any time
         auth()->user()->feedback()->updateOrCreate(
             ['user_id' => auth()->id()],
             [
@@ -45,6 +51,6 @@ class VoterFeedbackController extends Controller
 
         return redirect()
             ->route('voter.feedback')
-            ->with('success', 'Thank you! Your feedback has been saved.');
+            ->with('success', 'Thank you! Your feedback has been saved successfully.');
     }
 }

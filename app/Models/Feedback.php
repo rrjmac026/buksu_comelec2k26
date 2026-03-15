@@ -17,6 +17,24 @@ class Feedback extends Model
         'rating',
     ];
 
+    // ── Rating label helper ───────────────────────────────────────
+    private static array $ratingLabels = [
+        1 => 'Poor',
+        2 => 'Fair',
+        3 => 'Good',
+        4 => 'Great',
+        5 => 'Excellent',
+    ];
+
+    /**
+     * Human-readable label for the numeric rating.
+     */
+    public function getRatingLabelAttribute(): string
+    {
+        return self::$ratingLabels[$this->rating] ?? 'Unknown';
+    }
+
+    // ── Relationships ─────────────────────────────────────────────
     public function user()
     {
         return $this->belongsTo(User::class);
