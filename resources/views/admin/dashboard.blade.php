@@ -1,4 +1,5 @@
 <x-app-layout>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,800;0,900;1,700&family=Barlow+Condensed:wght@300;400;500;600;700;800&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
 
 <style>
@@ -573,6 +574,422 @@
     .hdiv{border-top:1px solid var(--b2);margin-top:10px;padding-top:10px;display:flex;justify-content:space-between;align-items:center;}
     .link-gold{font-family:'Barlow Condensed',sans-serif;font-size:.65rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--g);text-decoration:none;transition:color .2s;}
     .link-gold:hover{color:var(--g-lt);}
+
+    /* ═══════════════════════════════════════════
+    MOBILE RESPONSIVE
+    ═══════════════════════════════════════════ */
+
+    /* Tablets (768px and below) */
+    @media (max-width: 768px) {
+      :root {
+        --fs-h1: clamp(1.8rem, 3vw, 2.4rem);
+        --pad: 24px;
+      }
+
+      .wrap { padding-bottom: 40px; }
+
+      /* Page header */
+      .page-header {
+        padding: 24px 20px 20px;
+        grid-template-columns: 1fr;
+        gap: 20px;
+        align-items: start;
+      }
+
+      .page-h1 {
+        font-size: var(--fs-h1);
+        margin-bottom: 10px;
+      }
+
+      .header-sub { max-width: 100%; }
+
+      .turnout-hero {
+        min-width: auto;
+        text-align: center;
+      }
+
+      .turnout-hero::before { font-size: 2.5rem; right: 8px; bottom: -4px; }
+
+      .th-number { font-size: 2.8rem; }
+
+      /* Content area */
+      .content { padding: 20px 20px 0; }
+
+      /* Bento grid */
+      .bento {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 10px;
+      }
+
+      .tile { padding: 12px 14px 10px; }
+
+      .tile-lg {
+        grid-column: span 2;
+        flex-direction: column;
+      }
+
+      .tile-lg-l {
+        border-right: none;
+        border-bottom: 1px solid var(--b2);
+        padding: 18px 16px;
+      }
+
+      .tile-lg-r { padding: 18px 16px; }
+
+      .tile-num { font-size: 1.4rem; }
+
+      .tile-label { font-size: .62rem; }
+
+      /* Ticker */
+      .ticker-bar { height: 32px; }
+
+      .ticker-label { padding: 0 12px; font-size: .56rem; }
+
+      .ticker-item { font-size: .65rem; gap: 6px; }
+
+      /* Analytics grid */
+      .analytics-grid {
+        grid-template-columns: 1fr;
+        gap: 10px;
+      }
+
+      .chart-wrap { padding: 12px 16px 14px; }
+      .chart-wrap > div { height: 120px !important; }
+
+      .donut-panel { padding: 14px 12px; gap: 12px; }
+
+      .donut-wrap { width: 110px; height: 110px; }
+
+      .donut-pct { font-size: 1.1rem; }
+
+      .donut-legend { gap: 6px; }
+
+      .dl-label { font-size: .62rem; }
+
+      .still-box { padding: 6px 10px; }
+
+      .still-lbl { font-size: .54rem; }
+
+      .still-val { font-size: .85rem; }
+
+      /* Bottom grid */
+      .bottom-grid {
+        grid-template-columns: 1fr;
+        gap: 10px;
+      }
+
+      .feed-scroll { max-height: 250px; }
+
+      .feed-item { gap: 10px; padding: 8px 8px; }
+
+      .feed-av { width: 28px; height: 28px; font-size: .62rem; }
+
+      .feed-name { font-size: .68rem; max-width: 140px; }
+
+      .feed-txn { font-size: .54rem; }
+
+      .feed-time { font-size: .56rem; }
+
+      .m-item { gap: 10px; padding: 8px 6px; }
+
+      .m-av { width: 32px; height: 32px; font-size: .7rem; }
+
+      .m-name { font-size: .68rem; }
+
+      .m-role { font-size: .56rem; }
+
+      .lb-item { gap: 10px; padding: 10px 8px; }
+
+      .lb-av { width: 36px; height: 36px; font-size: .75rem; }
+
+      .lb-name { font-size: .68rem; }
+
+      .lb-votes { font-size: .95rem; }
+
+      .lb-pct { font-size: .54rem; }
+
+      .sys-row { gap: 6px; }
+
+      .sys-lbl { width: 50px; font-size: .58rem; }
+
+      .sys-val { font-size: .6rem; }
+
+      .panel-head { padding: 14px 18px 10px; }
+
+      .panel-title { font-size: .85rem; }
+
+      .kpi-num { font-size: 1.4rem; }
+
+      .kpi-lbl { font-size: .58rem; }
+
+      .tile-icon { width: 34px; height: 34px; font-size: .8rem; }
+
+      .tile-badge { font-size: .54rem; padding: 2px 8px; }
+
+      .tile-sub { font-size: .58rem; }
+
+      .sparkline { height: 24px; gap: 2px; }
+    }
+
+    /* Mobile (480px and below) */
+    @media (max-width: 480px) {
+      :root {
+        --fs-h1: 1.6rem;
+        --pad: 16px;
+      }
+
+      .wrap { padding-bottom: 30px; }
+
+      .page-header {
+        padding: 18px 16px 16px;
+        gap: 16px;
+      }
+
+      .eyebrow { font-size: .55rem; margin-bottom: 8px; }
+
+      .eyebrow-line { width: 24px; }
+
+      .page-h1 { font-size: var(--fs-h1); line-height: 1.1; letter-spacing: -.02em; }
+
+      .header-sub { font-size: .75rem; line-height: 1.5; margin-top: 8px; }
+
+      .turnout-hero {
+        padding: 16px 18px;
+        border-radius: 12px;
+        min-width: auto;
+      }
+
+      .turnout-hero::before { font-size: 1.8rem; right: 4px; bottom: 0px; }
+
+      .live-chip { padding: 2px 8px; font-size: .55rem; }
+
+      .live-dot2 { width: 4px; height: 4px; }
+
+      .th-label { font-size: .54rem; margin-bottom: 4px; }
+
+      .th-number { font-size: 2rem; }
+
+      .th-sub { font-size: .65rem; margin-top: 6px; }
+
+      .th-bar { height: 2px; margin-top: 10px; }
+
+      /* Content */
+      .content { padding: 16px 16px 0; }
+
+      /* Ticker */
+      .ticker-bar { height: 28px; overflow: auto; }
+
+      .ticker-label { padding: 0 10px; font-size: .5rem; gap: 4px; }
+
+      .ticker-dot { width: 4px; height: 4px; }
+
+      .ticker-item { font-size: .58rem; gap: 4px; }
+
+      .ticker-item .ti-val { font-size: .62rem; }
+
+      .ticker-sep { font-size: .7rem; }
+
+      /* Bento */
+      .bento {
+        grid-template-columns: 1fr;
+        gap: 8px;
+        margin-bottom: 16px;
+      }
+
+      .tile {
+        padding: 10px 12px 8px;
+        cursor: pointer;
+      }
+
+      .tile-lg {
+        grid-column: span 1;
+        display: grid;
+        grid-template-columns: 1fr;
+      }
+
+      .tile-lg-l {
+        border-right: none;
+        border-bottom: 1px solid var(--b2);
+        padding: 14px 12px;
+      }
+
+      .tile-lg-r { padding: 14px 12px; }
+
+      .tile-top { margin-bottom: 8px; }
+
+      .tile-icon { width: 30px; height: 30px; font-size: .75rem; }
+
+      .tile-badge { font-size: .5rem; padding: 2px 6px; }
+
+      .tile-num { font-size: 1.2rem; margin-bottom: 3px; }
+
+      .tile-label { font-size: .58rem; }
+
+      .tile-sub { font-size: .54rem; margin-top: 8px; padding-top: 8px; }
+
+      .tile-sub-dot { width: 3px; height: 3px; }
+
+      .sparkline { height: 20px; gap: 2px; margin-top: 8px; }
+
+      /* Analytics */
+      .analytics-grid {
+        grid-template-columns: 1fr;
+        gap: 8px;
+        margin-bottom: 16px;
+      }
+
+      .panel-head {
+        padding: 12px 14px 10px;
+        flex-direction: row;
+      }
+
+      .panel-eye { font-size: .52rem; margin-bottom: 0; }
+
+      .panel-title { font-size: .75rem; }
+
+      .chart-wrap { padding: 10px 12px 12px; }
+
+      .chart-wrap > div { height: 100px !important; }
+
+      .chart-label { font-size: .54rem; margin-bottom: 8px; }
+
+      .kpi-strip { grid-template-columns: repeat(3, 1fr); }
+
+      .kpi-cell { padding: 10px 12px; }
+
+      .kpi-num { font-size: 1.1rem; }
+
+      .kpi-lbl { font-size: .54rem; }
+
+      .kpi-chip { font-size: .48rem; padding: 1px 5px; top: 8px; right: 8px; }
+
+      /* Doughnut */
+      .donut-panel { padding: 12px 10px; gap: 10px; }
+
+      .donut-wrap { width: 90px; height: 90px; }
+
+      .donut-pct { font-size: .95rem; }
+
+      .donut-sub { font-size: .52rem; }
+
+      .donut-legend { gap: 5px; }
+
+      .dl-row { gap: 4px; }
+
+      .dl-label { font-size: .58rem; gap: 6px; }
+
+      .dl-dot { width: 6px; height: 6px; }
+
+      .dl-val { font-size: .68rem; }
+
+      .still-box { padding: 5px 8px; border-radius: 8px; }
+
+      .still-lbl { font-size: .5rem; }
+
+      .still-val { font-size: .75rem; }
+
+      /* Bottom grid */
+      .bottom-grid {
+        grid-template-columns: 1fr;
+        gap: 8px;
+      }
+
+      /* Feed */
+      .feed-head { padding: 12px 14px 10px; }
+
+      .feed-scroll { max-height: 220px; padding: 8px 10px; }
+
+      .feed-item { gap: 8px; padding: 7px 7px; border-radius: 8px; margin-bottom: 5px; }
+
+      .feed-av { width: 26px; height: 26px; font-size: .58rem; border-radius: 8px; }
+
+      .feed-name { font-size: .64rem; max-width: 120px; }
+
+      .feed-txn { font-size: .52rem; margin-top: 1px; }
+
+      .feed-time { font-size: .54rem; }
+
+      .feed-status { width: 5px; height: 5px; }
+
+      .feed-footer { padding: 8px 10px; border-top: 1px solid var(--b2); }
+
+      .btn-all { padding: 7px; font-size: .62rem; border-radius: 8px; }
+
+      /* Team */
+      .team-panel { padding: 12px 14px; }
+
+      .m-item { gap: 8px; padding: 7px 6px; border-radius: 8px; }
+
+      .m-av { width: 28px; height: 28px; font-size: .64rem; border-radius: 8px; }
+
+      .m-av::after { width: 7px; height: 7px; bottom: -1px; right: -1px; }
+
+      .m-name { font-size: .64rem; }
+
+      .m-role { font-size: .54rem; }
+
+      .hdiv { margin-top: 8px; padding-top: 8px; font-size: .58rem; }
+
+      .link-gold { font-size: .6rem; }
+
+      /* System health */
+      .sys-row { gap: 5px; margin-top: 7px; }
+
+      .sys-lbl { width: 48px; font-size: .54rem; }
+
+      .sys-track { height: 2px; }
+
+      .sys-val { font-size: .56rem; }
+
+      /* Leaderboard */
+      .lb-panel { padding: 12px 14px; }
+
+      .lb-item { gap: 8px; padding: 9px 7px; }
+
+      .lb-rank { font-size: .8rem; width: 20px; }
+
+      .lb-rank.r1 { font-size: .95rem; }
+
+      .lb-av { width: 32px; height: 32px; font-size: .7rem; border-radius: 8px; }
+
+      .lb-name { font-size: .64rem; }
+
+      .lb-pos { font-size: .54rem; }
+
+      .lb-prog { height: 1.5px; margin-top: 5px; }
+
+      .lb-votes { font-size: .85rem; }
+
+      .lb-pct { font-size: .5rem; }
+    }
+
+    /* Extra small (320px and below) */
+    @media (max-width: 360px) {
+      .page-h1 { font-size: 1.4rem; line-height: 1.15; }
+
+      .th-number { font-size: 1.8rem; }
+
+      .tile-num { font-size: 1rem; }
+
+      .kpi-num { font-size: 1rem; }
+
+      .donut-pct { font-size: .85rem; }
+
+      .m-av::after { width: 6px; height: 6px; }
+
+      .lb-av { width: 28px; height: 28px; font-size: .64rem; }
+    }
+
+    /* Landscape adjustments */
+    @media (max-height: 500px) and (orientation: landscape) {
+      .bento { margin-bottom: 10px; }
+
+      .analytics-grid { margin-bottom: 10px; }
+
+      .chart-wrap > div { height: 80px !important; }
+
+      .feed-scroll { max-height: 160px; }
+    }
 </style>
 
 {{-- FLOATING ORBS --}}
