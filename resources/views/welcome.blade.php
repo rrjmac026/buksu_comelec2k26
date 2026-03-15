@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" style="background:#1e0025;">
     <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -10,7 +10,7 @@
         @vite(['resources/css/app.css', 'resources/js/app.js'])
         <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
     </head>
-    <body class="antialiased" x-data>
+    <body class="antialiased" style="background:#1e0025;min-height:100vh;display:flex;flex-direction:column;" x-data>
 
         {{-- Nav --}}
         @if (Route::has('login'))
@@ -35,9 +35,10 @@
         </nav>
         @endif
 
-        <div style="padding-top:60px;">
+        <div style="padding-top:60px;flex:1;display:flex;flex-direction:column;">
 
 <style>
+  html, body { background: #1e0025; }
   * { box-sizing: border-box; margin: 0; padding: 0; }
   :root {
     --gold: #f9b40f; --gold-lt: #fcd558; --violet: #380041;
@@ -45,7 +46,7 @@
   }
 
   .outer {
-    width: 100%; min-height: 620px;
+    width: 100%; min-height: calc(100vh - 60px - 57px);
     background: #1e0025;
     background-image:
       radial-gradient(ellipse 80% 60% at 10% 10%, rgba(82,0,96,0.7) 0%, transparent 55%),
@@ -53,6 +54,7 @@
     display: flex; align-items: center; justify-content: center;
     padding: 32px 20px; position: relative; overflow: hidden;
     font-family: 'DM Sans', 'Segoe UI', sans-serif;
+    flex: 1;
   }
   .grid-bg {
     position: absolute; inset: 0; pointer-events: none;
@@ -234,7 +236,6 @@
     color: var(--gold); margin-bottom: 10px; text-align: center;
   }
 
-
   .contrib-bar { background: rgba(249,180,15,0.07); border-radius: 8px; padding: 10px 14px; width: 100%; }
   .contrib-label { font-size: 0.55rem; font-weight: 700; color: rgba(249,180,15,0.5); letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 7px; }
   .contrib-item { display: flex; align-items: center; gap: 7px; margin-bottom: 4px; }
@@ -403,7 +404,7 @@
       <div class="stats-bar">
         <div class="s-item"><div class="s-num">99.9%</div><div class="s-lbl">Uptime</div></div>
         <div class="s-item"><div class="s-num">256-bit</div><div class="s-lbl">Encrypted</div></div>
-        <div class="s-item"><div class="s-num">0</div><div class="s-lbl">Votes Cast</div></div>
+        <div class="s-item"><div class="s-num" id="stat-votes-cast">0</div><div class="s-lbl">Votes Cast</div></div>
         <div class="s-item"><div class="s-num">Anon</div><div class="s-lbl">Ballots</div></div>
       </div>
     </div>
@@ -549,10 +550,9 @@
   setTimeout(() => { resetAuto(); startProgress(); }, 1500);
 </script>
 
-
         </div>
 
-        <footer style="background:rgba(26,0,32,0.9);border-top:1px solid rgba(249,180,15,0.15);text-align:center;padding:16px 40px;">
+        <footer style="background:rgba(26,0,32,0.95);border-top:1px solid rgba(249,180,15,0.15);text-align:center;padding:16px 40px;">
             <p style="color:rgba(255,251,240,0.45);font-size:0.8rem;margin:0;">
                 &copy; {{ date('Y') }} <span style="color:#f9b40f;font-weight:700;">{{ config('app.name', 'Voting System') }}.</span> All rights reserved.
             </p>
