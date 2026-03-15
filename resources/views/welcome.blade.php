@@ -462,8 +462,8 @@
               <div class="spin-ring"></div>
               <div class="member-num">3</div>
             </div>
-            <div class="member-name">Bernardo Dela Cerna Jr.</div>
-            <div class="member-role">System Developer/QA</div>
+            <div class="member-name">Bernardo DeLa Cerna Jr.</div>
+            <div class="member-role">System Developer / QA</div>
             <div class="contrib-bar">
               <div class="contrib-label">Key Contributions</div>
               <div class="contrib-item"><div class="contrib-dot"></div><div class="contrib-text">Tested & caught bugs before they cause trouble</div></div>
