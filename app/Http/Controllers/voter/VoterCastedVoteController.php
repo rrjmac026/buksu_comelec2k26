@@ -115,12 +115,30 @@ class VoterCastedVoteController extends Controller
             ];
         });
 
+        // Collect all candidate IDs already saved in the ballot (for the modal)
+        $allSelectedIds = collect($ballot)
+            ->flatten()
+            ->filter(fn($v) => is_numeric($v))
+            ->map(fn($v) => (int) $v)
+            ->unique()
+            ->values()
+            ->all();
+
+        // Single eager query — replaces all inline Blade queries in the modal
+        $ballotCandidates = !empty($allSelectedIds)
+            ? Candidate::with(['partylist'])
+                ->whereIn('candidate_id', $allSelectedIds)
+                ->get()
+                ->keyBy('candidate_id')
+            : collect();
+
         return view('voter.ballot.step', compact(
             'position',
             'step',
             'totalSteps',
             'steps',
             'selectedId',
+            'ballotCandidates',
         ));
     }
 

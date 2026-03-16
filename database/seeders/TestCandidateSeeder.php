@@ -20,24 +20,20 @@ class TestCandidateSeeder extends Seeder
         $org      = fn(string $acronym)  => Organization::where('acronym', $acronym)->value('id');
 
         // ── Shorthand IDs ───────────────────────────────────────────
-        // Colleges
-        $cas  = $college('CAS');   // College of Arts and Sciences
-        $con  = $college('CON');   // College of Nursing
-        $cob  = $college('COB');   // College of Business
-        $cot  = $college('COT');   // College of Technologies
-        $coe  = $college('COE');   // College of Education
-        $cpag = $college('CPAG');  // College of Public Administration
+        $cas  = $college('CAS');
+        $con  = $college('CON');
+        $cob  = $college('COB');
+        $cot  = $college('COT');
+        $coe  = $college('COE');
+        $cpag = $college('CPAG');
 
-        // Organizations
-        $ssc = $org('SSC');   // Supreme Student Council
-        $sbo = $org('SBO');   // Student Body Organization
+        $ssc = $org('SSC');
+        $sbo = $org('SBO');
 
-        // Partylists
         $sinagtala = $party('SINAGTALA');
         $banaag    = $party('BANAAG');
         $hiraya    = $party('HIRAYA');
 
-        // Positions
         $president  = $position('President');
         $vp         = $position('Vice President');
         $senator    = $position('Senator');
@@ -58,6 +54,7 @@ class TestCandidateSeeder extends Seeder
                 'organization_id' => $ssc,
                 'college_id'      => $cas,
                 'course'          => 'Bachelor of Arts in Communication',
+                'photo'           => '1773628059_645679763_2960468820828838_6793719293451820377_n.jpg',
                 'platform'        => 'Empowering student voices through transparent governance and inclusive campus programs.',
             ],
             [
@@ -69,6 +66,7 @@ class TestCandidateSeeder extends Seeder
                 'organization_id' => $sbo,
                 'college_id'      => $cas,
                 'course'          => 'Bachelor of Science in Psychology',
+                'photo'           => '1773628071_dev2.jpg',
                 'platform'        => 'Building a united student body through active leadership and sustainable academic initiatives.',
             ],
 
@@ -85,6 +83,7 @@ class TestCandidateSeeder extends Seeder
                 'organization_id' => $ssc,
                 'college_id'      => $cot,
                 'course'          => 'Bachelor of Science in Information Technology',
+                'photo'           => '1773628094_dev3.jpg',
                 'platform'        => 'Driving digital innovation and student welfare through collaborative and tech-forward leadership.',
             ],
             [
@@ -96,11 +95,12 @@ class TestCandidateSeeder extends Seeder
                 'organization_id' => $sbo,
                 'college_id'      => $cob,
                 'course'          => 'Bachelor of Science in Business Administration',
+                'photo'           => '1773628191_44daf0f3-cbc4-4397-8902-9cf1f7ca3635.jpg',
                 'platform'        => 'Championing fiscal responsibility, student rights, and meaningful campus engagement.',
             ],
 
             // ══════════════════════════════════════════
-            //  SENATORS  (6 candidates)
+            //  SENATORS
             // ══════════════════════════════════════════
 
             [
@@ -112,6 +112,7 @@ class TestCandidateSeeder extends Seeder
                 'organization_id' => $ssc,
                 'college_id'      => $cob,
                 'course'          => 'Bachelor of Science in Accountancy',
+                'photo'           => '1773629111_b63feb1b-bb92-4f71-b806-1e4fc2496535.jpg',
                 'platform'        => 'Advocating for financial transparency and equitable resource distribution among all student organizations.',
             ],
             [
@@ -123,6 +124,7 @@ class TestCandidateSeeder extends Seeder
                 'organization_id' => $sbo,
                 'college_id'      => $coe,
                 'course'          => 'Bachelor of Secondary Education',
+                'photo'           => '1773628214_625970077_2329589484113115_4196818189688666720_n.jpg',
                 'platform'        => 'Strengthening academic support systems and promoting mental health awareness across all colleges.',
             ],
             [
@@ -134,6 +136,7 @@ class TestCandidateSeeder extends Seeder
                 'organization_id' => $ssc,
                 'college_id'      => $cot,
                 'course'          => 'Bachelor of Science in Computer Science',
+                'photo'           => '1773629430_96b38f69-9142-4a03-9a4c-da2cf191b91e.jpg',
                 'platform'        => 'Leveraging technology to modernize student services and improve campus-wide communication.',
             ],
             [
@@ -145,6 +148,7 @@ class TestCandidateSeeder extends Seeder
                 'organization_id' => $sbo,
                 'college_id'      => $cpag,
                 'course'          => 'Bachelor of Public Administration',
+                'photo'           => '1773628239_625970077_2329589484113115_4196818189688666720_n.jpg',
                 'platform'        => 'Pushing for policy reforms that prioritize student welfare, scholarships, and campus safety.',
             ],
             [
@@ -156,6 +160,7 @@ class TestCandidateSeeder extends Seeder
                 'organization_id' => $ssc,
                 'college_id'      => $cas,
                 'course'          => 'Bachelor of Science in Social Work',
+                'photo'           => '1773628253_982e2d73-0241-4628-a86b-6c4a0797b21a.jpg',
                 'platform'        => 'Amplifying the voices of marginalized students and building an inclusive campus environment for all.',
             ],
             [
@@ -165,9 +170,34 @@ class TestCandidateSeeder extends Seeder
                 'position_id'     => $senator,
                 'partylist_id'    => $hiraya,
                 'organization_id' => $sbo,
-                'college_id'      => $con,   // CON — College of Nursing
+                'college_id'      => $con,
                 'course'          => 'Bachelor of Science in Nursing',
+                'photo'           => '1773628268_626313936_1441563960744880_2531056482900615600_n.jpg',
                 'platform'        => 'Promoting student health literacy, nursing scholarship programs, and holistic campus wellness initiatives.',
+            ],
+            [
+                'first_name'      => 'Angelo',
+                'last_name'       => 'Daulong',
+                'middle_name'     => 'Lapido',
+                'position_id'     => $senator,
+                'partylist_id'    => $banaag,
+                'organization_id' => $ssc,
+                'college_id'      => $cot,
+                'course'          => 'Bachelor of Science in Information Technology',
+                'photo'           => '1773629092_d46908a1-9cc1-438a-bc91-b3fad16d9f34.jpg',
+                'platform'        => 'eat is all I want',
+            ],
+            [
+                'first_name'      => 'Ernest John',
+                'last_name'       => 'Tado',
+                'middle_name'     => 'Unemployed',
+                'position_id'     => $senator,
+                'partylist_id'    => $banaag,
+                'organization_id' => $ssc,
+                'college_id'      => $cot,
+                'course'          => 'Bachelor of Science in Information Technology',
+                'photo'           => '1773629401_6bf732f9-8253-4f20-b04d-c909e325bbc2.jpg',
+                'platform'        => 'Unemployed all the way',
             ],
 
         ];
@@ -184,6 +214,6 @@ class TestCandidateSeeder extends Seeder
             );
         }
 
-        $this->command->info('✅ Candidates seeded: 2 Presidents, 2 Vice Presidents, 6 Senators.');
+        $this->command->info('✅ Candidates seeded: 2 Presidents, 2 Vice Presidents, 8 Senators.');
     }
 }
