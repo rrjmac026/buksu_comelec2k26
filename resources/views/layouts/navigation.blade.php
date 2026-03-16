@@ -292,6 +292,7 @@
         </div>
 
         <div class="dropdown-menu-inner">
+            @if(Auth::check() && Auth::user()->role === 'admin')
             <a :href="profileEditRoute" class="dropdown-item">
                 <div class="dropdown-item-icon"><i class="fas fa-user"></i></div>
                 <div class="dropdown-item-text">
@@ -300,6 +301,7 @@
                 </div>
                 <i class="fas fa-chevron-right dropdown-chevron"></i>
             </a>
+            @endif
 
             <button @click="$store.darkMode.toggle()" class="dropdown-item">
                 <div class="dropdown-item-icon">
@@ -337,7 +339,7 @@ function navigationComponent() {
         profileOpen: false,
         userName:    @json(Auth::check() ? Auth::user()->full_name : 'Guest'),
         userInitial: @json(Auth::check() ? strtoupper(substr(Auth::user()->full_name, 0, 1)) : 'G'),
-        profileEditRoute: '{{ route("profile.edit") }}',
+        profileEditRoute: '{{ Auth::check() && Auth::user()->role === "admin" ? route("admin.profile.edit") : "" }}',
         logoutRoute:      '{{ route("logout") }}',
         csrfToken:        '{{ csrf_token() }}',
 

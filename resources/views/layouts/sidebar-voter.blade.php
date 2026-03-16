@@ -51,12 +51,4 @@
         <span class="nav-link-sub">Share your experience</span>
     </div>
 </a>
-
-<a href="{{ route('profile.edit') }}"
-   class="nav-link {{ $currentRoute === 'profile.edit' ? 'active' : '' }}">
-    <div class="nav-link-icon"><i class="fas fa-user-gear"></i></div>
-    <div class="nav-link-text">
-        <span class="nav-link-label">My Profile</span>
-        <span class="nav-link-sub">Account settings</span>
-    </div>
 </a>

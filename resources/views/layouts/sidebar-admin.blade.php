@@ -145,7 +145,7 @@
 {{-- ── Account ── --}}
 <div class="nav-section-label">Account</div>
 
-<a href="{{ route('profile.edit') }}"
+<a href="{{ route('admin.profile.edit') }}"
    class="nav-link {{ $currentRoute === 'profile.edit' ? 'active' : '' }}">
     <div class="nav-link-icon"><i class="fas fa-user-gear"></i></div>
     <div class="nav-link-text">

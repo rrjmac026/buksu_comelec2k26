@@ -407,16 +407,6 @@
 
         {{-- MY PROFILE --}}
         <div class="vd-gc p-5" style="animation-delay:.12s;">
-            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">
-                <h3 class="vd-card-title">My Profile</h3>
-                <a href="{{ route('profile.edit') }}"
-                   style="font-size:.68rem;font-weight:700;color:rgba(249,180,15,0.7);text-decoration:none;display:flex;align-items:center;gap:4px;padding:5px 12px;border-radius:6px;border:1px solid rgba(249,180,15,0.2);transition:all .2s;"
-                   onmouseover="this.style.color='#f9b40f';this.style.borderColor='rgba(249,180,15,0.4)'"
-                   onmouseout="this.style.color='rgba(249,180,15,0.7)';this.style.borderColor='rgba(249,180,15,0.2)'">
-                    <i class="fas fa-pen" style="font-size:.55rem;"></i> Edit
-                </a>
-            </div>
-
             {{-- Avatar row --}}
             <div style="display:flex;align-items:center;gap:14px;margin-bottom:16px;padding-bottom:14px;border-bottom:1px solid rgba(249,180,15,0.08);">
                 <div style="width:50px;height:50px;border-radius:14px;background:linear-gradient(135deg,#f9b40f,#fcd558);display:flex;align-items:center;justify-content:center;font-size:1.15rem;font-weight:900;color:#380041;flex-shrink:0;box-shadow:0 0 18px rgba(249,180,15,0.4);font-family:'Playfair Display',serif;">

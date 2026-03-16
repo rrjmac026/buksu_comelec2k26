@@ -43,11 +43,6 @@ Route::middleware('auth')->group(function () {
         ->middleware('verified')
         ->name('dashboard');
 
-    Route::prefix('profile')->name('profile.')->group(function () {
-        Route::get('/',     [ProfileController::class, 'edit'])->name('edit');
-        Route::patch('/',   [ProfileController::class, 'update'])->name('update');
-        Route::delete('/',  [ProfileController::class, 'destroy'])->name('destroy');
-    });
 
 });
 Route::get('auth/google',          [GoogleController::class, 'redirect'])->name('auth.google');
@@ -62,6 +57,13 @@ Route::middleware(['auth', 'admin'])
     ->prefix('admin')
     ->name('admin.')
     ->group(function () {
+
+    
+        Route::prefix('profile')->name('profile.')->group(function () {
+            Route::get('/',     [ProfileController::class, 'edit'])->name('edit');
+            Route::patch('/',   [ProfileController::class, 'update'])->name('update');
+            Route::delete('/',  [ProfileController::class, 'destroy'])->name('destroy');
+        });
 
         // Dashboard
         Route::get('dashboard', [AdminDashboardController::class, 'index'])->name('dashboard');
