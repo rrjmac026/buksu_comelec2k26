@@ -4,13 +4,14 @@
 
 @php
     $currentRoute = Route::currentRouteName();
+    $is = fn(string $pattern) => Str::startsWith($currentRoute, $pattern) || $currentRoute === $pattern;
 @endphp
 
 {{-- ── Overview ── --}}
 <div class="nav-section-label">Overview</div>
 
 <a href="{{ route('admin.dashboard') }}"
-   class="nav-link {{ Str::startsWith($currentRoute, 'admin.dashboard') ? 'active' : '' }}">
+   class="nav-link {{ $is('admin.dashboard') ? 'active' : '' }}">
     <div class="nav-link-icon"><i class="fas fa-gauge-high"></i></div>
     <div class="nav-link-text">
         <span class="nav-link-label">Dashboard</span>
@@ -22,7 +23,7 @@
 <div class="nav-section-label">Election Control</div>
 
 <a href="{{ route('admin.election.index') }}"
-   class="nav-link {{ Str::startsWith($currentRoute, 'admin.election') ? 'active' : '' }}">
+   class="nav-link {{ $is('admin.election') ? 'active' : '' }}">
     <div class="nav-link-icon"><i class="fas fa-tower-broadcast"></i></div>
     <div class="nav-link-text">
         <span class="nav-link-label">Election Status</span>
@@ -42,7 +43,7 @@
 <div class="nav-section-label">Election Setup</div>
 
 <a href="{{ route('admin.positions.index') }}"
-   class="nav-link {{ Str::startsWith($currentRoute, 'positions') ? 'active' : '' }}">
+   class="nav-link {{ $is('admin.positions') ? 'active' : '' }}">
     <div class="nav-link-icon"><i class="fas fa-sitemap"></i></div>
     <div class="nav-link-text">
         <span class="nav-link-label">Positions</span>
@@ -51,7 +52,7 @@
 </a>
 
 <a href="{{ route('admin.partylists.index') }}"
-   class="nav-link {{ Str::startsWith($currentRoute, 'partylists') ? 'active' : '' }}">
+   class="nav-link {{ $is('admin.partylists') ? 'active' : '' }}">
     <div class="nav-link-icon"><i class="fas fa-flag"></i></div>
     <div class="nav-link-text">
         <span class="nav-link-label">Partylists</span>
@@ -60,7 +61,7 @@
 </a>
 
 <a href="{{ route('admin.organizations.index') }}"
-   class="nav-link {{ Str::startsWith($currentRoute, 'organizations') ? 'active' : '' }}">
+   class="nav-link {{ $is('admin.organizations') ? 'active' : '' }}">
     <div class="nav-link-icon"><i class="fas fa-building-columns"></i></div>
     <div class="nav-link-text">
         <span class="nav-link-label">Organizations</span>
@@ -69,7 +70,7 @@
 </a>
 
 <a href="{{ route('admin.colleges.index') }}"
-   class="nav-link {{ Str::startsWith($currentRoute, 'colleges') ? 'active' : '' }}">
+   class="nav-link {{ $is('admin.colleges') ? 'active' : '' }}">
     <div class="nav-link-icon"><i class="fas fa-graduation-cap"></i></div>
     <div class="nav-link-text">
         <span class="nav-link-label">Colleges</span>
@@ -81,7 +82,7 @@
 <div class="nav-section-label">Candidates</div>
 
 <a href="{{ route('admin.candidates.index') }}"
-   class="nav-link {{ Str::startsWith($currentRoute, 'candidates') ? 'active' : '' }}">
+   class="nav-link {{ $is('admin.candidates') ? 'active' : '' }}">
     <div class="nav-link-icon"><i class="fas fa-id-card"></i></div>
     <div class="nav-link-text">
         <span class="nav-link-label">Candidates</span>
@@ -93,7 +94,7 @@
 <div class="nav-section-label">Voters</div>
 
 <a href="{{ route('admin.voters.index') }}"
-   class="nav-link {{ Str::startsWith($currentRoute, 'admin.voters') ? 'active' : '' }}">
+   class="nav-link {{ $is('admin.voters') ? 'active' : '' }}">
     <div class="nav-link-icon"><i class="fas fa-users"></i></div>
     <div class="nav-link-text">
         <span class="nav-link-label">Voters</span>
@@ -124,7 +125,7 @@
 </a>
 
 <a href="{{ route('admin.feedback.index') }}"
-   class="nav-link {{ Str::startsWith($currentRoute, 'admin.feedback') ? 'active' : '' }}">
+   class="nav-link {{ $is('admin.feedback') ? 'active' : '' }}">
     <div class="nav-link-icon"><i class="fas fa-comment-dots"></i></div>
     <div class="nav-link-text">
         <span class="nav-link-label">Feedback</span>
@@ -133,12 +134,13 @@
 </a>
 
 <a href="{{ route('admin.reports.index') }}"
-   class="nav-link {{ Str::startsWith($currentRoute, 'admin.reports') ? 'active' : '' }}">
+   class="nav-link {{ $is('admin.reports') ? 'active' : '' }}">
     <div class="nav-link-icon"><i class="fas fa-file-alt"></i></div>
     <div class="nav-link-text">
         <span class="nav-link-label">Reports</span>
         <span class="nav-link-sub">Detailed election reports</span>
     </div>
+</a>
 
 <hr class="sidebar-divider">
 
@@ -146,7 +148,7 @@
 <div class="nav-section-label">Account</div>
 
 <a href="{{ route('admin.profile.edit') }}"
-   class="nav-link {{ $currentRoute === 'profile.edit' ? 'active' : '' }}">
+   class="nav-link {{ $is('admin.profile') || $currentRoute === 'profile.edit' ? 'active' : '' }}">
     <div class="nav-link-icon"><i class="fas fa-user-gear"></i></div>
     <div class="nav-link-text">
         <span class="nav-link-label">My Profile</span>

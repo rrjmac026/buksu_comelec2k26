@@ -1,222 +1,447 @@
 <x-app-layout>
-    <x-slot name="header">
-        <div class="flex items-center justify-between">
-            <div class="flex items-center gap-3">
-                <a href="{{ route('admin.positions.index') }}"
-                   class="w-8 h-8 flex items-center justify-center rounded-xl
-                          text-violet-600 dark:text-violet-400
-                          hover:bg-violet-100 dark:hover:bg-violet-800/40 transition-colors">
-                    <i class="fas fa-arrow-left text-sm"></i>
-                </a>
-                <div>
-                    <h2 class="font-bold text-xl text-gray-800 dark:text-gray-100 leading-tight">Position Profile</h2>
-                    <p class="text-sm text-violet-600 dark:text-violet-400 mt-0.5">Viewing details for <strong>{{ $position->name }}</strong></p>
-                </div>
-            </div>
-            <div class="flex items-center gap-2">
-                <a href="{{ route('admin.positions.edit', $position) }}"
-                   class="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold
-                          text-violet-600 dark:text-violet-400
-                          border border-violet-200 dark:border-violet-700
-                          hover:bg-violet-50 dark:hover:bg-violet-900/30 transition-all duration-200">
-                    <i class="fas fa-pen text-xs"></i> Edit
-                </a>
-            </div>
+@push('styles')
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;800;900&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; }
+
+@keyframes fadeUp {
+    from { opacity: 0; transform: translateY(16px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes shimmerBar {
+    0%,100% { background-position: 0% 0%; }
+    50%      { background-position: 100% 0%; }
+}
+
+/* ── Page header ── */
+.apos-page-header {
+    display: flex; align-items: flex-start; justify-content: space-between;
+    gap: 16px; margin-bottom: 28px; flex-wrap: wrap;
+    animation: fadeUp 0.3s ease both;
+}
+.apos-page-header-left { display: flex; align-items: center; gap: 14px; }
+.apos-back-btn {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 34px; height: 34px; border-radius: 10px; flex-shrink: 0;
+    border: 1px solid rgba(249,180,15,0.2); background: transparent;
+    font-size: 0.72rem; color: rgba(249,180,15,0.6);
+    text-decoration: none; transition: all 0.18s;
+}
+.apos-back-btn:hover { border-color: rgba(249,180,15,0.4); color: #f9b40f; background: rgba(249,180,15,0.06); }
+.apos-page-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.4rem; font-weight: 900; color: #fffbf0; margin: 0;
+}
+.apos-page-sub { font-size: 0.72rem; color: rgba(255,251,240,0.4); margin-top: 3px; }
+.apos-page-sub strong { color: rgba(249,180,15,0.7); }
+
+/* ── Glass card ── */
+.apos-card {
+    background: rgba(26,0,32,0.88);
+    backdrop-filter: blur(24px);
+    border: 1px solid rgba(249,180,15,0.18);
+    border-radius: 18px;
+    box-shadow: 0 4px 32px rgba(0,0,0,0.35), inset 0 1px 0 rgba(249,180,15,0.06);
+    overflow: hidden;
+    animation: fadeUp .4s ease both;
+    margin-bottom: 16px;
+}
+.apos-card::before {
+    content: ''; display: block; height: 2px;
+    background: linear-gradient(90deg, transparent, #f9b40f, #fcd558, transparent);
+    background-size: 200% 100%;
+    animation: shimmerBar 3s ease-in-out infinite;
+}
+
+/* ── Toast ── */
+.apos-toast {
+    display: flex; align-items: center; gap: 10px;
+    padding: 12px 16px; border-radius: 10px; margin-bottom: 16px;
+    font-family: 'DM Sans', sans-serif; font-size: 0.75rem; font-weight: 600;
+    background: rgba(52,211,153,0.08); border: 1px solid rgba(52,211,153,0.2); color: #34d399;
+    animation: fadeUp .35s ease both;
+}
+
+/* ── Grid layout ── */
+.apos-grid {
+    display: grid; grid-template-columns: 260px 1fr; gap: 16px; align-items: start;
+}
+@media (max-width: 768px) { .apos-grid { grid-template-columns: 1fr; } }
+
+/* ── Profile card ── */
+.apos-profile-card {
+    background: rgba(26,0,32,0.88);
+    backdrop-filter: blur(24px);
+    border: 1px solid rgba(249,180,15,0.18);
+    border-radius: 18px;
+    box-shadow: 0 4px 32px rgba(0,0,0,0.35), inset 0 1px 0 rgba(249,180,15,0.06);
+    overflow: hidden;
+    padding: 28px 24px;
+    text-align: center;
+    animation: fadeUp .4s ease both;
+}
+.apos-profile-card::before {
+    content: ''; display: block; height: 2px; margin: -28px -24px 24px;
+    background: linear-gradient(90deg, transparent, #f9b40f, #fcd558, transparent);
+    background-size: 200% 100%;
+    animation: shimmerBar 3s ease-in-out infinite;
+}
+
+.apos-profile-avatar {
+    width: 80px; height: 80px; border-radius: 20px; margin: 0 auto 16px;
+    background: rgba(249,180,15,0.1); border: 1px solid rgba(249,180,15,0.25);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.8rem; color: #f9b40f;
+}
+.apos-profile-name {
+    font-family: 'Playfair Display', serif; font-size: 1.1rem; font-weight: 900;
+    color: #fffbf0; margin-bottom: 20px;
+}
+
+.apos-profile-divider { height: 1px; background: rgba(249,180,15,0.1); margin: 0 0 16px; }
+
+.apos-profile-btn {
+    display: flex; align-items: center; justify-content: center; gap: 8px;
+    width: 100%; padding: 9px 16px; border-radius: 10px;
+    font-family: 'DM Sans', sans-serif; font-size: 0.75rem; font-weight: 700;
+    cursor: pointer; transition: all .18s; text-decoration: none; border: none;
+    margin-bottom: 8px;
+}
+.apos-profile-btn:last-child { margin-bottom: 0; }
+.apos-profile-btn-sky {
+    background: transparent; border: 1px solid rgba(96,165,250,0.25); color: rgba(96,165,250,0.7);
+}
+.apos-profile-btn-sky:hover { background: rgba(96,165,250,0.08); border-color: rgba(96,165,250,0.5); color: #93c5fd; }
+.apos-profile-btn-danger {
+    background: transparent; border: 1px solid rgba(248,113,113,0.25); color: rgba(248,113,113,0.7);
+}
+.apos-profile-btn-danger:hover { background: rgba(248,113,113,0.08); border-color: rgba(248,113,113,0.5); color: #f87171; }
+
+/* ── Stats row ── */
+.apos-stats-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 16px; }
+
+.apos-stat-tile {
+    background: rgba(26,0,32,0.88);
+    border: 1px solid rgba(249,180,15,0.15);
+    border-radius: 16px; padding: 20px;
+    animation: fadeUp .42s ease both;
+}
+.apos-stat-tile::before { display: none; }
+.apos-stat-tile-label {
+    font-size: 0.6rem; font-weight: 700; text-transform: uppercase;
+    letter-spacing: 0.1em; color: rgba(249,180,15,0.5); margin-bottom: 8px;
+}
+.apos-stat-tile-num {
+    font-family: 'Playfair Display', serif; font-size: 2.2rem; font-weight: 900; line-height: 1;
+    background: linear-gradient(135deg, #f9b40f, #fcd558);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+}
+.apos-stat-tile-icon {
+    float: right; width: 44px; height: 44px; border-radius: 12px;
+    display: flex; align-items: center; justify-content: center; font-size: 1rem;
+}
+
+/* ── Candidates table card ── */
+.apos-table-card {
+    background: rgba(26,0,32,0.88);
+    backdrop-filter: blur(24px);
+    border: 1px solid rgba(249,180,15,0.18);
+    border-radius: 18px;
+    box-shadow: 0 4px 32px rgba(0,0,0,0.35), inset 0 1px 0 rgba(249,180,15,0.06);
+    overflow: hidden;
+    animation: fadeUp .46s ease both;
+}
+.apos-table-card::before {
+    content: ''; display: block; height: 2px;
+    background: linear-gradient(90deg, transparent, #f9b40f, #fcd558, transparent);
+    background-size: 200% 100%;
+    animation: shimmerBar 3s ease-in-out infinite;
+}
+
+.apos-table-head {
+    padding: 18px 24px 14px;
+    border-bottom: 1px solid rgba(249,180,15,0.08);
+    background: linear-gradient(to right, rgba(56,0,65,0.4), transparent);
+    display: flex; align-items: center; gap: 10px;
+}
+.apos-table-head-title {
+    font-family: 'Playfair Display', serif; font-size: 0.95rem; font-weight: 800;
+    color: #fffbf0;
+}
+.apos-table-head-icon { color: rgba(249,180,15,0.6); font-size: 0.8rem; }
+
+.apos-table { width: 100%; border-collapse: collapse; font-size: 0.82rem; }
+.apos-thead-row {
+    background: linear-gradient(to right, rgba(56,0,65,0.4), transparent);
+    border-bottom: 1px solid rgba(249,180,15,0.1);
+}
+.apos-thead-row th {
+    padding: 12px 24px; text-align: left;
+    font-size: 0.58rem; font-weight: 700; text-transform: uppercase;
+    letter-spacing: 0.1em; color: rgba(249,180,15,0.5);
+}
+.apos-thead-row th:last-child { text-align: center; }
+
+.apos-tbody-row {
+    border-bottom: 1px solid rgba(249,180,15,0.07);
+    transition: background .18s;
+}
+.apos-tbody-row:last-child { border-bottom: none; }
+.apos-tbody-row:hover { background: rgba(249,180,15,0.04); }
+.apos-tbody-row td { padding: 13px 24px; color: rgba(255,251,240,0.85); vertical-align: middle; }
+
+.apos-cand-name {
+    font-weight: 600; color: #fffbf0; text-decoration: none; transition: color .18s;
+}
+.apos-cand-name:hover { color: #f9b40f; }
+
+.apos-party-badge {
+    display: inline-flex; align-items: center; gap: 4px;
+    padding: 3px 10px; border-radius: 99px; font-size: 0.62rem; font-weight: 700;
+    background: rgba(249,180,15,0.1); border: 1px solid rgba(249,180,15,0.18);
+    color: rgba(249,180,15,0.75);
+}
+.apos-votes-badge {
+    display: inline-flex; align-items: center; justify-content: center;
+    padding: 4px 14px; border-radius: 99px; font-size: 0.7rem; font-weight: 800;
+    background: rgba(52,211,153,0.1); border: 1px solid rgba(52,211,153,0.2);
+    color: #34d399;
+}
+
+/* ── Empty state ── */
+.apos-empty {
+    padding: 48px 24px; text-align: center;
+}
+.apos-empty-icon  { font-size: 2rem; color: rgba(249,180,15,0.1); margin-bottom: 12px; display: block; }
+.apos-empty-title { font-family: 'Playfair Display', serif; font-size: 0.95rem; font-weight: 800; color: rgba(255,251,240,0.3); }
+
+/* ── Header edit btn ── */
+.apos-btn {
+    display: inline-flex; align-items: center; gap: 7px;
+    padding: 9px 20px; border-radius: 10px;
+    font-family: 'DM Sans', sans-serif; font-size: 0.75rem; font-weight: 700;
+    cursor: pointer; transition: all .18s; text-decoration: none; border: none;
+}
+.apos-btn-ghost {
+    background: transparent; border: 1px solid rgba(249,180,15,0.2); color: rgba(249,180,15,0.6);
+}
+.apos-btn-ghost:hover { background: rgba(249,180,15,0.06); color: #f9b40f; border-color: rgba(249,180,15,0.4); }
+
+/* ── Delete modal ── */
+.apos-modal-wrap { padding: 28px; background: rgba(26,0,32,0.98); }
+.apos-modal-icon {
+    width: 50px; height: 50px; border-radius: 14px; flex-shrink: 0;
+    background: rgba(248,113,113,0.1); border: 1px solid rgba(248,113,113,0.2);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.1rem; color: #f87171;
+}
+.apos-modal-title { font-family: 'Playfair Display', serif; font-size: 1.05rem; font-weight: 900; color: #fffbf0; margin-bottom: 3px; }
+.apos-modal-sub   { font-size: 0.7rem; color: rgba(255,251,240,0.4); }
+.apos-modal-body  { font-size: 0.75rem; color: rgba(255,251,240,0.5); line-height: 1.7; margin: 16px 0 22px; }
+.apos-warning-box {
+    padding: 10px 14px; border-radius: 9px; margin-bottom: 16px;
+    background: rgba(248,113,113,0.06); border: 1px solid rgba(248,113,113,0.15);
+    font-size: 0.68rem; color: rgba(248,113,113,0.8); display: flex; align-items: flex-start; gap: 8px;
+}
+.apos-modal-btns  { display: flex; gap: 10px; justify-content: flex-end; }
+.apos-m-cancel {
+    padding: 9px 18px; border-radius: 9px; cursor: pointer;
+    background: transparent; border: 1px solid rgba(249,180,15,0.18);
+    color: rgba(249,180,15,0.55); font-family: 'DM Sans', sans-serif;
+    font-size: 0.75rem; font-weight: 700; transition: all .18s;
+}
+.apos-m-cancel:hover { background: rgba(249,180,15,0.06); color: #f9b40f; }
+.apos-m-delete {
+    padding: 9px 20px; border-radius: 9px; cursor: pointer;
+    background: linear-gradient(135deg, #ef4444, #f87171); border: none;
+    color: #fff; font-family: 'DM Sans', sans-serif;
+    font-size: 0.75rem; font-weight: 700;
+    box-shadow: 0 3px 10px rgba(239,68,68,0.3); transition: all .18s;
+}
+.apos-m-delete:hover { transform: translateY(-1px); box-shadow: 0 5px 16px rgba(239,68,68,0.45); }
+</style>
+@endpush
+
+{{-- Toast --}}
+@if(session('success'))
+<div class="apos-toast"
+     x-data="{ show: true }" x-show="show"
+     x-init="setTimeout(() => show = false, 4000)"
+     x-transition:leave="transition ease-in duration-300"
+     x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0">
+    <i class="fas fa-circle-check" style="flex-shrink:0;"></i>
+    {{ session('success') }}
+</div>
+@endif
+
+{{-- Page Header --}}
+<div class="apos-page-header">
+    <div class="apos-page-header-left">
+        <a href="{{ route('admin.positions.index') }}" class="apos-back-btn">
+            <i class="fas fa-arrow-left"></i>
+        </a>
+        <div>
+            <div class="apos-page-title">Position Profile</div>
+            <div class="apos-page-sub">Viewing details for <strong>{{ $position->name }}</strong></div>
         </div>
-    </x-slot>
+    </div>
+    <a href="{{ route('admin.positions.edit', $position) }}" class="apos-btn apos-btn-ghost">
+        <i class="fas fa-pen" style="font-size:.65rem;"></i> Edit
+    </a>
+</div>
 
-    @if(session('success'))
-        <div x-data="{ show: true }" x-show="show" x-init="setTimeout(() => show = false, 4000)"
-             class="mb-4 flex items-center gap-3 px-4 py-3 rounded-xl
-                    bg-emerald-50 dark:bg-emerald-900/20 border border-emerald-200 dark:border-emerald-700
-                    text-emerald-700 dark:text-emerald-300 text-sm font-medium">
-            <i class="fas fa-check-circle"></i> {{ session('success') }}
-        </div>
-    @endif
+<div class="apos-grid">
 
-    <div class="grid grid-cols-1 lg:grid-cols-3 gap-5">
-
-        {{-- Left: Position Header --}}
-        <div class="lg:col-span-1 space-y-4">
-
-            {{-- Position Card --}}
-            <div class="bg-white dark:bg-violet-950/40 rounded-2xl border border-violet-100 dark:border-violet-800/50 shadow-sm p-6 text-center">
-                <div class="w-20 h-20 rounded-2xl bg-gradient-to-br from-violet-600 to-violet-400
-                            flex items-center justify-center text-white text-2xl
-                            shadow-lg shadow-violet-200 dark:shadow-violet-900/40 mx-auto mb-4">
-                    <i class="fas fa-sitemap"></i>
-                </div>
-                <h3 class="font-bold text-lg text-gray-800 dark:text-gray-100">{{ $position->name }}</h3>
-
-                <div class="mt-5 pt-4 border-t border-violet-100 dark:border-violet-800/50 space-y-2">
-                    <a href="{{ route('admin.positions.edit', $position) }}"
-                       class="w-full py-2 rounded-xl text-sm font-semibold transition-all duration-200
-                              text-sky-700 dark:text-sky-400 border border-sky-200 dark:border-sky-700 hover:bg-sky-50 dark:hover:bg-sky-900/20">
-                        <i class="fas fa-pen mr-2"></i> Edit Position
-                    </a>
-
-                    <button type="button" @click="$dispatch('open-modal', 'delete-position')"
-                            class="w-full py-2 rounded-xl text-sm font-semibold
-                                   text-rose-600 dark:text-rose-400
-                                   border border-rose-200 dark:border-rose-700
-                                   hover:bg-rose-50 dark:hover:bg-rose-900/20 transition-all duration-200">
-                        <i class="fas fa-trash mr-2"></i> Delete Position
-                    </button>
-                </div>
+    {{-- Left: Profile card ── --}}
+    <div>
+        <div class="apos-profile-card">
+            <div class="apos-profile-avatar">
+                <i class="fas fa-sitemap"></i>
             </div>
+            <div class="apos-profile-name">{{ $position->name }}</div>
 
+            <div class="apos-profile-divider"></div>
+
+            <a href="{{ route('admin.positions.edit', $position) }}" class="apos-profile-btn apos-profile-btn-sky">
+                <i class="fas fa-pen" style="font-size:.65rem;"></i> Edit Position
+            </a>
+            <button type="button" class="apos-profile-btn apos-profile-btn-danger"
+                    @click="$dispatch('open-modal', 'delete-position')">
+                <i class="fas fa-trash" style="font-size:.65rem;"></i> Delete Position
+            </button>
         </div>
-
-        {{-- Right: Statistics & Details --}}
-        <div class="lg:col-span-2 space-y-5">
-
-            {{-- Stats Row --}}
-            <div class="grid grid-cols-2 gap-4">
-                <div class="bg-white dark:bg-violet-950/40 rounded-2xl border border-violet-100 dark:border-violet-800/50 shadow-sm p-5">
-                    <div class="flex items-center justify-between">
-                        <div>
-                            <p class="text-xs text-violet-500 dark:text-violet-400 font-semibold uppercase">Total Candidates</p>
-                            <p class="text-3xl font-bold text-gray-800 dark:text-gray-100 mt-1">
-                                {{ $position->candidates->count() ?? 0 }}
-                            </p>
-                        </div>
-                        <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-sky-100 to-sky-50
-                                    dark:from-sky-900/30 dark:to-sky-900/10 flex items-center justify-center">
-                            <i class="fas fa-users text-xl text-sky-500"></i>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="bg-white dark:bg-violet-950/40 rounded-2xl border border-violet-100 dark:border-violet-800/50 shadow-sm p-5">
-                    <div class="flex items-center justify-between">
-                        <div>
-                            <p class="text-xs text-violet-500 dark:text-violet-400 font-semibold uppercase">Total Votes</p>
-                            <p class="text-3xl font-bold text-gray-800 dark:text-gray-100 mt-1">
-                                {{ \App\Models\CastedVote::whereIn('candidate_id', $position->candidates->pluck('candidate_id'))->count() ?? 0 }}
-                            </p>
-                        </div>
-                        <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-emerald-100 to-emerald-50
-                                    dark:from-emerald-900/30 dark:to-emerald-900/10 flex items-center justify-center">
-                            <i class="fas fa-check-double text-xl text-emerald-500"></i>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            {{-- Candidates Section --}}
-            <div class="bg-white dark:bg-violet-950/40 rounded-2xl border border-violet-100 dark:border-violet-800/50 shadow-sm overflow-hidden">
-                <div class="px-6 py-4 border-b border-violet-100 dark:border-violet-800/50
-                            bg-gradient-to-r from-violet-50 to-transparent dark:from-violet-900/20">
-                    <h4 class="font-semibold text-gray-800 dark:text-gray-100 flex items-center gap-2">
-                        <i class="fas fa-users text-violet-500"></i> Candidates ({{ $position->candidates->count() }})
-                    </h4>
-                </div>
-
-                @if($position->candidates->count() > 0)
-                    <div class="overflow-x-auto">
-                        <table class="w-full text-sm">
-                            <thead>
-                                <tr class="border-b border-violet-100 dark:border-violet-800/50
-                                           bg-gradient-to-r from-violet-50/50 to-transparent
-                                           dark:from-violet-900/20">
-                                    <th class="text-left px-6 py-3 text-xs font-bold text-violet-600 dark:text-violet-400 uppercase">Name</th>
-                                    <th class="text-left px-6 py-3 text-xs font-bold text-violet-600 dark:text-violet-400 uppercase hidden md:table-cell">Party List</th>
-                                    <th class="text-left px-6 py-3 text-xs font-bold text-violet-600 dark:text-violet-400 uppercase hidden lg:table-cell">College</th>
-                                    <th class="text-center px-6 py-3 text-xs font-bold text-violet-600 dark:text-violet-400 uppercase">Votes</th>
-                                </tr>
-                            </thead>
-                            <tbody class="divide-y divide-violet-50 dark:divide-violet-800/30">
-                                @foreach($position->candidates as $candidate)
-                                <tr class="hover:bg-violet-50/30 dark:hover:bg-violet-900/10">
-                                    <td class="px-6 py-3">
-                                        <a href="{{ route('admin.candidates.show', $candidate) }}"
-                                           class="font-medium text-gray-700 dark:text-gray-300 hover:text-violet-600 dark:hover:text-violet-400 transition">
-                                            {{ $candidate->first_name }} {{ $candidate->last_name }}
-                                        </a>
-                                    </td>
-                                    <td class="px-6 py-3 hidden md:table-cell text-sm text-gray-600 dark:text-gray-400">
-                                        @if($candidate->partylist)
-                                            <span class="inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-semibold
-                                                         bg-violet-100 dark:bg-violet-900/30 text-violet-700 dark:text-violet-300
-                                                         border border-violet-200 dark:border-violet-700">
-                                                {{ $candidate->partylist->name }}
-                                            </span>
-                                        @else
-                                            <span class="text-gray-500 dark:text-gray-500">-</span>
-                                        @endif
-                                    </td>
-                                    <td class="px-6 py-3 hidden lg:table-cell text-sm text-gray-600 dark:text-gray-400">
-                                        @if($candidate->college)
-                                            {{ $candidate->college->name }}
-                                        @else
-                                            <span class="text-gray-500 dark:text-gray-500">-</span>
-                                        @endif
-                                    </td>
-                                    <td class="px-6 py-3 text-center">
-                                        <span class="inline-flex items-center justify-center px-3 py-1 rounded-lg text-xs font-bold
-                                                   bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-300">
-                                            {{ \App\Models\CastedVote::where('candidate_id', $candidate->candidate_id)->count() }}
-                                        </span>
-                                    </td>
-                                </tr>
-                                @endforeach
-                            </tbody>
-                        </table>
-                    </div>
-                @else
-                    <div class="px-6 py-8 text-center">
-                        <div class="flex flex-col items-center justify-center gap-2">
-                            <i class="fas fa-inbox text-3xl text-violet-300 dark:text-violet-700"></i>
-                            <p class="text-sm font-medium text-gray-600 dark:text-gray-400">No candidates in this position yet.</p>
-                        </div>
-                    </div>
-                @endif
-            </div>
-
-        </div>
-
     </div>
 
-    {{-- Delete Modal --}}
-    <x-modal name="delete-position" focusable maxWidth="md">
-        <div class="p-6">
-            <div class="flex items-start gap-4 mb-4">
-                <div class="w-12 h-12 rounded-full bg-rose-100 dark:bg-rose-900/30 flex items-center justify-center flex-shrink-0">
-                    <i class="fas fa-exclamation text-xl text-rose-600 dark:text-rose-400"></i>
+    {{-- Right: Stats + Table ── --}}
+    <div>
+
+        {{-- Stats row ── --}}
+        <div class="apos-stats-row">
+            <div class="apos-stat-tile">
+                <div style="display:flex;align-items:flex-start;justify-content:space-between;">
+                    <div>
+                        <div class="apos-stat-tile-label">Total Candidates</div>
+                        <div class="apos-stat-tile-num">{{ $position->candidates->count() }}</div>
+                    </div>
+                    <div class="apos-stat-tile-icon"
+                         style="background:rgba(96,165,250,0.1);border:1px solid rgba(96,165,250,0.2);">
+                        <i class="fas fa-users" style="color:#60a5fa;"></i>
+                    </div>
                 </div>
-                <div>
-                    <h3 class="text-lg font-bold text-gray-800 dark:text-gray-100">Delete Position</h3>
-                    <p class="text-sm text-gray-600 dark:text-gray-400 mt-1">Are you sure you want to delete <strong>{{ $position->name }}</strong>?</p>
+            </div>
+
+            <div class="apos-stat-tile">
+                <div style="display:flex;align-items:flex-start;justify-content:space-between;">
+                    <div>
+                        <div class="apos-stat-tile-label">Total Votes</div>
+                        <div class="apos-stat-tile-num"
+                             style="background:linear-gradient(135deg,#34d399,#6ee7b7);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;">
+                            {{ \App\Models\CastedVote::whereIn('candidate_id', $position->candidates->pluck('candidate_id'))->count() }}
+                        </div>
+                    </div>
+                    <div class="apos-stat-tile-icon"
+                         style="background:rgba(52,211,153,0.1);border:1px solid rgba(52,211,153,0.2);">
+                        <i class="fas fa-check-double" style="color:#34d399;"></i>
+                    </div>
                 </div>
+            </div>
+        </div>
+
+        {{-- Candidates table ── --}}
+        <div class="apos-table-card">
+            <div class="apos-table-head">
+                <span class="apos-table-head-icon"><i class="fas fa-users"></i></span>
+                <span class="apos-table-head-title">
+                    Candidates
+                    <span style="font-family:'DM Sans',sans-serif;font-size:0.7rem;font-weight:400;color:rgba(255,251,240,0.35);margin-left:6px;">
+                        ({{ $position->candidates->count() }})
+                    </span>
+                </span>
             </div>
 
             @if($position->candidates->count() > 0)
-                <div class="mb-4 p-3 rounded-lg bg-rose-50 dark:bg-rose-900/20 border border-rose-200 dark:border-rose-700">
-                    <p class="text-xs text-rose-600 dark:text-rose-400 flex items-center gap-2">
-                        <i class="fas fa-warning"></i> This position has {{ $position->candidates->count() }} candidate(s). Deleting it may affect election data.
-                    </p>
-                </div>
+            <div style="overflow-x:auto;">
+                <table class="apos-table">
+                    <thead>
+                        <tr class="apos-thead-row">
+                            <th>Name</th>
+                            <th class="hidden-sm">Party List</th>
+                            <th class="hidden-lg">College</th>
+                            <th>Votes</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach($position->candidates as $candidate)
+                        <tr class="apos-tbody-row">
+                            <td>
+                                <a href="{{ route('admin.candidates.show', $candidate) }}" class="apos-cand-name">
+                                    {{ $candidate->first_name }} {{ $candidate->last_name }}
+                                </a>
+                            </td>
+                            <td>
+                                @if($candidate->partylist)
+                                    <span class="apos-party-badge">{{ $candidate->partylist->name }}</span>
+                                @else
+                                    <span style="color:rgba(255,251,240,0.25);font-size:0.75rem;">—</span>
+                                @endif
+                            </td>
+                            <td>
+                                <span style="color:rgba(255,251,240,0.6);font-size:0.78rem;">
+                                    {{ $candidate->college?->name ?? '—' }}
+                                </span>
+                            </td>
+                            <td style="text-align:center;">
+                                <span class="apos-votes-badge">
+                                    {{ \App\Models\CastedVote::where('candidate_id', $candidate->candidate_id)->count() }}
+                                </span>
+                            </td>
+                        </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+            </div>
+            @else
+            <div class="apos-empty">
+                <i class="fas fa-inbox apos-empty-icon"></i>
+                <div class="apos-empty-title">No candidates in this position yet</div>
+            </div>
             @endif
+        </div>
 
-            <div class="flex items-center gap-3 mt-6">
-                <button type="button" @click="$dispatch('close-modal', 'delete-position')"
-                        class="flex-1 px-4 py-2 rounded-xl text-sm font-semibold
-                               text-violet-600 dark:text-violet-400
-                               border border-violet-200 dark:border-violet-700
-                               hover:bg-violet-50 dark:hover:bg-violet-900/30 transition-all duration-200">
-                    Cancel
-                </button>
+    </div>
+</div>
 
-                <form method="POST" action="{{ route('admin.positions.destroy', $position) }}" class="flex-1">
-                    @csrf @method('DELETE')
-                    <button type="submit"
-                            class="w-full px-4 py-2 rounded-xl text-sm font-semibold text-white
-                                   bg-gradient-to-r from-rose-600 to-rose-500
-                                   hover:from-rose-700 hover:to-rose-600 transition-all duration-200">
-                        Delete
-                    </button>
-                </form>
+{{-- Delete Modal --}}
+<x-modal name="delete-position" focusable>
+    <div class="apos-modal-wrap">
+        <div style="display:flex;align-items:flex-start;gap:14px;margin-bottom:4px;">
+            <div class="apos-modal-icon"><i class="fas fa-trash"></i></div>
+            <div>
+                <div class="apos-modal-title">Delete Position</div>
+                <div class="apos-modal-sub">This action cannot be undone.</div>
             </div>
         </div>
-    </x-modal>
+        <p class="apos-modal-body">
+            Are you sure you want to delete <strong style="color:#fffbf0;">{{ $position->name }}</strong>?
+        </p>
+        @if($position->candidates->count() > 0)
+        <div class="apos-warning-box">
+            <i class="fas fa-triangle-exclamation" style="flex-shrink:0;margin-top:1px;"></i>
+            <span>This position has {{ $position->candidates->count() }} candidate(s). Deleting it may affect election data.</span>
+        </div>
+        @endif
+        <div class="apos-modal-btns">
+            <button class="apos-m-cancel" @click="$dispatch('close-modal', 'delete-position')">
+                Cancel
+            </button>
+            <form method="POST" action="{{ route('admin.positions.destroy', $position) }}" style="margin:0;">
+                @csrf @method('DELETE')
+                <button type="submit" class="apos-m-delete">
+                    <i class="fas fa-trash" style="font-size:.62rem;margin-right:4px;"></i> Delete
+                </button>
+            </form>
+        </div>
+    </div>
+</x-modal>
+
 </x-app-layout>
