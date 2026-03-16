@@ -12,6 +12,7 @@ use App\Http\Controllers\Admin\AdminVoterController;
 use App\Http\Controllers\Admin\AdminFeedbackController;
 use App\Http\Controllers\Admin\AdminElectionController;
 use App\Http\Controllers\Admin\AdminReportController;
+use App\Http\Controllers\Admin\DataBackupController;
 
 use App\Http\Controllers\Voter\VoterDashboardController;
 use App\Http\Controllers\Voter\VoterCastedVoteController;
@@ -58,28 +59,26 @@ Route::middleware(['auth', 'admin'])
     ->name('admin.')
     ->group(function () {
 
-    
         Route::prefix('profile')->name('profile.')->group(function () {
-            Route::get('/',     [ProfileController::class, 'edit'])->name('edit');
-            Route::patch('/',   [ProfileController::class, 'update'])->name('update');
-            Route::delete('/',  [ProfileController::class, 'destroy'])->name('destroy');
+            Route::get('/',    [ProfileController::class, 'edit'])->name('edit');
+            Route::patch('/',  [ProfileController::class, 'update'])->name('update');
+            Route::delete('/', [ProfileController::class, 'destroy'])->name('destroy');
         });
 
         // Dashboard
-        Route::get('dashboard', [AdminDashboardController::class, 'index'])->name('dashboard');
+        Route::get('dashboard',      [AdminDashboardController::class, 'index'])->name('dashboard');
         Route::get('dashboard/live', [AdminDashboardController::class, 'live'])->name('dashboard.live');
 
         // Election Setup
-        Route::resource('candidates',   AdminCandidateController::class);
-        Route::resource('positions',    AdminPositionController::class);
-        Route::resource('partylists',   AdminPartylistController::class);
-        Route::resource('organizations',AdminOrganizationController::class);
-        Route::resource('colleges',     AdminCollegeController::class);
-        Route::resource('feedback', AdminFeedbackController::class)->only(['index', 'show', 'destroy']);
+        Route::resource('candidates',    AdminCandidateController::class);
+        Route::resource('positions',     AdminPositionController::class);
+        Route::resource('partylists',    AdminPartylistController::class);
+        Route::resource('organizations', AdminOrganizationController::class);
+        Route::resource('colleges',      AdminCollegeController::class);
 
-        Route::get('election',          [AdminElectionController::class, 'index'])->name('election.index');
-        Route::post('election/status',  [AdminElectionController::class, 'updateStatus'])->name('election.status');
-        Route::post('election/name',    [AdminElectionController::class, 'updateName'])->name('election.name');
+        Route::get('election',         [AdminElectionController::class, 'index'])->name('election.index');
+        Route::post('election/status', [AdminElectionController::class, 'updateStatus'])->name('election.status');
+        Route::post('election/name',   [AdminElectionController::class, 'updateName'])->name('election.name');
 
         // Voters
         Route::patch('voters/{voter}/status', [AdminVoterController::class, 'toggleStatus'])
@@ -88,13 +87,15 @@ Route::middleware(['auth', 'admin'])
 
         // Votes & Results
         Route::get('votes/results', [AdminCastedVoteController::class, 'results'])->name('votes.results');
-        Route::delete('votes/transaction/{transaction}', [AdminCastedVoteController::class, 'destroyTransaction'])->name('votes.destroyTransaction');
+        Route::delete('votes/transaction/{transaction}', [AdminCastedVoteController::class, 'destroyTransaction'])
+            ->name('votes.destroyTransaction');
         Route::resource('votes', AdminCastedVoteController::class);
 
-        // Feedback (read-only for admins)
+        // Feedback (read-only)
         Route::resource('feedback', AdminFeedbackController::class)
             ->only(['index', 'show', 'destroy']);
 
+        // Reports
         Route::prefix('reports')->name('reports.')->group(function () {
             Route::get('/',           fn() => view('admin.reports.index'))->name('index');
             Route::get('/results',    [AdminReportController::class, 'results'])->name('results');
@@ -104,7 +105,20 @@ Route::middleware(['auth', 'admin'])
             Route::get('/candidates', [AdminReportController::class, 'candidates'])->name('candidates');
         });
 
-    });
+        // Backups
+        Route::prefix('backups')->name('backups.')->group(function () {
+            Route::get('/',                  [DataBackupController::class, 'index'])->name('index');
+            Route::post('/',                 [DataBackupController::class, 'store'])->name('store');
+            Route::get('/{backup}/download', [DataBackupController::class, 'download'])->name('download');
+            Route::delete('/{backup}',       [DataBackupController::class, 'destroy'])->name('destroy');
+            Route::post('/cleanup',          [DataBackupController::class, 'cleanup'])->name('cleanup');
+            Route::get('/{backup}/status',   [DataBackupController::class, 'status'])->name('status');
+            Route::get('/test-system',       [DataBackupController::class, 'testBackup'])->name('test');
+            Route::post('/quick-backup',     [DataBackupController::class, 'quickBackup'])->name('quick');
+            Route::get('/statistics',        [DataBackupController::class, 'statistics'])->name('statistics');
+        });
+
+});
 
 /*
 |--------------------------------------------------------------------------

@@ -144,6 +144,32 @@
 
 <hr class="sidebar-divider">
 
+{{-- ── System ── --}}
+<div class="nav-section-label">System</div>
+
+<a href="{{ route('admin.backups.index') }}"
+   class="nav-link {{ $is('admin.backups') ? 'active' : '' }}">
+    <div class="nav-link-icon"><i class="fas fa-database"></i></div>
+    <div class="nav-link-text">
+        <span class="nav-link-label">Backups</span>
+        <span class="nav-link-sub">Database backup & restore</span>
+    </div>
+    @php
+        $latestBackup = \App\Models\DataBackup::where('status', 'completed')
+            ->latest('completed_at')->first();
+        $processingCount = \App\Models\DataBackup::where('status', 'processing')->count();
+    @endphp
+    @if($processingCount > 0)
+        <span class="nav-badge" style="background:rgba(96,165,250,0.12);color:#60a5fa;border:1px solid rgba(96,165,250,0.25);">
+            Running
+        </span>
+    @elseif($latestBackup && $latestBackup->completed_at->diffInHours() <= 24)
+        <span class="nav-badge green">OK</span>
+    @endif
+</a>
+
+<hr class="sidebar-divider">
+
 {{-- ── Account ── --}}
 <div class="nav-section-label">Account</div>
 
