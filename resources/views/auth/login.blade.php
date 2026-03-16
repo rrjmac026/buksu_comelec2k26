@@ -11,7 +11,6 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
     @vite(['resources/css/app.css','resources/css/auth/login.css', 'resources/js/app.js'])
-
 </head>
     <body class="antialiased" x-data>
 
@@ -27,8 +26,10 @@
                     {{ config('app.name', 'BukSU') }} <span class="accent">System</span>
                 </span>
             </a>
+            {{-- btn-back-text is hidden on small screens; icon always stays --}}
             <a href="/" class="btn-nav-ghost">
-                <i class="fas fa-arrow-left"></i> Back to Home
+                <i class="fas fa-arrow-left"></i>
+                <span class="btn-back-text">Back to Home</span>
             </a>
         </nav>
 
@@ -111,7 +112,6 @@
                         <h1 class="form-heading">Welcome <span class="h-accent">Back</span></h1>
                         <p class="form-subtext">Sign in with your Google account to cast your vote and view election results.</p>
 
-                        {{-- Session errors (e.g. inactive account, admin tried Google login) --}}
                         @if (session('error'))
                             <div class="field-error" style="margin-bottom: 1rem;">
                                 <i class="fas fa-circle-exclamation"></i> {{ session('error') }}
@@ -234,7 +234,6 @@
             });
         </script>
         <script>
-            // Apply saved theme immediately to prevent flash
             if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
                 document.documentElement.classList.add('dark');
             } else {
