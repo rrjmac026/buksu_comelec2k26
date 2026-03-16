@@ -18,7 +18,8 @@
         @if (Route::has('login'))
         <nav style="position:fixed;top:0;left:0;right:0;z-index:50;height:60px;display:flex;align-items:center;padding:0 32px;background:rgba(26,0,32,0.9);backdrop-filter:blur(20px);border-bottom:1px solid rgba(249,180,15,0.2);">
             <a href="/" style="display:flex;align-items:center;gap:12px;text-decoration:none;flex:1;">
-                <img src="{{ asset('assets/app_logo.png') }}" style="height:38px;width:38px;object-fit:cover;border-radius:8px;border:1.5px solid rgba(249,180,15,0.4);background:#1a0025;mix-blend-mode:multiply;">
+                <img src="{{ asset('assets/app_logo.png') }}" 
+                    style="height:38px;width:38px;object-fit:cover;border-radius:8px;border:1.5px solid rgba(249,180,15,0.4);">
                 <span style="font-family:'Playfair Display',serif;font-size:1.1rem;font-weight:700;color:#fffbf0;">
                     {{ config('app.name', 'BukSU') }} <span style="color:#f9b40f;">System</span>
                 </span>
