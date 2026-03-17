@@ -344,7 +344,7 @@ class DataBackupController extends Controller
             $processing = DataBackup::where('status', 'processing')->exists();
 
             if ($processing) {
-                return response()->json([
+                return response()->json([   
                     'success' => false,
                     'message' => 'A backup is already in progress. Please wait for it to finish.',
                 ], 409);
