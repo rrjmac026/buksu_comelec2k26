@@ -8,6 +8,7 @@ use App\Models\College;
 use App\Models\CastedVote;
 use App\Models\User;
 use App\Models\Candidate;
+use App\Models\Feedback;
 use App\Helpers\CustomPDF;
 use Carbon\Carbon;
 
@@ -52,8 +53,15 @@ class AdminReportController extends Controller
         return $this->generateCandidateSummaryPDF($data, $filename);
     }
 
+    public function feedback()
+    {
+        $data     = $this->getFeedbackData();
+        $filename = 'voter_feedback.pdf';
+        return $this->generateFeedbackPDF($data, $filename);
+    }
+
     // =========================================================
-    //  PDF Factory  — SetMargins(15, 15, 15) matches original
+    //  PDF Factory
     // =========================================================
 
     private function makePDF(string $orientation = 'P'): CustomPDF
@@ -61,12 +69,12 @@ class AdminReportController extends Controller
         $pdf = new CustomPDF($orientation, 'mm', 'A4');
         $pdf->SetAutoPageBreak(true, 25);
         $pdf->AliasNbPages();
-        $pdf->SetMargins(15, 15, 15);   // ← same as original working code
+        $pdf->SetMargins(15, 15, 15);
         return $pdf;
     }
 
     // =========================================================
-    //  PDF Generators  (original design 1:1)
+    //  PDF Generators
     // =========================================================
 
     private function generateSSCPDF($data, $filename)
@@ -121,7 +129,7 @@ class AdminReportController extends Controller
         $pdf = $this->makePDF('P');
         $pdf->AddPage();
 
-        $this->addHeaderToPage($pdf, 'Complete Election Results Report', $data['generatedAt']);
+        $this->addHeaderToPage($pdf, 'All Election Results', $data['generatedAt']);
         $this->addStatsSection($pdf, $data);
 
         $pdf->SetFont('Arial', 'B', 14);
@@ -143,7 +151,7 @@ class AdminReportController extends Controller
             $pdf->AddPage();
 
             $pdf->SetFont('Arial', 'B', 14);
-            $pdf->Cell(0, 10, $college['college']->name . ' Results', 0, 1, 'L');
+            $pdf->Cell(0, 10, $this->utf8($college['college']->name . ' Results'), 0, 1, 'L');
             $pdf->Ln(2);
 
             if ($college['positions']->isNotEmpty()) {
@@ -153,7 +161,7 @@ class AdminReportController extends Controller
                     if ($pdf->GetY() > 250) {
                         $pdf->AddPage();
                         $pdf->SetFont('Arial', 'B', 14);
-                        $pdf->Cell(0, 10, $college['college']->name . ' Results (continued)', 0, 1, 'L');
+                        $pdf->Cell(0, 10, $this->utf8($college['college']->name . ' Results (continued)'), 0, 1, 'L');
                         $pdf->Ln(2);
                         $this->drawTableHeader($pdf, $widths);
                     }
@@ -177,7 +185,6 @@ class AdminReportController extends Controller
         $this->addHeaderToPage($pdf, 'Voter Turnout Report', $data['generatedAt']);
         $this->addStatsSection($pdf, $data);
 
-        // Per-college table
         $pdf->SetFont('Arial', 'B', 14);
         $pdf->Cell(0, 10, 'Turnout by College', 0, 1, 'L');
         $pdf->Ln(2);
@@ -195,14 +202,13 @@ class AdminReportController extends Controller
         foreach ($data['collegeStats'] as $i => $row) {
             $fill = $i % 2 === 0;
             $pdf->SetFont('Arial', '', 10);
-            $pdf->Cell($cw[0], 10, $row['name'],                       1, 0, 'L', $fill);
+            $pdf->Cell($cw[0], 10, $this->utf8($row['name']),          1, 0, 'L', $fill);
             $pdf->Cell($cw[1], 10, number_format($row['totalVoters']), 1, 0, 'C', $fill);
             $pdf->Cell($cw[2], 10, number_format($row['votedCount']),  1, 0, 'C', $fill);
             $pdf->Cell($cw[3], 10, $row['percentage'] . '%',           1, 0, 'C', $fill);
             $pdf->Ln();
         }
 
-        // Non-voters list
         $pdf->Ln(8);
         $pdf->SetFont('Arial', 'B', 14);
         $pdf->Cell(0, 10, 'Non-Voters (' . $data['nonVoters']->count() . ')', 0, 1, 'L');
@@ -219,10 +225,10 @@ class AdminReportController extends Controller
             }
             $fill = $i % 2 === 0;
             $pdf->SetFont('Arial', '', 10);
-            $pdf->Cell($nw[0], 10, $voter->full_name,                1, 0, 'L', $fill);
-            $pdf->Cell($nw[1], 10, $voter->student_number ?? '—',    1, 0, 'C', $fill);
-            $pdf->Cell($nw[2], 10, $voter->college?->acronym ?? '—', 1, 0, 'C', $fill);
-            $pdf->Cell($nw[3], 10, $voter->course ?? '—',            1, 0, 'L', $fill);
+            $pdf->Cell($nw[0], 10, $this->utf8($voter->full_name),                1, 0, 'L', $fill);
+            $pdf->Cell($nw[1], 10, $this->utf8($voter->student_number ?? '-'),    1, 0, 'C', $fill);
+            $pdf->Cell($nw[2], 10, $this->utf8($voter->college?->acronym ?? '-'), 1, 0, 'C', $fill);
+            $pdf->Cell($nw[3], 10, $this->utf8($voter->course ?? '-'),            1, 0, 'L', $fill);
             $pdf->Ln();
         }
 
@@ -247,17 +253,17 @@ class AdminReportController extends Controller
                 $this->drawSmallHeader($pdf, $cw, $headers);
             }
 
-            $fill    = $i % 2 === 0;
-            $first   = $votes->first();
-            $voter   = $first->voter;
-            $time    = Carbon::parse($first->voted_at)->timezone('Asia/Manila')->format('M j, Y H:i');
+            $fill  = $i % 2 === 0;
+            $first = $votes->first();
+            $voter = $first->voter;
+            $time  = Carbon::parse($first->voted_at)->timezone('Asia/Manila')->format('M j, Y H:i');
 
             $pdf->SetFont('Arial', '', 9);
-            $pdf->Cell($cw[0], 10, $txn,                               1, 0, 'L', $fill);
-            $pdf->Cell($cw[1], 10, $voter?->full_name ?? '—',          1, 0, 'L', $fill);
-            $pdf->Cell($cw[2], 10, $voter?->student_number ?? '—',     1, 0, 'C', $fill);
-            $pdf->Cell($cw[3], 10, $voter?->college?->acronym ?? '—',  1, 0, 'C', $fill);
-            $pdf->Cell($cw[4], 10, $time,                              1, 0, 'C', $fill);
+            $pdf->Cell($cw[0], 10, $this->utf8($txn),                              1, 0, 'L', $fill);
+            $pdf->Cell($cw[1], 10, $this->utf8($voter?->full_name ?? '-'),          1, 0, 'L', $fill);
+            $pdf->Cell($cw[2], 10, $this->utf8($voter?->student_number ?? '-'),     1, 0, 'C', $fill);
+            $pdf->Cell($cw[3], 10, $this->utf8($voter?->college?->acronym ?? '-'),  1, 0, 'C', $fill);
+            $pdf->Cell($cw[4], 10, $this->utf8($time),                              1, 0, 'C', $fill);
             $pdf->Ln();
         }
 
@@ -284,13 +290,107 @@ class AdminReportController extends Controller
 
             $fill = $i % 2 === 0;
             $pdf->SetFont('Arial', '', 9);
-            $pdf->Cell($cw[0], 10, $candidate->full_name,                          1, 0, 'L', $fill);
-            $pdf->Cell($cw[1], 10, $candidate->position?->name ?? '—',             1, 0, 'L', $fill);
-            $pdf->Cell($cw[2], 10, $candidate->partylist?->name ?? '—',            1, 0, 'C', $fill);
-            $pdf->Cell($cw[3], 10, $candidate->college?->acronym ?? '—',           1, 0, 'C', $fill);
-            $pdf->Cell($cw[4], 10, $candidate->organization?->acronym ?? '—',      1, 0, 'C', $fill);
-            $pdf->Cell($cw[5], 10, $this->truncate($candidate->course ?? '—', 18), 1, 0, 'L', $fill);
-            $pdf->Cell($cw[6], 10, $candidate->vote_count ?? 0,                    1, 0, 'R', $fill);
+            $pdf->Cell($cw[0], 10, $this->utf8($candidate->full_name),                                  1, 0, 'L', $fill);
+            $pdf->Cell($cw[1], 10, $this->utf8($candidate->position?->name ?? '-'),                     1, 0, 'L', $fill);
+            $pdf->Cell($cw[2], 10, $this->utf8($candidate->partylist?->name ?? '-'),                    1, 0, 'C', $fill);
+            $pdf->Cell($cw[3], 10, $this->utf8($candidate->college?->acronym ?? '-'),                   1, 0, 'C', $fill);
+            $pdf->Cell($cw[4], 10, $this->utf8($candidate->organization?->acronym ?? '-'),              1, 0, 'C', $fill);
+            $pdf->Cell($cw[5], 10, $this->utf8($this->truncate($candidate->course ?? '-', 18)),         1, 0, 'L', $fill);
+            $pdf->Cell($cw[6], 10, $candidate->vote_count ?? 0,                                         1, 0, 'R', $fill);
+            $pdf->Ln();
+        }
+
+        $pdf->AddSignatories();
+        return $pdf->Output('D', $filename);
+    }
+
+    private function generateFeedbackPDF($data, $filename)
+    {
+        $pdf = $this->makePDF('P');
+        $pdf->AddPage();
+
+        $this->addHeaderToPage($pdf, 'Voter Feedback Report', $data['generatedAt']);
+
+        // ── Summary stats block ───────────────────────────────────
+        $pdf->SetFont('Arial', 'B', 14);
+        $pdf->Cell(0, 10, 'Feedback Summary', 0, 1, 'L');
+        $pdf->SetFont('Arial', '', 12);
+
+        // Plain ASCII label — no em dash
+        $stars = [1 => 'Poor', 2 => 'Fair', 3 => 'Good', 4 => 'Great', 5 => 'Excellent'];
+
+        foreach ([
+            ['Total Responses:', number_format($data['totalCount'])],
+            ['Average Rating:',  number_format($data['averageRating'], 2) . ' / 5.00'],
+        ] as $stat) {
+            $pdf->Cell(60, 8, $stat[0], 0, 0, 'L');
+            $pdf->Cell(0,  8, $stat[1], 0, 1, 'L');
+        }
+        $pdf->Ln(2);
+
+        // ── Rating breakdown bars ─────────────────────────────────
+        $pdf->SetFont('Arial', 'B', 11);
+        $pdf->Cell(0, 8, 'Rating Breakdown', 0, 1, 'L');
+
+        $barMaxWidth = 100;
+        foreach ([5, 4, 3, 2, 1] as $star) {
+            $count = $data['ratingCounts'][$star] ?? 0;
+            $pct   = $data['totalCount'] > 0 ? round($count / $data['totalCount'] * 100, 1) : 0;
+            $fill  = (int) round($barMaxWidth * $pct / 100);
+
+            // Plain hyphen — no em dash, no UTF-8 special chars
+            $label = $star . ' - ' . $stars[$star];
+
+            $pdf->SetFont('Arial', '', 9);
+            $pdf->Cell(28, 7, $label, 0, 0, 'L');
+
+            // Background track
+            $pdf->SetFillColor(230, 220, 240);
+            $pdf->Cell($barMaxWidth, 5, '', 1, 0, 'L', true);
+
+            // Purple filled portion
+            if ($fill > 0) {
+                $x = $pdf->GetX() - $barMaxWidth;
+                $y = $pdf->GetY();
+                $pdf->SetXY($x, $y);
+                $pdf->SetFillColor(168, 85, 247);
+                $pdf->Cell($fill, 5, '', 0, 0, 'L', true);
+                $pdf->SetXY($x + $barMaxWidth, $y);
+            }
+
+            $pdf->SetFont('Arial', '', 9);
+            $pdf->Cell(0, 5, '  ' . number_format($count) . ' (' . $pct . '%)', 0, 1, 'L');
+            $pdf->Ln(2);
+        }
+
+        $pdf->Ln(6);
+
+        // ── Individual feedback table ─────────────────────────────
+        $pdf->SetFont('Arial', 'B', 14);
+        $pdf->Cell(0, 10, 'Individual Responses (' . number_format($data['totalCount']) . ')', 0, 1, 'L');
+        $pdf->Ln(2);
+
+        $cw      = [50, 25, 22, 83];
+        $headers = ['Voter Name', 'College', 'Rating', 'Feedback'];
+        $this->drawSmallHeader($pdf, $cw, $headers);
+
+        foreach ($data['feedbacks'] as $i => $fb) {
+            $lineHeight = 10;
+
+            if ($pdf->GetY() + $lineHeight > 265) {
+                $pdf->AddPage();
+                $this->drawSmallHeader($pdf, $cw, $headers);
+            }
+
+            $fill      = $i % 2 === 0;
+            // Plain hyphen — avoids any UTF-8 encoding issue
+            $ratingStr = $fb->rating . ' - ' . ($stars[$fb->rating] ?? '-');
+
+            $pdf->SetFont('Arial', '', 9);
+            $pdf->Cell($cw[0], $lineHeight, $this->utf8($fb->user?->full_name ?? '-'),         1, 0, 'L', $fill);
+            $pdf->Cell($cw[1], $lineHeight, $this->utf8($fb->user?->college?->acronym ?? '-'), 1, 0, 'C', $fill);
+            $pdf->Cell($cw[2], $lineHeight, $ratingStr,                                         1, 0, 'C', $fill);
+            $pdf->Cell($cw[3], $lineHeight, $this->utf8($this->truncate($fb->feedback ?? '-', 120)), 1, 0, 'L', $fill);
             $pdf->Ln();
         }
 
@@ -299,7 +399,7 @@ class AdminReportController extends Controller
     }
 
     // =========================================================
-    //  Shared PDF Helpers  (original design 1:1)
+    //  Shared PDF Helpers
     // =========================================================
 
     private function addHeaderToPage($pdf, $title, $date)
@@ -308,7 +408,7 @@ class AdminReportController extends Controller
 
         $pdf->SetFont('Arial', 'B', 16);
         foreach (explode("\n", $title) as $line) {
-            $pdf->Cell(0, 10, $line, 0, 1, 'C');
+            $pdf->Cell(0, 10, $this->utf8($line), 0, 1, 'C');
         }
         $pdf->SetFont('Arial', '', 12);
         $pdf->Cell(0, 10, 'Generated on: ' . $timestamp, 0, 1, 'C');
@@ -354,7 +454,7 @@ class AdminReportController extends Controller
         $widths = [70, 30, 35, 25, 20];
 
         $pdf->SetFont('Arial', 'B', 11);
-        $pdf->Cell(0, 8, $position->name, 0, 1, 'L');
+        $pdf->Cell(0, 8, $this->utf8($position->name), 0, 1, 'L');
         $pdf->SetFont('Arial', '', 10);
 
         foreach ($position->candidates as $index => $candidate) {
@@ -372,15 +472,14 @@ class AdminReportController extends Controller
     {
         $pct = $totalVoted > 0 ? round($candidate->vote_count / $totalVoted * 100, 2) : 0;
 
-        $pdf->Cell($widths[0], 10, $candidate->full_name,                  1, 0, 'L', $fill);
-        $pdf->Cell($widths[1], 10, $candidate->college?->acronym  ?? '—',  1, 0, 'C', $fill);
-        $pdf->Cell($widths[2], 10, $candidate->partylist?->acronym ?? '—', 1, 0, 'C', $fill);
-        $pdf->Cell($widths[3], 10, $candidate->vote_count,                 1, 0, 'R', $fill);
-        $pdf->Cell($widths[4], 10, $pct . '%',                             1, 0, 'R', $fill);
+        $pdf->Cell($widths[0], 10, $this->utf8($candidate->full_name),                 1, 0, 'L', $fill);
+        $pdf->Cell($widths[1], 10, $this->utf8($candidate->college?->acronym  ?? '-'), 1, 0, 'C', $fill);
+        $pdf->Cell($widths[2], 10, $this->utf8($candidate->partylist?->acronym ?? '-'),1, 0, 'C', $fill);
+        $pdf->Cell($widths[3], 10, $candidate->vote_count,                             1, 0, 'R', $fill);
+        $pdf->Cell($widths[4], 10, $pct . '%',                                         1, 0, 'R', $fill);
         $pdf->Ln();
     }
 
-    /** Purple header row for non-candidate tables. */
     private function drawSmallHeader($pdf, array $widths, array $headers): void
     {
         $pdf->SetFont('Arial', 'B', 11);
@@ -534,6 +633,26 @@ class AdminReportController extends Controller
         ];
     }
 
+    private function getFeedbackData()
+    {
+        $feedbacks = Feedback::with(['user.college'])
+            ->latest('updated_at')
+            ->get();
+
+        $totalCount    = $feedbacks->count();
+        $averageRating = $totalCount > 0 ? $feedbacks->avg('rating') : 0;
+        $ratingCounts  = $feedbacks->groupBy('rating')
+            ->map(fn($group) => $group->count());
+
+        return [
+            'feedbacks'     => $feedbacks,
+            'totalCount'    => $totalCount,
+            'averageRating' => $averageRating,
+            'ratingCounts'  => $ratingCounts,
+            'generatedAt'   => $this->timestamp(),
+        ];
+    }
+
     // =========================================================
     //  Query Helpers
     // =========================================================
@@ -587,6 +706,18 @@ class AdminReportController extends Controller
 
     private function truncate(string $text, int $max): string
     {
-        return mb_strlen($text) > $max ? mb_substr($text, 0, $max - 1) . '…' : $text;
+        // Use '...' — avoids the UTF-8 ellipsis character (…) which FPDF can't render
+        return mb_strlen($text) > $max ? mb_substr($text, 0, $max - 1) . '...' : $text;
+    }
+
+    /**
+     * Convert UTF-8 string to windows-1252 for FPDF compatibility.
+     * FPDF does not support UTF-8 natively; all text must be in Latin-1/windows-1252.
+     * //TRANSLIT replaces unmappable chars with ASCII equivalents.
+     * //IGNORE  silently drops anything that cannot be transliterated.
+     */
+    private function utf8($text): string
+    {
+        return iconv('UTF-8', 'windows-1252//TRANSLIT//IGNORE', (string) $text);
     }
 }

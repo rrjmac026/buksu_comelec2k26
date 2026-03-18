@@ -103,6 +103,7 @@ Route::middleware(['auth', 'admin'])
             Route::get('/turnout',    [AdminReportController::class, 'turnout'])->name('turnout');
             Route::get('/ballots',    [AdminReportController::class, 'ballots'])->name('ballots');
             Route::get('/candidates', [AdminReportController::class, 'candidates'])->name('candidates');
+            Route::get('/feedback',   [AdminReportController::class, 'feedback'])->name('feedback');
         });
 
         // Backups

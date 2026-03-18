@@ -277,7 +277,7 @@
         <div class="info-box fu d2">
             <p>
                 All reports are generated in real-time from live election data.
-                <strong>Results</strong> and <strong>College Breakdown</strong> use portrait layout (A4).
+                <strong>SSC Results</strong>, <strong>All Election Results</strong>, <strong>Voter Turnout</strong>, and <strong>Voter Feedback</strong> use portrait layout (A4).
                 <strong>Ballot Log</strong> and <strong>Candidate Summary</strong> use landscape layout for wider tables.
                 Data is accurate as of the moment of download.
             </p>
@@ -287,7 +287,7 @@
 
         <div class="reports-grid fu d3">
 
-            {{-- 1. Election Results --}}
+            {{-- 1. SSC Election Results --}}
             <a href="{{ route('admin.reports.results') }}" class="gs report-card" target="_blank">
                 <div class="card-icon-wrap"><i class="fas fa-trophy"></i></div>
                 <div class="card-title">SSC Election Results</div>
@@ -301,7 +301,7 @@
                 </div>
             </a>
 
-            {{-- 2. By-College Breakdown --}}
+            {{-- 2. All Election Results --}}
             <a href="{{ route('admin.reports.by-college') }}" class="gs report-card" target="_blank">
                 <div class="card-icon-wrap"><i class="fas fa-building-columns"></i></div>
                 <div class="card-title">All Election Results</div>
@@ -320,7 +320,7 @@
                 <div class="card-icon-wrap"><i class="fas fa-chart-pie"></i></div>
                 <div class="card-title">Voter Turnout</div>
                 <div class="card-desc">
-                    Turnout analysis by college with participation bars, plus a full list of voters who have not yet submitted their ballot.
+                    Turnout analysis by college with participation rates, plus a full list of voters who have not yet submitted their ballot.
                 </div>
                 <div class="card-meta">
                     <span class="meta-badge">Portrait · A4</span>
@@ -334,7 +334,7 @@
                 <div class="card-icon-wrap"><i class="fas fa-scroll"></i></div>
                 <div class="card-title">Ballot Transaction Log</div>
                 <div class="card-desc">
-                    Full audit log of every submitted ballot — transaction number, voter name, student number, college, positions voted, and timestamp.
+                    Full audit log of every submitted ballot — transaction number, voter name, student number, college, and timestamp.
                 </div>
                 <div class="card-meta">
                     <span class="meta-badge landscape">Landscape · A4</span>
@@ -353,6 +353,20 @@
                 <div class="card-meta">
                     <span class="meta-badge landscape">Landscape · A4</span>
                     <span class="meta-badge">All Candidates</span>
+                    <span class="card-cta">Download <i class="fas fa-arrow-right" style="font-size:.6rem;"></i></span>
+                </div>
+            </a>
+
+            {{-- 6. Voter Feedback --}}
+            <a href="{{ route('admin.reports.feedback') }}" class="gs report-card" target="_blank">
+                <div class="card-icon-wrap"><i class="fas fa-comments"></i></div>
+                <div class="card-title">Voter Feedback</div>
+                <div class="card-desc">
+                    All voter feedback submissions with ratings, a visual rating breakdown chart, average score, and individual responses per voter.
+                </div>
+                <div class="card-meta">
+                    <span class="meta-badge">Portrait · A4</span>
+                    <span class="meta-badge">Ratings & Comments</span>
                     <span class="card-cta">Download <i class="fas fa-arrow-right" style="font-size:.6rem;"></i></span>
                 </div>
             </a>
