@@ -7,13 +7,21 @@ use App\Models\Candidate;
 use App\Models\CastedVote;
 use App\Models\Position;
 use Illuminate\Http\Request;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
 
 class VoterCastedVoteController extends Controller
 {
-    private function getVoterPositions(): \Illuminate\Support\Collection
+    // ── Request-level cache to avoid repeated DB calls ────────────────────
+    private ?Collection $cachedPositions = null;
+
+    private function getVoterPositions(): Collection
     {
+        if ($this->cachedPositions !== null) {
+            return $this->cachedPositions;
+        }
+
         $voter     = auth()->user();
         $voterYear = (int) $voter->year_level;
 
@@ -39,7 +47,7 @@ class VoterCastedVoteController extends Controller
 
         $universalPositionIds = Position::whereIn('name', $universalPositions)->pluck('id');
 
-        return Position::with([
+        $this->cachedPositions = Position::with([
             'candidates' => fn($q) => $q
                 ->with(['partylist', 'college'])
                 ->where(function ($q) use ($voter, $universalPositionIds) {
@@ -51,6 +59,8 @@ class VoterCastedVoteController extends Controller
         ->whereIn('name', $allowedNames)
         ->orderBy('sort_order')
         ->get();
+
+        return $this->cachedPositions;
     }
 
     public function intro()
@@ -79,9 +89,9 @@ class VoterCastedVoteController extends Controller
             return redirect()->route('voter.vote.intro');
         }
 
-        $position   = $positions->get($step - 1);
-        $totalSteps = $positions->count();
-        $ballot     = session('ballot', []);
+        $position    = $positions->get($step - 1);
+        $totalSteps  = $positions->count();
+        $ballot      = session('ballot', []);
         $rawSelected = $ballot[$position->id] ?? null;
 
         if ($position->max_votes > 1) {
@@ -115,7 +125,6 @@ class VoterCastedVoteController extends Controller
             ];
         });
 
-        // Collect all candidate IDs already saved in the ballot (for the modal)
         $allSelectedIds = collect($ballot)
             ->flatten()
             ->filter(fn($v) => is_numeric($v))
@@ -124,7 +133,6 @@ class VoterCastedVoteController extends Controller
             ->values()
             ->all();
 
-        // Single eager query — replaces all inline Blade queries in the modal
         $ballotCandidates = !empty($allSelectedIds)
             ? Candidate::with(['partylist'])
                 ->whereIn('candidate_id', $allSelectedIds)
@@ -220,6 +228,7 @@ class VoterCastedVoteController extends Controller
 
         session(['ballot' => $ballot]);
 
+        // ── Remove in production ──────────────────────────────────────────
         \Log::info('saveStep debug', [
             'step'          => $step,
             'position_id'   => $position->id,
@@ -305,11 +314,6 @@ class VoterCastedVoteController extends Controller
     {
         $voter = auth()->user();
 
-        if ($voter->hasVoted()) {
-            return redirect()->route('voter.dashboard')
-                ->with('error', 'You have already submitted your vote.');
-        }
-
         $ballot = session('ballot', []);
 
         if (empty($ballot)) {
@@ -330,65 +334,96 @@ class VoterCastedVoteController extends Controller
             }
         }
 
-        // Cross-validate all candidate IDs belong to claimed positions
-        if ($votePairs->isNotEmpty()) {
-            $candidateIds = $votePairs->pluck('candidate_id')->toArray();
-            $validPairs   = Candidate::whereIn('candidate_id', $candidateIds)
-                ->pluck('position_id', 'candidate_id');
-
-            foreach ($votePairs as $pair) {
-                if (($validPairs[$pair['candidate_id']] ?? null) !== $pair['position_id']) {
-                    session()->forget('ballot');
-                    throw ValidationException::withMessages([
-                        'votes' => 'Invalid ballot detected. Please start over.',
-                    ]);
-                }
-            }
-        }
-
         $now            = now();
         $txn            = $this->generateTransactionNumber($voter->id);
         $ip             = $request->ip();
         $userAgent      = $request->userAgent();
-        $allPositionIds = $this->getVoterPositions()->pluck('id');
+        $positions      = $this->getVoterPositions();
+        $allPositionIds = $positions->pluck('id');
 
-        DB::transaction(function () use ($voter, $ballot, $allPositionIds, $now, $txn, $ip, $userAgent) {
-            foreach ($allPositionIds as $positionId) {
-                $ballotVal = $ballot[$positionId] ?? null;
+        try {
+            DB::transaction(function () use (
+                $voter, $ballot, $votePairs, $positions, $allPositionIds, $now, $txn, $ip, $userAgent
+            ) {
+                // ── FIX 1: hasVoted re-check INSIDE transaction with row lock ──
+                // Prevents race condition from double-submit / simultaneous requests
+                if (CastedVote::where('voter_id', $voter->id)->lockForUpdate()->exists()) {
+                    throw new \Exception('You have already submitted your vote.');
+                }
 
-                if (is_array($ballotVal) && !empty($ballotVal)) {
-                    // Multi-vote: one DB row per selected candidate
-                    foreach ($ballotVal as $candidateId) {
+                // ── FIX 2: Cross-validation INSIDE transaction ─────────────────
+                // Ensures candidate-position integrity at the moment of insert
+                if ($votePairs->isNotEmpty()) {
+                    $candidateIds = $votePairs->pluck('candidate_id')->toArray();
+                    $validPairs   = Candidate::whereIn('candidate_id', $candidateIds)
+                        ->pluck('position_id', 'candidate_id');
+
+                    foreach ($votePairs as $pair) {
+                        if (($validPairs[$pair['candidate_id']] ?? null) !== $pair['position_id']) {
+                            throw new \Exception('Invalid ballot detected. Please start over.');
+                        }
+                    }
+                }
+
+                // ── FIX 3: Re-validate senator max_votes inside store() ────────
+                // Prevents a tampered session from smuggling in extra senator votes
+                foreach ($positions as $position) {
+                    $ballotVal = $ballot[$position->id] ?? null;
+                    if (is_array($ballotVal) && !empty($ballotVal)) {
+                        $maxVotes = $position->max_votes ?? 1;
+                        if (count($ballotVal) > $maxVotes) {
+                            throw new \Exception(
+                                "Exceeded maximum allowed votes for {$position->name}."
+                            );
+                        }
+                    }
+                }
+
+                // ── Insert all ballot rows ─────────────────────────────────────
+                foreach ($allPositionIds as $positionId) {
+                    $ballotVal = $ballot[$positionId] ?? null;
+
+                    if (is_array($ballotVal) && !empty($ballotVal)) {
+                        // Multi-vote: one DB row per selected candidate
+                        foreach ($ballotVal as $candidateId) {
+                            CastedVote::create([
+                                'transaction_number' => $txn,
+                                'voter_id'           => $voter->id,
+                                'position_id'        => $positionId,
+                                'candidate_id'       => (int) $candidateId,
+                                'vote_hash'          => $this->generateVoteHash($voter->id, $positionId, (int) $candidateId),
+                                'voted_at'           => $now,
+                                'ip_address'         => $ip,
+                                'user_agent'         => $userAgent,
+                            ]);
+                        }
+                    } else {
+                        // Single-vote or skipped (abstain)
+                        $candidateId = ($ballotVal && $ballotVal !== 'skip' && is_numeric($ballotVal))
+                            ? (int) $ballotVal
+                            : null;
+
                         CastedVote::create([
                             'transaction_number' => $txn,
                             'voter_id'           => $voter->id,
                             'position_id'        => $positionId,
-                            'candidate_id'       => (int) $candidateId,
-                            'vote_hash'          => $this->generateVoteHash($voter->id, $positionId, (int) $candidateId),
+                            'candidate_id'       => $candidateId,
+                            'vote_hash'          => $this->generateVoteHash($voter->id, $positionId, $candidateId ?? 0),
                             'voted_at'           => $now,
                             'ip_address'         => $ip,
                             'user_agent'         => $userAgent,
                         ]);
                     }
-                } else {
-                    // Single-vote or skipped
-                    $candidateId = ($ballotVal && $ballotVal !== 'skip' && is_numeric($ballotVal))
-                        ? (int) $ballotVal
-                        : null;
-
-                    CastedVote::create([
-                        'transaction_number' => $txn,
-                        'voter_id'           => $voter->id,
-                        'position_id'        => $positionId,
-                        'candidate_id'       => $candidateId,
-                        'vote_hash'          => $this->generateVoteHash($voter->id, $positionId, $candidateId ?? 0),
-                        'voted_at'           => $now,
-                        'ip_address'         => $ip,
-                        'user_agent'         => $userAgent,
-                    ]);
                 }
-            }
-        });
+            });
+
+        } catch (\Exception $e) {
+            // ── FIX 4: Always clear ballot session on any failure ─────────
+            session()->forget('ballot');
+
+            return redirect()->route('voter.vote.intro')
+                ->with('error', $e->getMessage());
+        }
 
         session()->forget('ballot');
 
