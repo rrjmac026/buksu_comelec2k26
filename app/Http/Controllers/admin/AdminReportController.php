@@ -49,7 +49,7 @@ class AdminReportController extends Controller
         });
 
         $data['colleges'] = $colleges;
-        return view('reports.index', $data);
+        return view('admin.reports.index', $data);
     }
 
     public function generatePDF(Request $request)
@@ -70,6 +70,127 @@ class AdminReportController extends Controller
             $filename = 'ALL_election_results.pdf';
             return $this->generateFullPDF($data, $filename);
         }
+    }
+
+    public function results()
+    {
+        $data = $this->getReportData();
+        $colleges = College::select('name', 'acronym')->get();
+        $data['colleges'] = $colleges;
+
+        $data['positions'] = Position::with(['candidates' => function ($query) {
+            $query->select('candidates.*')
+                ->selectRaw('(
+                    SELECT COUNT(*) FROM casted_votes
+                    WHERE casted_votes.candidate_id = candidates.candidate_id
+                    AND casted_votes.position_id = candidates.position_id
+                ) as vote_count')
+                ->with(['partylist', 'college'])
+                ->orderByDesc('vote_count');
+        }])->get();
+
+        return view('admin.reports.index', $data);
+    }
+
+    public function byCollege()
+    {
+        $colleges = College::select('name', 'acronym')->get();
+        $data = $this->getReportData();
+
+        $data['collegeStats'] = College::with(['voters' => function ($query) {
+            $query->where('status', 'Active');
+        }])
+        ->get()
+        ->map(function ($college) {
+            $totalVoters = $college->voters->count();
+            $votedCount = CastedVote::whereIn('voter_id', $college->voters->pluck('id'))
+                ->distinct('voter_id')
+                ->count();
+
+            return [
+                'name'        => $college->name,
+                'acronym'     => $college->acronym,
+                'totalVoters' => $totalVoters,
+                'votedCount'  => $votedCount,
+                'percentage'  => $totalVoters > 0 ? round(($votedCount / $totalVoters) * 100, 2) : 0,
+            ];
+        });
+
+        $data['colleges'] = $colleges;
+        return view('admin.reports.by-college', $data);
+    }
+
+    public function turnout()
+    {
+        $totalVoters = User::where('status', 'Active')->count();
+        $totalVoted  = CastedVote::distinct('voter_id')->count();
+
+        $collegeStats = College::with(['voters' => function ($query) {
+            $query->where('status', 'Active');
+        }])
+        ->get()
+        ->map(function ($college) {
+            $totalVoters = $college->voters->count();
+            $votedCount = CastedVote::whereIn('voter_id', $college->voters->pluck('id'))
+                ->distinct('voter_id')
+                ->count();
+
+            return [
+                'name'        => $college->name,
+                'acronym'     => $college->acronym,
+                'totalVoters' => $totalVoters,
+                'votedCount'  => $votedCount,
+                'notVoted'    => $totalVoters - $votedCount,
+                'percentage'  => $totalVoters > 0 ? round(($votedCount / $totalVoters) * 100, 2) : 0,
+            ];
+        });
+
+        return view('admin.reports.turnout', compact(
+            'totalVoters',
+            'totalVoted',
+            'collegeStats',
+        ));
+    }
+
+    public function ballots()
+    {
+        $transactions = CastedVote::query()
+            ->selectRaw('
+                MIN(casted_vote_id)    AS casted_vote_id,
+                transaction_number,
+                voter_id,
+                MIN(voted_at)          AS voted_at,
+                COUNT(*)               AS positions_count,
+                SUM(CASE WHEN candidate_id IS NOT NULL THEN 1 ELSE 0 END) AS positions_voted
+            ')
+            ->groupBy('transaction_number', 'voter_id')
+            ->orderByDesc('voted_at')
+            ->paginate(20)
+            ->withQueryString();
+
+        $voterIds = $transactions->pluck('voter_id')->unique()->filter();
+        $voters   = User::whereIn('id', $voterIds)->get()->keyBy('id');
+
+        $transactions->each(function ($row) use ($voters) {
+            $row->voter = $voters->get($row->voter_id);
+        });
+
+        return view('admin.reports.ballots', compact('transactions'));
+    }
+
+    public function candidates()
+    {
+        $candidates = \App\Models\Candidate::with(['position', 'partylist', 'college'])
+            ->selectRaw('candidates.*, (
+                SELECT COUNT(*) FROM casted_votes
+                WHERE casted_votes.candidate_id = candidates.candidate_id
+            ) as vote_count')
+            ->orderByDesc('vote_count')
+            ->get();
+
+        $totalVoted = CastedVote::distinct('voter_id')->count();
+
+        return view('admin.reports.candidates', compact('candidates', 'totalVoted'));
     }
 
     // ── PDF Generators ─────────────────────────────────────────────
