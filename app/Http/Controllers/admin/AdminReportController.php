@@ -237,8 +237,8 @@ class AdminReportController extends Controller
 
         $this->addHeaderToPage($pdf, 'Ballot Transaction Log', $data['generatedAt']);
 
-        $cw      = [52, 58, 32, 28, 52, 45];
-        $headers = ['Transaction #', 'Voter Name', 'Student #', 'College', 'Positions Voted', 'Timestamp'];
+        $cw      = [65, 72, 40, 35, 55];
+        $headers = ['Transaction #', 'Voter Name', 'Student #', 'College', 'Timestamp'];
         $this->drawSmallHeader($pdf, $cw, $headers);
 
         foreach ($data['ballots'] as $i => [$txn, $votes]) {
@@ -250,7 +250,6 @@ class AdminReportController extends Controller
             $fill    = $i % 2 === 0;
             $first   = $votes->first();
             $voter   = $first->voter;
-            $pos     = $votes->pluck('position.name')->filter()->unique()->implode(', ');
             $time    = Carbon::parse($first->voted_at)->timezone('Asia/Manila')->format('M j, Y H:i');
 
             $pdf->SetFont('Arial', '', 9);
@@ -258,8 +257,7 @@ class AdminReportController extends Controller
             $pdf->Cell($cw[1], 10, $voter?->full_name ?? '—',          1, 0, 'L', $fill);
             $pdf->Cell($cw[2], 10, $voter?->student_number ?? '—',     1, 0, 'C', $fill);
             $pdf->Cell($cw[3], 10, $voter?->college?->acronym ?? '—',  1, 0, 'C', $fill);
-            $pdf->Cell($cw[4], 10, $this->truncate($pos, 40),          1, 0, 'L', $fill);
-            $pdf->Cell($cw[5], 10, $time,                              1, 0, 'C', $fill);
+            $pdf->Cell($cw[4], 10, $time,                              1, 0, 'C', $fill);
             $pdf->Ln();
         }
 

@@ -290,13 +290,13 @@
             {{-- 1. Election Results --}}
             <a href="{{ route('admin.reports.results') }}" class="gs report-card" target="_blank">
                 <div class="card-icon-wrap"><i class="fas fa-trophy"></i></div>
-                <div class="card-title">Election Results</div>
+                <div class="card-title">SSC Election Results</div>
                 <div class="card-desc">
-                    Complete results for every position — ranked candidates with vote counts, percentages, and visual progress bars. Includes overall turnout summary.
+                    Supreme Student Council results for all SSC positions — ranked candidates with vote counts, percentages, and overall turnout summary.
                 </div>
                 <div class="card-meta">
                     <span class="meta-badge">Portrait · A4</span>
-                    <span class="meta-badge">All Positions</span>
+                    <span class="meta-badge">SSC Only</span>
                     <span class="card-cta">Download <i class="fas fa-arrow-right" style="font-size:.6rem;"></i></span>
                 </div>
             </a>
@@ -304,13 +304,13 @@
             {{-- 2. By-College Breakdown --}}
             <a href="{{ route('admin.reports.by-college') }}" class="gs report-card" target="_blank">
                 <div class="card-icon-wrap"><i class="fas fa-building-columns"></i></div>
-                <div class="card-title">College Breakdown</div>
+                <div class="card-title">All Election Results</div>
                 <div class="card-desc">
-                    Per-college sections showing candidates, their positions, vote counts, and college-level voter turnout with inline progress bars.
+                    Complete report covering SSC positions followed by every college's SBO results — candidates, vote counts, percentages, and per-college voter turnout.
                 </div>
                 <div class="card-meta">
                     <span class="meta-badge">Portrait · A4</span>
-                    <span class="meta-badge">Per College</span>
+                    <span class="meta-badge">SSC + All Colleges</span>
                     <span class="card-cta">Download <i class="fas fa-arrow-right" style="font-size:.6rem;"></i></span>
                 </div>
             </a>
