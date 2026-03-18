@@ -11,7 +11,7 @@ class CustomPDF extends FPDF
     {
         // Full width header image
         $pageWidth = $this->GetPageWidth();
-        $this->Image(public_path('images/COMELEC_HEADER.png'), 0, 0, $pageWidth); // x=0, y=0 for top-left, width=page width
+        $this->Image(public_path('assets/COMELEC_HEADER.png'), 0, 0, $pageWidth); // x=0, y=0 for top-left, width=page width
         
         // Add more space after header
         $this->Ln(30);

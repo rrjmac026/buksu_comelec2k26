@@ -97,7 +97,7 @@ Route::middleware(['auth', 'admin'])
 
         // Reports
         Route::prefix('reports')->name('reports.')->group(function () {
-            Route::get('/', [AdminReportController::class, 'index'])->name('index');
+            Route::get('/',           fn() => view('admin.reports.index'))->name('index');
             Route::get('/results',    [AdminReportController::class, 'results'])->name('results');
             Route::get('/by-college', [AdminReportController::class, 'byCollege'])->name('by-college');
             Route::get('/turnout',    [AdminReportController::class, 'turnout'])->name('turnout');
