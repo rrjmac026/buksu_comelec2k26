@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Models\ActivityLog;
 use App\Models\User;
 use GuzzleHttp\Client;
 use Illuminate\Http\Request;
@@ -36,11 +37,26 @@ class GoogleController extends Controller
                     ->first();
 
         if (!$user) {
+            // Log failed attempt (unregistered Google account)
+            ActivityLog::record(
+                event: 'login_failed',
+                email: $googleUser->getEmail(),
+                ip:    $request->ip(),
+                ua:    $request->userAgent() ?? ''
+            );
+
             return redirect()->route('login')
                 ->with('error', 'Your Google account is not registered as a voter. Please contact the administrator.');
         }
 
         if ($user->status === 'inactive') {
+            ActivityLog::record(
+                event: 'login_failed',
+                user:  $user,
+                ip:    $request->ip(),
+                ua:    $request->userAgent() ?? ''
+            );
+
             return redirect()->route('login')
                 ->with('error', 'Your account has been deactivated. Please contact the administrator.');
         }
@@ -56,6 +72,14 @@ class GoogleController extends Controller
 
         Auth::login($user, true);
         $request->session()->regenerate();
+
+        // ── Log Google login ───────────────────────────────────
+        ActivityLog::record(
+            event: 'login',
+            user:  $user,
+            ip:    $request->ip(),
+            ua:    $request->userAgent() ?? ''
+        );
 
         return redirect()->route('voter.dashboard')
             ->with('success', 'Welcome back, ' . $user->full_name . '!');

@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\LoginRequest;
+use App\Models\ActivityLog;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -30,6 +31,14 @@ class AuthenticatedSessionController extends Controller
 
         $user = Auth::user();
 
+        // ── Log successful login ───────────────────────────────
+        ActivityLog::record(
+            event: 'login',
+            user:  $user,
+            ip:    $request->ip(),
+            ua:    $request->userAgent() ?? ''
+        );
+
         if ($user->role === 'admin') {
             return redirect()->route('admin.dashboard');
         }
@@ -46,6 +55,18 @@ class AuthenticatedSessionController extends Controller
      */
     public function destroy(Request $request): RedirectResponse
     {
+        $user = Auth::user();
+
+        // ── Log logout before the session is killed ────────────
+        if ($user) {
+            ActivityLog::record(
+                event: 'logout',
+                user:  $user,
+                ip:    $request->ip(),
+                ua:    $request->userAgent() ?? ''
+            );
+        }
+
         Auth::guard('web')->logout();
 
         $request->session()->invalidate();

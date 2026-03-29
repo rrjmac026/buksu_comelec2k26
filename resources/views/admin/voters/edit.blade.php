@@ -9,7 +9,7 @@
             </a>
             <div>
                 <h2 class="font-bold text-xl text-gray-800 dark:text-gray-100 leading-tight">Edit Voter</h2>
-                <p class="text-sm text-violet-600 dark:text-violet-400 mt-0.5">Updating: <strong>{{ $voter->name }}</strong></p>
+                <p class="text-sm text-violet-600 dark:text-violet-400 mt-0.5">Updating: <strong>{{ $voter->full_name }}</strong></p>
             </div>
         </div>
     </x-slot>
@@ -32,18 +32,46 @@
                 </div>
 
                 <div class="p-6 grid grid-cols-1 sm:grid-cols-2 gap-5">
-                    <div class="sm:col-span-2">
+                    <div>
                         <label class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-1.5">
-                            Full Name <span class="text-rose-500">*</span>
+                            First Name <span class="text-rose-500">*</span>
                         </label>
-                        <input type="text" name="name" value="{{ old('name', $voter->name) }}"
+                        <input type="text" name="first_name" value="{{ old('first_name', $voter->first_name) }}"
                                class="w-full px-4 py-2.5 rounded-xl text-sm
                                       border border-violet-200 dark:border-violet-700
                                       bg-violet-50/40 dark:bg-violet-900/30
                                       text-gray-800 dark:text-gray-200
                                       focus:outline-none focus:ring-2 focus:ring-violet-400
-                                      @error('name') border-rose-400 @enderror">
-                        @error('name')
+                                      @error('first_name') border-rose-400 @enderror">
+                        @error('first_name')
+                            <p class="mt-1 text-xs text-rose-500 flex items-center gap-1"><i class="fas fa-circle-exclamation"></i> {{ $message }}</p>
+                        @enderror
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-1.5">
+                            Middle Name
+                        </label>
+                        <input type="text" name="middle_name" value="{{ old('middle_name', $voter->middle_name) }}"
+                               class="w-full px-4 py-2.5 rounded-xl text-sm
+                                      border border-violet-200 dark:border-violet-700
+                                      bg-violet-50/40 dark:bg-violet-900/30
+                                      text-gray-800 dark:text-gray-200
+                                      focus:outline-none focus:ring-2 focus:ring-violet-400">
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-1.5">
+                            Last Name <span class="text-rose-500">*</span>
+                        </label>
+                        <input type="text" name="last_name" value="{{ old('last_name', $voter->last_name) }}"
+                               class="w-full px-4 py-2.5 rounded-xl text-sm
+                                      border border-violet-200 dark:border-violet-700
+                                      bg-violet-50/40 dark:bg-violet-900/30
+                                      text-gray-800 dark:text-gray-200
+                                      focus:outline-none focus:ring-2 focus:ring-violet-400
+                                      @error('last_name') border-rose-400 @enderror">
+                        @error('last_name')
                             <p class="mt-1 text-xs text-rose-500 flex items-center gap-1"><i class="fas fa-circle-exclamation"></i> {{ $message }}</p>
                         @enderror
                     </div>
@@ -124,8 +152,8 @@
                                        focus:outline-none focus:ring-2 focus:ring-violet-400">
                             <option value="">Select college</option>
                             @foreach($colleges as $college)
-                                <option value="{{ $college->college_id }}"
-                                    {{ old('college_id', $voter->college_id) == $college->college_id ? 'selected' : '' }}>
+                                <option value="{{ $college->id }}"
+                                    {{ old('college_id', $voter->college_id) == $college->id ? 'selected' : '' }}>
                                     {{ $college->name }} ({{ $college->acronym }})
                                 </option>
                             @endforeach

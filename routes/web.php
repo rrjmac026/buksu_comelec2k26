@@ -13,6 +13,7 @@ use App\Http\Controllers\Admin\AdminFeedbackController;
 use App\Http\Controllers\Admin\AdminElectionController;
 use App\Http\Controllers\Admin\AdminReportController;
 use App\Http\Controllers\Admin\DataBackupController;
+use App\Http\Controllers\Admin\AdminActivityLogController;
 
 use App\Http\Controllers\Voter\VoterDashboardController;
 use App\Http\Controllers\Voter\VoterCastedVoteController;
@@ -118,6 +119,9 @@ Route::middleware(['auth', 'admin'])
             Route::post('/quick-backup',     [DataBackupController::class, 'quickBackup'])->name('quick');
             Route::get('/statistics',        [DataBackupController::class, 'statistics'])->name('statistics');
         });
+
+        Route::get('activity-logs',      [AdminActivityLogController::class, 'index'])->name('activity-logs.index');
+        Route::get('activity-logs/live', [AdminActivityLogController::class, 'live'])->name('activity-logs.live');
 
 });
 

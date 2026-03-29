@@ -142,6 +142,17 @@
     </div>
 </a>
 
+{{-- ── Activity Logs ── --}}
+<a href="{{ route('admin.activity-logs.index') }}"
+   class="nav-link {{ $is('admin.activity-logs') ? 'active' : '' }}">
+    <div class="nav-link-icon"><i class="fas fa-clock-rotate-left"></i></div>
+    <div class="nav-link-text">
+        <span class="nav-link-label">Activity Logs</span>
+        <span class="nav-link-sub">Login & logout activity</span>
+    </div>
+    <span class="nav-badge" style="background:rgba(34,197,94,0.12);color:#22c55e;border:1px solid rgba(34,197,94,0.25);">Live</span>
+</a>
+
 <hr class="sidebar-divider">
 
 {{-- ── System ── --}}
