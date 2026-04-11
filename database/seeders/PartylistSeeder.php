@@ -12,9 +12,9 @@ class PartylistSeeder extends Seeder
         $partylists = [
             
             [
-                'name' => 'SINAGTALA',
-                'acronym' => 'SNG',
-                'description' => 'SINAGTALA - Student Political Party'
+                'name' => 'SILAK',
+                'acronym' => 'SLK',
+                'description' => 'SILAK - Student Political Party'
             ],
             [
                 'name' => 'BANAAG',

@@ -133,10 +133,10 @@
                         @endif
 
                         <div class="c-info">
-                            <div class="c-name">{{ $candidate->full_name }}</div>
-                            @if($candidate->partylist)
+                            <div class="c-party-badge">{{ $candidate->full_name }}</div>
+                            <!-- @if($candidate->partylist)
                                 <div><span class="c-party-badge">{{ $candidate->partylist->name }}</span></div>
-                            @endif
+                            @endif -->
                             @if($candidate->course)
                                 <div class="c-course">{{ $candidate->course }}</div>
                             @endif
