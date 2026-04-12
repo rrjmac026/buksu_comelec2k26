@@ -273,10 +273,10 @@
 
     {{-- Stats --}}
     @php
-        $total      = $candidates->total();
-        $partylists = $candidates->groupBy('partylist_id')->count();
-        $colleges   = $candidates->groupBy('college_id')->count();
-        $votes      = \App\Models\CastedVote::count();
+        $total      = $stats['total'];
+        $partylists = $stats['partylists'];
+        $colleges   = $stats['colleges'];
+        $votes      = $stats['votes'];
     @endphp
     <div class="ac-stat-strip">
         <div class="ac-stat-card" style="animation-delay:.06s;">
