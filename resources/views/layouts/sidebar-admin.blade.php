@@ -19,26 +19,6 @@
     </div>
 </a>
 
-{{-- ── Election Control ── --}}
-<div class="nav-section-label">Election Control</div>
-
-<a href="{{ route('admin.election.index') }}"
-   class="nav-link {{ $is('admin.election') ? 'active' : '' }}">
-    <div class="nav-link-icon"><i class="fas fa-tower-broadcast"></i></div>
-    <div class="nav-link-text">
-        <span class="nav-link-label">Election Status</span>
-        <span class="nav-link-sub">Start, pause, or end election</span>
-    </div>
-    @php $electionStatus = \App\Models\ElectionSetting::status(); @endphp
-    @if($electionStatus === 'ongoing')
-        <span class="nav-badge green">Live</span>
-    @elseif($electionStatus === 'upcoming')
-        <span class="nav-badge" style="background:rgba(249,180,15,0.12);color:#f9b40f;border:1px solid rgba(249,180,15,0.25);">Soon</span>
-    @else
-        <span class="nav-badge" style="background:rgba(255,255,255,0.06);color:rgba(255,255,255,0.35);border:1px solid rgba(255,255,255,0.1);">Done</span>
-    @endif
-</a>
-
 {{-- ── Election Setup ── --}}
 <div class="nav-section-label">Election Setup</div>
 
@@ -155,25 +135,31 @@
 
 <hr class="sidebar-divider">
 
-{{-- ── System ── --}}
-<div class="nav-section-label">System</div>
-
-<a href="{{ route('admin.backups.index') }}"
-   class="nav-link {{ $is('admin.backups') ? 'active' : '' }}">
-    <div class="nav-link-icon"><i class="fas fa-database"></i></div>
+{{-- ── Settings ── --}}
+<div class="nav-section-label">Settings</div>
+ 
+@php
+    $electionStatus  = \App\Models\ElectionSetting::status();
+    $processingCount = \App\Models\DataBackup::where('status', 'processing')->count();
+    $latestBackup    = \App\Models\DataBackup::where('status', 'completed')->latest('completed_at')->first();
+@endphp
+ 
+<a href="{{ route('admin.settings.index') }}"
+   class="nav-link {{ $is('admin.settings') ? 'active' : '' }}">
+    <div class="nav-link-icon"><i class="fas fa-sliders"></i></div>
     <div class="nav-link-text">
-        <span class="nav-link-label">Backups</span>
-        <span class="nav-link-sub">Database backup & restore</span>
+        <span class="nav-link-label">Settings</span>
+        <span class="nav-link-sub">Election & backups</span>
     </div>
-    @php
-        $latestBackup = \App\Models\DataBackup::where('status', 'completed')
-            ->latest('completed_at')->first();
-        $processingCount = \App\Models\DataBackup::where('status', 'processing')->count();
-    @endphp
+    {{-- Badge: priority order — processing backup > live election > backup ok --}}
     @if($processingCount > 0)
         <span class="nav-badge" style="background:rgba(96,165,250,0.12);color:#60a5fa;border:1px solid rgba(96,165,250,0.25);">
             Running
         </span>
+    @elseif($electionStatus === 'ongoing')
+        <span class="nav-badge green">Live</span>
+    @elseif($electionStatus === 'upcoming')
+        <span class="nav-badge" style="background:rgba(249,180,15,0.12);color:#f9b40f;border:1px solid rgba(249,180,15,0.25);">Soon</span>
     @elseif($latestBackup && $latestBackup->completed_at->diffInHours() <= 24)
         <span class="nav-badge green">OK</span>
     @endif
