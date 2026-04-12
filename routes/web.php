@@ -133,7 +133,7 @@ Route::middleware(['auth', 'admin'])
 |--------------------------------------------------------------------------
 */
 
-Route::middleware(['auth', 'voter'])->prefix('voter')->name('voter.')->group(function () {
+Route::middleware(['auth', 'voter', 'election.status'])->prefix('voter')->name('voter.')->group(function () {
  
     // Dashboard
     Route::get('/dashboard',    [VoterDashboardController::class, 'index'])->name('dashboard');

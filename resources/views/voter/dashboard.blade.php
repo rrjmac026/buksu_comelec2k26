@@ -1,3 +1,4 @@
+
 <x-app-layout>
     {{-- Fonts --}}
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;800;900&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -27,6 +28,98 @@
             </div>
         </div>
     </div>
+
+    @php $electionStatus = $electionStatus ?? \App\Models\ElectionSetting::status(); @endphp
+
+    {{-- Election Status Banner --}}
+    @if($electionStatus === 'upcoming')
+    <div style="display:flex;align-items:center;gap:14px;padding:18px 24px;border-radius:16px;
+                background:rgba(249,180,15,0.08);border:1px solid rgba(249,180,15,0.22);
+                margin-bottom:20px;animation:fadeUp .4s ease both;">
+        <div style="width:44px;height:44px;border-radius:12px;flex-shrink:0;
+                    background:rgba(249,180,15,0.12);border:1px solid rgba(249,180,15,0.25);
+                    display:flex;align-items:center;justify-content:center;color:#f9b40f;font-size:1.1rem;">
+            <i class="fas fa-hourglass-start"></i>
+        </div>
+        <div style="flex:1;">
+            <div style="font-family:'Playfair Display',serif;font-size:0.95rem;font-weight:900;color:#f9b40f;margin-bottom:3px;">
+                Election Coming Soon
+            </div>
+            <div style="font-size:0.72rem;color:rgba(249,180,15,0.6);line-height:1.6;">
+                The election has not opened yet. Voting will be enabled once the election begins. Stay tuned!
+            </div>
+        </div>
+        <div style="padding:6px 16px;border-radius:99px;background:rgba(249,180,15,0.1);
+                    border:1px solid rgba(249,180,15,0.25);font-size:0.65rem;font-weight:800;
+                    color:#f9b40f;letter-spacing:0.08em;white-space:nowrap;">
+            UPCOMING
+        </div>
+    </div>
+
+    @elseif($electionStatus === 'ended')
+    <div style="display:flex;align-items:center;gap:14px;padding:18px 24px;border-radius:16px;
+                background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.1);
+                margin-bottom:20px;animation:fadeUp .4s ease both;">
+        <div style="width:44px;height:44px;border-radius:12px;flex-shrink:0;
+                    background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);
+                    display:flex;align-items:center;justify-content:center;color:rgba(255,255,255,0.4);font-size:1.1rem;">
+            <i class="fas fa-flag-checkered"></i>
+        </div>
+        <div style="flex:1;">
+            <div style="font-family:'Playfair Display',serif;font-size:0.95rem;font-weight:900;
+                        color:rgba(255,255,255,0.5);margin-bottom:3px;">
+                Election Has Ended
+            </div>
+            <div style="font-size:0.72rem;color:rgba(255,255,255,0.3);line-height:1.6;">
+                The voting period is now closed. Thank you to everyone who participated!
+            </div>
+        </div>
+        <div style="padding:6px 16px;border-radius:99px;background:rgba(255,255,255,0.05);
+                    border:1px solid rgba(255,255,255,0.1);font-size:0.65rem;font-weight:800;
+                    color:rgba(255,255,255,0.3);letter-spacing:0.08em;white-space:nowrap;">
+            ENDED
+        </div>
+    </div>
+
+    @elseif($electionStatus === 'ongoing')
+    <div style="display:flex;align-items:center;gap:14px;padding:18px 24px;border-radius:16px;
+                background:rgba(52,211,153,0.06);border:1px solid rgba(52,211,153,0.22);
+                margin-bottom:20px;animation:fadeUp .4s ease both;">
+        <div style="width:44px;height:44px;border-radius:12px;flex-shrink:0;
+                    background:rgba(52,211,153,0.1);border:1px solid rgba(52,211,153,0.25);
+                    display:flex;align-items:center;justify-content:center;color:#34d399;font-size:1.1rem;">
+            <i class="fas fa-circle-dot"></i>
+        </div>
+        <div style="flex:1;">
+            <div style="font-family:'Playfair Display',serif;font-size:0.95rem;font-weight:900;color:#34d399;margin-bottom:3px;">
+                Election is Live!
+            </div>
+            <div style="font-size:0.72rem;color:rgba(52,211,153,0.6);line-height:1.6;">
+                Voting is now open. Cast your ballot before the election closes.
+            </div>
+        </div>
+        @if(!auth()->user()->hasVoted())
+        <!-- <a href="{{ route('voter.vote.intro') }}"
+        style="padding:9px 20px;border-radius:10px;background:linear-gradient(135deg,#34d399,#6ee7b7);
+                color:#064e3b;font-size:0.72rem;font-weight:800;text-decoration:none;
+                white-space:nowrap;box-shadow:0 4px 16px rgba(52,211,153,0.3);">
+                @if(($electionStatus ?? \App\Models\ElectionSetting::status()) === 'ongoing')
+                <i class="fas fa-vote-yea"></i> Vote Now
+                @endif
+        </a> -->
+        @endif
+    </div>
+    @endif
+
+    {{-- Flash info message --}}
+    @if(session('info'))
+    <div style="display:flex;align-items:center;gap:10px;padding:12px 18px;border-radius:12px;
+                background:rgba(99,102,241,0.08);border:1px solid rgba(99,102,241,0.2);
+                margin-bottom:16px;">
+        <i class="fas fa-circle-info" style="color:#818cf8;flex-shrink:0;"></i>
+        <span style="font-size:0.73rem;font-weight:600;color:#818cf8;">{{ session('info') }}</span>
+    </div>
+    @endif
 
     {{-- Flash Messages --}}
     @if(session('error'))
@@ -99,9 +192,11 @@
                         </a>
                     </div>
                 @else
-                    <a href="{{ route('voter.vote.intro') }}" class="vd-cta-btn vd-cta-btn-full">
-                        <i class="fas fa-vote-yea"></i> Cast My Vote Now
-                    </a>
+                    @if(($electionStatus ?? \App\Models\ElectionSetting::status()) === 'ongoing')
+                        <a href="{{ route('voter.vote.intro') }}" class="vd-cta-btn vd-cta-btn-full">
+                            <i class="fas fa-vote-yea"></i> Cast My Vote Now
+                        </a>
+                    @endif
                 @endif
             </div>
         </div>
