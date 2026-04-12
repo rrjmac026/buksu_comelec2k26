@@ -33,6 +33,7 @@ class AdminCandidateController extends Controller
 
     public function store(Request $request)
     {
+        
         $validated = $request->validate([
             'first_name'      => ['required', 'string', 'max:100'],
             'last_name'       => ['required', 'string', 'max:100'],
@@ -43,7 +44,7 @@ class AdminCandidateController extends Controller
             'college_id'      => ['required', 'exists:colleges,id'],         // PK is id ✅
             'course'          => ['required', 'string', 'max:100'],
             'platform'        => ['nullable', 'string'],
-            'photo'           => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:2048'],
+            'photo'           => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:10240'],
         ]);
 
         if ($request->hasFile('photo')) {
@@ -88,7 +89,7 @@ class AdminCandidateController extends Controller
             'college_id'      => ['required', 'exists:colleges,id'],         // PK is id ✅
             'course'          => ['required', 'string', 'max:100'],
             'platform'        => ['nullable', 'string'],
-            'photo'           => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:2048'],
+            'photo'           => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:10240'],
         ]);
 
         if ($request->hasFile('photo')) {
@@ -120,5 +121,38 @@ class AdminCandidateController extends Controller
 
         return redirect()->route('admin.candidates.index')
             ->with('success', 'Candidate deleted successfully.');
+    }
+
+    public function searchStudent(Request $request)
+    {
+        $query = trim($request->query('q', ''));
+
+        if (strlen($query) < 2) {
+            return response()->json([]);
+        }
+
+        $users = \App\Models\User::with('college')
+            ->where('role', 'voter')
+            ->where(function ($q) use ($query) {
+                $q->where('first_name', 'like', "%{$query}%")
+                ->orWhere('last_name', 'like', "%{$query}%")
+                ->orWhere('middle_name', 'like', "%{$query}%")
+                ->orWhereRaw("CONCAT(first_name, ' ', last_name) like ?", ["%{$query}%"])
+                ->orWhereRaw("CONCAT(last_name, ', ', first_name) like ?", ["%{$query}%"]);
+            })
+            ->limit(10)
+            ->get()
+            ->map(fn($u) => [
+                'id'          => $u->id,
+                'first_name'  => $u->first_name,
+                'middle_name' => $u->middle_name ?? '',
+                'last_name'   => $u->last_name,
+                'college_id'  => $u->college_id,
+                'college'     => $u->college?->name ?? '',
+                'course'      => $u->course,
+                'display'     => $u->last_name . ', ' . $u->first_name . ($u->middle_name ? ' ' . $u->middle_name[0] . '.' : '') . ' — ' . $u->course,
+            ]);
+
+        return response()->json($users);
     }
 }

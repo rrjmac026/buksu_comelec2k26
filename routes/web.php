@@ -71,6 +71,8 @@ Route::middleware(['auth', 'admin'])
         Route::get('dashboard/live', [AdminDashboardController::class, 'live'])->name('dashboard.live');
 
         // Election Setup
+        Route::get('/admin/students/search', [AdminCandidateController::class, 'searchStudent'])
+            ->name('students.search');
         Route::resource('candidates',    AdminCandidateController::class);
         Route::resource('positions',     AdminPositionController::class);
         Route::resource('partylists',    AdminPartylistController::class);

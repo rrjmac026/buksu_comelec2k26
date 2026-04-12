@@ -24,10 +24,11 @@ class DatabaseSeeder extends Seeder
         // ]);
 
         $this->call([
+            PartylistSeeder::class,
             CollegeSeeder::class,
             PositionSeeder::class,
             OrganizationSeeder::class,
-            PartylistSeeder::class,
+            CandidateSeeder::class,
             // TestCandidateSeeder::class
         ]);
 
