@@ -177,6 +177,8 @@
 
     /* ══ CANDIDATE CARD ══ */
     .candidate-card {
+        max-width: 280px;
+        margin: 0 auto;
         border-radius: 14px;
         border: 2px solid rgba(249,180,15,.1);
         background: rgba(56,0,65,.5);
