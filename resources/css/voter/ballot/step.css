@@ -172,7 +172,8 @@
     .candidates-grid {
         display: grid;
         gap: 16px;
-        grid-template-columns: repeat(var(--col-count), 1fr);
+        grid-template-columns: repeat(var(--col-count), minmax(0, 230px));
+        justify-content: center;
     }
 
     /* ══ CANDIDATE CARD ══ */
