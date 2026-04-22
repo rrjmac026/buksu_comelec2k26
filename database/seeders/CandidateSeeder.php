@@ -183,33 +183,6 @@ class CandidateSeeder extends Seeder
             ['first_name' => 'Jeanneil',             'last_name' => 'Lira',       'middle_name' => 'Cuyos',       'partylist_id' => $banaag, 'organization_id' => $sbo, 'position_id' => $treasurer,      'college_id' => $cob,  'course' => 'BSA',          'photo' => '1775917313_Treasurer_Jeanneil Lira.JPG'],
 
             // ══════════════════════════════════════════════════════════
-            //  IDs 44–54 | COLLEGE OF ARTS & SCIENCES (CAS) — SILAK / SBO
-            // ══════════════════════════════════════════════════════════
-
-            // 44
-            ['first_name' => 'Hazel Faith',          'last_name' => 'Lantong',    'middle_name' => 'Allosada',    'partylist_id' => $silak,  'organization_id' => $sbo, 'position_id' => $secondYearRep,  'college_id' => $cas,  'course' => 'BS-BIO',       'photo' => '1775917368_2ND YEAR REPRESENTATIVE, HAZEL FAITH LANTONG.JPG'],
-            // 45
-            ['first_name' => 'Irish Jane',           'last_name' => 'Lofranco',   'middle_name' => 'Palingcod',   'partylist_id' => $silak,  'organization_id' => $sbo, 'position_id' => $thirdYearRep,   'college_id' => $cas,  'course' => 'AB-ECON',      'photo' => '1775917404_3RD YEAR REPRESENTATIVE, IRISH JANE LOFRANCO_.JPG'],
-            // 46
-            ['first_name' => 'Margalo Clarrise',     'last_name' => 'Fernandez',  'middle_name' => 'Jagunos',     'partylist_id' => $silak,  'organization_id' => $sbo, 'position_id' => $fourthYearRep,  'college_id' => $cas,  'course' => 'AB-ECON',      'photo' => '1775917436_4TH YEAR REPRESENTATIVE, MARGALO FERNANDEZ.JPG'],
-            // 47
-            ['first_name' => 'Coleen',               'last_name' => 'Vestidas',   'middle_name' => 'Cañete',      'partylist_id' => $silak,  'organization_id' => $sbo, 'position_id' => $secretary,      'college_id' => $cas,  'course' => 'AB-SOCIO',     'photo' => '1775917492_ASSOCIATE SECRETARY, COLEEN VESTIDAS.JPG'],
-            // 48
-            ['first_name' => 'Kennan Jemm',          'last_name' => 'Tejero',     'middle_name' => 'Gomez',       'partylist_id' => $silak,  'organization_id' => $sbo, 'position_id' => $assocTreasurer, 'college_id' => $cas,  'course' => 'BS-BIO',       'photo' => '1775917530_ASSOCIATE TREASURER, KENNAN JEMM TEJERO.JPG'],
-            // 49
-            ['first_name' => 'Christopher',          'last_name' => 'Dumaque',    'middle_name' => 'Fernandez',   'partylist_id' => $silak,  'organization_id' => $sbo, 'position_id' => $auditor,        'college_id' => $cas,  'course' => 'AB-PHILO',     'photo' => '1775917555_AUDITOR, CHRISTOPHER DUMAQUE_.JPG'],
-            // 50
-            ['first_name' => 'Camilo Jr.',           'last_name' => 'Anaya',      'middle_name' => 'Abella',      'partylist_id' => $silak,  'organization_id' => $sbo, 'position_id' => $governor,       'college_id' => $cas,  'course' => 'AB-PHILO',     'photo' => '1775917597_GOVERNOR, CAMILO ANAYA.JPG'],
-            // 51
-            ['first_name' => 'Jayvee',               'last_name' => 'Okinlay',    'middle_name' => 'Baculbacul',  'partylist_id' => $silak,  'organization_id' => $sbo, 'position_id' => $pro,            'college_id' => $cas,  'course' => 'BS-BIO',       'photo' => '1775917625_PUBLIC RELATIONS OFFICER, JAYVEE OKINLAY.JPG'],
-            // 52
-            ['first_name' => 'Aliah Faye',           'last_name' => 'Badajos',    'middle_name' => 'Sario',       'partylist_id' => $silak,  'organization_id' => $sbo, 'position_id' => $secretary,      'college_id' => $cas,  'course' => 'AB-ENG',       'photo' => '1775917651_SECRETARY, ALIAH FAYE BADAJOS.JPG'],
-            // 53
-            ['first_name' => 'Justine Mark',         'last_name' => 'Longcob',    'middle_name' => 'Lagat',       'partylist_id' => $silak,  'organization_id' => $sbo, 'position_id' => $treasurer,      'college_id' => $cas,  'course' => 'BS-MATH',      'photo' => '1775917683_TREASURER, JUSTINE MARK LONGCOB.JPG'],
-            // 54
-            ['first_name' => 'Billy Joel',           'last_name' => 'Briones',    'middle_name' => 'Caingcoy',    'partylist_id' => $silak,  'organization_id' => $sbo, 'position_id' => $viceGovernor,   'college_id' => $cas,  'course' => 'AB-ENG',       'photo' => '1775917712_VICE GOVERNOR, BILLY JOEL BRIONES.JPG'],
-
-            // ══════════════════════════════════════════════════════════
             //  IDs 55–66 | SSC SENATORS + VICE PRESIDENT — HIRAYA / SSC
             // ══════════════════════════════════════════════════════════
 
