@@ -235,28 +235,7 @@
             });
         </script>
         <script>
-            if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
-                document.documentElement.classList.add('dark');
-            } else {
-                document.documentElement.classList.remove('dark');
-            }
-
-            document.addEventListener('alpine:init', () => {
-                Alpine.store('darkMode', {
-                    init() {
-                        const theme = localStorage.getItem('theme');
-                        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-                        this.on = theme === 'dark' || (!theme && prefersDark);
-                        document.documentElement.classList.toggle('dark', this.on);
-                    },
-                    on: false,
-                    toggle() {
-                        this.on = !this.on;
-                        localStorage.setItem('theme', this.on ? 'dark' : 'light');
-                        document.documentElement.classList.toggle('dark', this.on);
-                    }
-                });
-            });
+            document.documentElement.classList.add('dark');
         </script>
 
     </body>
