@@ -19,14 +19,13 @@ export default defineConfig({
     ],
 
     server: {
-        host: '0.0.0.0',
+        host: '127.0.0.1',
         port: 5173,
         strictPort: true,
-        cors: true,
         hmr: {
-            host: 'nonadjunctive-severely-rosemary.ngrok-free.dev',
-            protocol: 'wss',
-            clientPort: 443,
+            host: '127.0.0.1',
+            protocol: 'ws',
+            clientPort: 5173,
         },
     },
 });
