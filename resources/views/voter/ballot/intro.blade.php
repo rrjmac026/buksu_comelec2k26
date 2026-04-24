@@ -3,16 +3,28 @@
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;800;900&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
 *, *::before, *::after { box-sizing: border-box; }
-.ballot-wrap { max-width: 640px; margin: 40px auto; padding: 0 16px; }
+.ballot-wrap {
+    max-width: 840px;
+    margin: 0 auto;
+    padding: 8px 16px 12px;
+    min-height: calc(100vh - 84px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
 
 .ballot-card {
     background: rgba(26,0,32,0.88);
     backdrop-filter: blur(24px);
     border: 1px solid rgba(249,180,15,0.2);
     border-radius: 20px;
-    box-shadow: 0 8px 48px rgba(0,0,0,0.5), inset 0 1px 0 rgba(249,180,15,0.08);
+    box-shadow: 0 8px 40px rgba(0,0,0,0.44), 0 0 24px rgba(249,180,15,0.08), inset 0 1px 0 rgba(249,180,15,0.08);
     overflow: hidden;
     animation: fadeUp 0.45s ease both;
+    width: 100%;
+    max-height: calc(100vh - 104px);
+    display: flex;
+    flex-direction: column;
 }
 .ballot-card::before {
     content: '';
@@ -106,38 +118,54 @@
 /* ══════════════════════════
    NORMAL (not-yet-voted) STATE
 ══════════════════════════ */
-.intro-body { padding: 48px 44px; text-align: center; }
+.intro-body {
+    padding: 22px 24px 18px;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    overflow-y: auto;
+}
 
 .intro-seal {
-    width: 88px; height: 88px; border-radius: 50%;
+    width: 66px; height: 66px; border-radius: 50%;
     background: radial-gradient(circle at 40% 35%, rgba(249,180,15,0.18), rgba(249,180,15,0.05));
     border: 2px solid rgba(249,180,15,0.3);
     display: flex; align-items: center; justify-content: center;
-    margin: 0 auto 28px;
-    font-size: 2.4rem;
-    box-shadow: 0 0 40px rgba(249,180,15,0.15), inset 0 0 20px rgba(249,180,15,0.05);
+    margin: 0 auto 4px;
+    font-size: 1.8rem;
+    box-shadow: 0 0 28px rgba(249,180,15,0.15), inset 0 0 14px rgba(249,180,15,0.05);
 }
 
 .intro-title {
     font-family: 'Playfair Display', serif;
-    font-size: 1.8rem; font-weight: 900;
+    font-size: 1.55rem; font-weight: 900;
     background: linear-gradient(135deg, #fffbf0 0%, #fcd558 100%);
     -webkit-background-clip: text; -webkit-text-fill-color: transparent;
     background-clip: text;
-    margin-bottom: 10px;
+    margin-bottom: 2px;
 }
 .intro-sub {
-    font-size: 0.82rem; color: rgba(255,251,240,0.5);
-    line-height: 1.75; max-width: 420px; margin: 0 auto 36px;
+    font-size: 0.76rem;
+    color: rgba(255,251,240,0.62);
+    line-height: 1.55;
+    max-width: 560px;
+    margin: 0 auto 4px;
 }
 
-.reminders { display: flex; flex-direction: column; gap: 10px; text-align: left; margin-bottom: 36px; }
+.reminders {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 9px;
+    text-align: left;
+    margin: 4px 0 0;
+}
 
 .reminder {
     display: flex; align-items: flex-start; gap: 12px;
-    padding: 12px 16px; border-radius: 12px;
-    background: rgba(249,180,15,0.05);
-    border: 1px solid rgba(249,180,15,0.1);
+    padding: 9px 10px; border-radius: 10px;
+    background: rgba(249,180,15,0.06);
+    border: 1px solid rgba(249,180,15,0.14);
     animation: fadeUp 0.4s ease both;
 }
 .reminder:nth-child(1) { animation-delay: 0.08s; }
@@ -146,29 +174,39 @@
 .reminder:nth-child(4) { animation-delay: 0.26s; }
 
 .reminder-icon {
-    width: 32px; height: 32px; border-radius: 9px; flex-shrink: 0;
+    width: 25px; height: 25px; border-radius: 8px; flex-shrink: 0;
     background: rgba(249,180,15,0.1); border: 1px solid rgba(249,180,15,0.15);
     display: flex; align-items: center; justify-content: center;
-    color: #f9b40f; font-size: 0.78rem;
+    color: #f9b40f; font-size: 0.64rem;
 }
 .reminder-text {
-    font-size: 0.73rem; color: rgba(255,251,240,0.6);
-    line-height: 1.6; padding-top: 4px;
+    font-size: 0.67rem; color: rgba(255,251,240,0.7);
+    line-height: 1.45;
+    padding-top: 1px;
 }
-.reminder-text strong { color: #fcd558; font-weight: 700; }
+.reminder-text strong { color: #facc15; font-weight: 700; }
 
 .intro-meta {
     display: inline-flex; align-items: center; gap: 8px;
-    padding: 6px 14px; border-radius: 99px;
-    background: rgba(249,180,15,0.07); border: 1px solid rgba(249,180,15,0.15);
-    font-size: 0.68rem; color: rgba(249,180,15,0.65);
+    padding: 6px 12px; border-radius: 99px;
+    background: rgba(249,180,15,0.1); border: 1px solid rgba(249,180,15,0.2);
+    font-size: 0.64rem; color: rgba(249,180,15,0.86);
     font-weight: 600; letter-spacing: 0.05em;
-    margin-bottom: 24px;
+    margin: 0 auto 2px;
+}
+
+.intro-actions {
+    margin-top: auto;
+    padding-top: 6px;
+    display: flex;
+    justify-content: center;
 }
 
 .btn-start {
     display: inline-flex; align-items: center; gap: 9px;
-    padding: 14px 40px; border-radius: 12px;
+    width: min(100%, 310px);
+    justify-content: center;
+    padding: 12px 20px; border-radius: 12px;
     background: linear-gradient(135deg, #f9b40f, #fcd558);
     color: #380041; font-size: 0.88rem; font-weight: 800;
     text-decoration: none; border: none; cursor: pointer;
@@ -179,12 +217,25 @@
 }
 .btn-start:hover {
     transform: translateY(-2px);
-    box-shadow: 0 8px 32px rgba(249,180,15,0.5);
+    box-shadow: 0 10px 34px rgba(249,180,15,0.5), 0 0 18px rgba(249,180,15,0.3);
+}
+
+@media (max-height: 760px) {
+    .ballot-wrap { min-height: calc(100vh - 78px); padding-top: 4px; }
+    .ballot-card { max-height: calc(100vh - 90px); }
+}
+
+@media (max-width: 900px) {
+    .ballot-wrap { max-width: 700px; }
+    .reminders { grid-template-columns: 1fr; }
 }
 
 @media (max-width: 600px) {
-    .intro-body  { padding: 32px 24px; }
+    .ballot-wrap  { min-height: auto; align-items: flex-start; padding: 10px 10px 16px; }
+    .ballot-card  { max-height: none; }
+    .intro-body  { padding: 18px 14px 14px; }
     .intro-title { font-size: 1.4rem; }
+    .intro-sub { font-size: 0.72rem; }
     .voted-body  { padding: 32px 24px; }
     .voted-title { font-size: 1.3rem; }
     .peace-gif-wrap { width: 130px; height: 130px; }
@@ -290,9 +341,11 @@
                 </div>
             </div>
 
-            <a href="{{ route('voter.vote.step', 1) }}" class="btn-start">
-                <i class="fas fa-vote-yea"></i> Begin Voting
-            </a>
+            <div class="intro-actions">
+                <a href="{{ route('voter.vote.step', 1) }}" class="btn-start">
+                    <i class="fas fa-vote-yea"></i> Begin Voting
+                </a>
+            </div>
 
         </div>
     </div>

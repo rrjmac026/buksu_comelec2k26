@@ -3,7 +3,13 @@
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;800;900&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
 *, *::before, *::after { box-sizing: border-box; }
-.vd-wrap { max-width: 760px; margin: 32px auto; padding: 0 16px 60px; }
+.vd-wrap {
+    max-width: 1200px;
+    width: 100%;
+    margin: 0 auto;
+    padding: 0 32px 24px;
+    margin-top: -12px;
+}
 
 @keyframes fadeUp {
     from { opacity: 0; transform: translateY(18px); }
@@ -12,23 +18,18 @@
 
 /* ── Page header ── */
 .page-header {
-    display: flex; align-items: center; gap: 14px; margin-bottom: 24px;
+    display: flex;
+    align-items: flex-start;
+    justify-content: flex-start;
+    margin-bottom: 8px;
     animation: fadeUp 0.35s ease both;
 }
-.back-btn {
-    display: inline-flex; align-items: center; gap: 6px;
-    padding: 7px 14px; border-radius: 9px;
-    border: 1px solid rgba(249,180,15,0.2); background: transparent;
-    font-size: 0.7rem; font-weight: 600; color: rgba(249,180,15,0.6);
-    text-decoration: none; transition: all 0.18s; font-family: 'DM Sans', sans-serif;
-    flex-shrink: 0;
-}
-.back-btn:hover { border-color: rgba(249,180,15,0.4); color: #f9b40f; background: rgba(249,180,15,0.05); }
 .page-title {
     font-family: 'Playfair Display', serif;
     font-size: 1.3rem; font-weight: 900; color: #fffbf0;
+    margin-bottom: 2px;
 }
-.page-sub { font-size: 0.72rem; color: rgba(255,251,240,0.4); margin-top: 2px; }
+.page-sub { font-size: 0.72rem; color: rgba(255,251,240,0.72); margin-top: 0; }
 
 /* ── Receipt card ── */
 .receipt-card {
@@ -39,20 +40,25 @@
     box-shadow: 0 8px 48px rgba(0,0,0,0.45), inset 0 1px 0 rgba(249,180,15,0.07);
     overflow: hidden;
     animation: fadeUp 0.4s ease both;
+    padding: 32px;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
 }
 .receipt-card::before {
     content: ''; display: block; height: 2px;
     background: linear-gradient(90deg, transparent, #f9b40f, #fcd558, transparent);
+    margin: -32px -32px 0;
 }
 
 /* ── Receipt header ── */
 .receipt-header {
-    padding: 28px 32px 24px;
-    border-bottom: 1px solid rgba(249,180,15,0.08);
+    padding: 0;
+    border-bottom: none;
     display: flex; align-items: flex-start; justify-content: space-between; gap: 16px;
     flex-wrap: wrap;
 }
-.receipt-seal { display: flex; align-items: center; gap: 14px; }
+.receipt-seal { display: flex; align-items: center; gap: 16px; }
 .seal-icon {
     width: 52px; height: 52px; border-radius: 14px; flex-shrink: 0;
     background: rgba(249,180,15,0.1); border: 1px solid rgba(249,180,15,0.25);
@@ -70,22 +76,18 @@
 
 /* ── Meta grid ── */
 .meta-grid {
-    display: grid; grid-template-columns: repeat(2, 1fr); gap: 0;
-    border-bottom: 1px solid rgba(249,180,15,0.08);
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 24px;
+    padding-top: 24px;
+    border-top: 1px solid rgba(255,255,255,0.08);
 }
-@media (min-width: 560px) { .meta-grid { grid-template-columns: repeat(4, 1fr); } }
-.meta-cell { padding: 16px 20px; border-right: 1px solid rgba(249,180,15,0.06); }
-.meta-cell:last-child { border-right: none; }
-.meta-cell:nth-child(2) { border-right: 1px solid rgba(249,180,15,0.06); }
-@media (max-width: 559px) {
-    .meta-cell:nth-child(even) { border-right: none; }
-    .meta-cell:nth-child(1), .meta-cell:nth-child(2) { border-bottom: 1px solid rgba(249,180,15,0.06); }
-}
-.meta-lbl { font-size: 0.6rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: rgba(249,180,15,0.4); margin-bottom: 4px; }
-.meta-val { font-size: 0.78rem; font-weight: 700; color: #fffbf0; }
+.meta-cell { padding: 0; }
+.meta-lbl { font-size: 0.62rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.09em; color: rgba(249,180,15,0.62); margin-bottom: 6px; }
+.meta-val { font-size: 0.92rem; font-weight: 700; color: #fffbf0; }
 
 /* ── Votes list ── */
-.votes-section { padding: 24px 32px; }
+.votes-section { padding: 0; }
 .votes-section-title {
     font-size: 0.62rem; font-weight: 700; text-transform: uppercase;
     letter-spacing: 0.1em; color: rgba(249,180,15,0.5); margin-bottom: 16px;
@@ -97,7 +99,7 @@
     padding: 14px 16px; border-radius: 14px;
     border: 1px solid rgba(52,211,153,0.12);
     background: rgba(52,211,153,0.03);
-    margin-bottom: 8px;
+    margin-bottom: 16px;
     transition: all 0.18s;
     animation: fadeUp 0.4s ease both;
 }
@@ -108,7 +110,7 @@
     border-radius: 14px;
     border: 1px solid rgba(52,211,153,0.12);
     background: rgba(52,211,153,0.03);
-    margin-bottom: 8px;
+    margin-bottom: 16px;
     overflow: hidden;
     animation: fadeUp 0.4s ease both;
     transition: all 0.18s;
@@ -196,7 +198,7 @@
 }
 
 /* ── Stats bar ── */
-.stats-bar { margin: 0 32px 24px; display: flex; gap: 10px; flex-wrap: wrap; }
+.stats-bar { display: flex; gap: 16px; flex-wrap: wrap; margin-top: 16px; }
 .stat-pill {
     display: inline-flex; align-items: center; gap: 6px;
     padding: 6px 14px; border-radius: 99px; font-size: 0.65rem; font-weight: 700;
@@ -207,20 +209,24 @@
 
 /* ── Integrity notice ── */
 .integrity-notice {
-    margin: 0 32px 28px;
+    margin: 0;
     display: flex; align-items: flex-start; gap: 10px;
     padding: 12px 16px; border-radius: 10px;
     background: rgba(249,180,15,0.04); border: 1px solid rgba(249,180,15,0.1);
     font-size: 0.68rem; color: rgba(255,251,240,0.4); line-height: 1.65;
 }
 
-@media (max-width: 600px) {
-    .receipt-header  { padding: 20px; }
-    .meta-cell       { padding: 12px 16px; }
-    .votes-section   { padding: 18px 20px; }
-    .stats-bar       { margin: 0 20px 18px; }
-    .integrity-notice{ margin: 0 20px 24px; }
-    .page-title      { font-size: 1.1rem; }
+@media (max-width: 1024px) {
+    .vd-wrap { padding: 0 24px 20px; margin-top: -6px; }
+    .meta-grid { grid-template-columns: repeat(2, 1fr); }
+}
+
+@media (max-width: 640px) {
+    .vd-wrap { padding: 0 16px 16px; margin-top: -2px; }
+    .receipt-card { padding: 20px; gap: 16px; }
+    .receipt-card::before { margin: -20px -20px 0; }
+    .meta-grid { grid-template-columns: 1fr; gap: 16px; }
+    .page-title { font-size: 1.1rem; }
 }
 </style>
 @endpush
@@ -229,9 +235,6 @@
 
     {{-- Page header --}}
     <div class="page-header">
-        <a href="{{ route('voter.dashboard') }}" class="back-btn">
-            <i class="fas fa-arrow-left" style="font-size:0.6rem;"></i> Back
-        </a>
         <div>
             <div class="page-title">My Voting Details</div>
             <div class="page-sub">Official record of your ballot submissions</div>
@@ -279,7 +282,7 @@
         </div>
 
         {{-- Stats pills --}}
-        <div class="stats-bar" style="margin-top:20px;">
+        <div class="stats-bar">
             <span class="stat-pill green">
                 <i class="fas fa-check-circle"></i>
                 {{ $totalVoted }} candidate{{ $totalVoted !== 1 ? 's' : '' }} voted
