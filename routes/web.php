@@ -14,6 +14,7 @@ use App\Http\Controllers\Admin\AdminElectionController;
 use App\Http\Controllers\Admin\AdminReportController;
 use App\Http\Controllers\Admin\DataBackupController;
 use App\Http\Controllers\Admin\AdminActivityLogController;
+use App\Http\Controllers\Admin\AdminSettingsController;
 
 use App\Http\Controllers\Voter\VoterDashboardController;
 use App\Http\Controllers\Voter\VoterCastedVoteController;
@@ -71,15 +72,13 @@ Route::middleware(['auth', 'admin'])
         Route::get('dashboard/live', [AdminDashboardController::class, 'live'])->name('dashboard.live');
 
         // Election Setup
+        Route::get('/admin/students/search', [AdminCandidateController::class, 'searchStudent'])
+            ->name('students.search');
         Route::resource('candidates',    AdminCandidateController::class);
         Route::resource('positions',     AdminPositionController::class);
         Route::resource('partylists',    AdminPartylistController::class);
         Route::resource('organizations', AdminOrganizationController::class);
         Route::resource('colleges',      AdminCollegeController::class);
-
-        Route::get('election',         [AdminElectionController::class, 'index'])->name('election.index');
-        Route::post('election/status', [AdminElectionController::class, 'updateStatus'])->name('election.status');
-        Route::post('election/name',   [AdminElectionController::class, 'updateName'])->name('election.name');
 
         // Voters
         Route::patch('voters/{voter}/status', [AdminVoterController::class, 'toggleStatus'])
@@ -107,21 +106,32 @@ Route::middleware(['auth', 'admin'])
             Route::get('/feedback',   [AdminReportController::class, 'feedback'])->name('feedback');
         });
 
-        // Backups
-        Route::prefix('backups')->name('backups.')->group(function () {
-            Route::get('/',                  [DataBackupController::class, 'index'])->name('index');
-            Route::post('/',                 [DataBackupController::class, 'store'])->name('store');
-            Route::get('/{backup}/download', [DataBackupController::class, 'download'])->name('download');
-            Route::delete('/{backup}',       [DataBackupController::class, 'destroy'])->name('destroy');
-            Route::post('/cleanup',          [DataBackupController::class, 'cleanup'])->name('cleanup');
-            Route::get('/{backup}/status',   [DataBackupController::class, 'status'])->name('status');
-            Route::get('/test-system',       [DataBackupController::class, 'testBackup'])->name('test');
-            Route::post('/quick-backup',     [DataBackupController::class, 'quickBackup'])->name('quick');
-            Route::get('/statistics',        [DataBackupController::class, 'statistics'])->name('statistics');
-        });
 
         Route::get('activity-logs',      [AdminActivityLogController::class, 'index'])->name('activity-logs.index');
         Route::get('activity-logs/live', [AdminActivityLogController::class, 'live'])->name('activity-logs.live');
+
+        Route::prefix('settings')->name('settings.')->group(function () {
+ 
+            // Main page (tab=election | tab=backups)
+            Route::get('/', [AdminSettingsController::class, 'index'])->name('index');
+        
+            // Election sub-routes
+            Route::post('/election/status', [AdminSettingsController::class, 'updateStatus'])->name('election.status');
+            Route::post('/election/name',   [AdminSettingsController::class, 'updateName'])->name('election.name');
+        
+            // Backup sub-routes
+            Route::prefix('backups')->name('backups.')->group(function () {
+                Route::post('/',                  [AdminSettingsController::class, 'storeBackup'])->name('store');
+                Route::get('/{backup}/download',  [AdminSettingsController::class, 'downloadBackup'])->name('download');
+                Route::delete('/{backup}',        [AdminSettingsController::class, 'destroyBackup'])->name('destroy');
+                Route::post('/cleanup',           [AdminSettingsController::class, 'cleanupBackups'])->name('cleanup');
+                Route::get('/{backup}/status',    [AdminSettingsController::class, 'backupStatus'])->name('status');
+                Route::get('/test-system',        [AdminSettingsController::class, 'testSystem'])->name('test');
+                Route::post('/quick-backup',      [AdminSettingsController::class, 'quickBackup'])->name('quick');
+                Route::get('/statistics',         [AdminSettingsController::class, 'backupStatistics'])->name('statistics');
+            });
+        
+        });
 
 });
 
@@ -131,7 +141,7 @@ Route::middleware(['auth', 'admin'])
 |--------------------------------------------------------------------------
 */
 
-Route::middleware(['auth', 'voter'])->prefix('voter')->name('voter.')->group(function () {
+Route::middleware(['auth', 'voter', 'election.status'])->prefix('voter')->name('voter.')->group(function () {
  
     // Dashboard
     Route::get('/dashboard',    [VoterDashboardController::class, 'index'])->name('dashboard');

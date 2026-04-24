@@ -2,135 +2,135 @@
 @push('styles')
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;800;900&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <style>
-*, *::before, *::after { box-sizing: border-box; }
+    *, *::before, *::after { box-sizing: border-box; }
 
-@keyframes fadeUp {
-    from { opacity: 0; transform: translateY(16px); }
-    to   { opacity: 1; transform: translateY(0); }
-}
-@keyframes shimmerBar {
-    0%,100% { background-position: 0% 0%; }
-    50%      { background-position: 100% 0%; }
-}
+    @keyframes fadeUp {
+        from { opacity: 0; transform: translateY(16px); }
+        to   { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes shimmerBar {
+        0%,100% { background-position: 0% 0%; }
+        50%      { background-position: 100% 0%; }
+    }
 
-.ac-wrap { max-width: 760px; margin: 0 auto; padding: 0 0 60px; }
+    .ac-wrap { max-width: 760px; margin: 0 auto; padding: 0 0 60px; }
 
-.ac-page-header {
-    display: flex; align-items: center; gap: 14px; margin-bottom: 28px;
-    animation: fadeUp .3s ease both;
-}
-.ac-back-btn {
-    display: inline-flex; align-items: center; justify-content: center;
-    width: 34px; height: 34px; border-radius: 10px; flex-shrink: 0;
-    border: 1px solid rgba(249,180,15,0.2); background: transparent;
-    font-size: 0.72rem; color: rgba(249,180,15,0.6);
-    text-decoration: none; transition: all .18s;
-}
-.ac-back-btn:hover { border-color: rgba(249,180,15,0.4); color: #f9b40f; background: rgba(249,180,15,0.06); }
-.ac-page-title { font-family:'Playfair Display',serif; font-size:1.4rem; font-weight:900; color:#fffbf0; margin:0; }
-.ac-page-sub   { font-size:0.72rem; color:rgba(255,251,240,0.4); margin-top:3px; }
+    .ac-page-header {
+        display: flex; align-items: center; gap: 14px; margin-bottom: 28px;
+        animation: fadeUp .3s ease both;
+    }
+    .ac-back-btn {
+        display: inline-flex; align-items: center; justify-content: center;
+        width: 34px; height: 34px; border-radius: 10px; flex-shrink: 0;
+        border: 1px solid rgba(249,180,15,0.2); background: transparent;
+        font-size: 0.72rem; color: rgba(249,180,15,0.6);
+        text-decoration: none; transition: all .18s;
+    }
+    .ac-back-btn:hover { border-color: rgba(249,180,15,0.4); color: #f9b40f; background: rgba(249,180,15,0.06); }
+    .ac-page-title { font-family:'Playfair Display',serif; font-size:1.4rem; font-weight:900; color:#fffbf0; margin:0; }
+    .ac-page-sub   { font-size:0.72rem; color:rgba(255,251,240,0.4); margin-top:3px; }
 
-/* ── Section card ── */
-.ac-card {
-    background: rgba(26,0,32,0.88);
-    backdrop-filter: blur(24px);
-    border: 1px solid rgba(249,180,15,0.18);
-    border-radius: 18px;
-    box-shadow: 0 4px 32px rgba(0,0,0,0.35), inset 0 1px 0 rgba(249,180,15,0.06);
-    overflow: hidden;
-    margin-bottom: 16px;
-    animation: fadeUp .4s ease both;
-}
-.ac-card::before {
-    content: ''; display: block; height: 2px;
-    background: linear-gradient(90deg, transparent, #f9b40f, #fcd558, transparent);
-    background-size: 200% 100%;
-    animation: shimmerBar 3s ease-in-out infinite;
-}
-.ac-card-header {
-    padding: 18px 28px 14px;
-    border-bottom: 1px solid rgba(249,180,15,0.08);
-    display: flex; align-items: center; gap: 12px;
-    background: linear-gradient(to right, rgba(56,0,65,0.3), transparent);
-}
-.ac-card-icon {
-    width: 36px; height: 36px; border-radius: 10px; flex-shrink: 0;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 0.8rem;
-}
-.ac-card-title { font-family:'Playfair Display',serif; font-size:0.95rem; font-weight:800; color:#fffbf0; }
-.ac-card-body  { padding: 24px 28px; }
-.ac-card-grid  { display:grid; grid-template-columns:1fr 1fr; gap:18px; }
-.ac-card-grid .span2 { grid-column: span 2; }
-@media (max-width:560px) { .ac-card-grid { grid-template-columns:1fr; } .ac-card-grid .span2 { grid-column:span 1; } }
+    /* ── Section card ── */
+    .ac-card {
+        background: rgba(26,0,32,0.88);
+        backdrop-filter: blur(24px);
+        border: 1px solid rgba(249,180,15,0.18);
+        border-radius: 18px;
+        box-shadow: 0 4px 32px rgba(0,0,0,0.35), inset 0 1px 0 rgba(249,180,15,0.06);
+        overflow: hidden;
+        margin-bottom: 16px;
+        animation: fadeUp .4s ease both;
+    }
+    .ac-card::before {
+        content: ''; display: block; height: 2px;
+        background: linear-gradient(90deg, transparent, #f9b40f, #fcd558, transparent);
+        background-size: 200% 100%;
+        animation: shimmerBar 3s ease-in-out infinite;
+    }
+    .ac-card-header {
+        padding: 18px 28px 14px;
+        border-bottom: 1px solid rgba(249,180,15,0.08);
+        display: flex; align-items: center; gap: 12px;
+        background: linear-gradient(to right, rgba(56,0,65,0.3), transparent);
+    }
+    .ac-card-icon {
+        width: 36px; height: 36px; border-radius: 10px; flex-shrink: 0;
+        display: flex; align-items: center; justify-content: center;
+        font-size: 0.8rem;
+    }
+    .ac-card-title { font-family:'Playfair Display',serif; font-size:0.95rem; font-weight:800; color:#fffbf0; }
+    .ac-card-body  { padding: 24px 28px; }
+    .ac-card-grid  { display:grid; grid-template-columns:1fr 1fr; gap:18px; }
+    .ac-card-grid .span2 { grid-column: span 2; }
+    @media (max-width:560px) { .ac-card-grid { grid-template-columns:1fr; } .ac-card-grid .span2 { grid-column:span 1; } }
 
-/* ── Fields ── */
-.ac-label {
-    display:block; font-size:0.6rem; font-weight:700; text-transform:uppercase;
-    letter-spacing:.08em; color:rgba(249,180,15,0.5); margin-bottom:7px;
-}
-.ac-label span { color:#f87171; }
-.ac-input, .ac-select, .ac-textarea {
-    width:100%; background:rgba(56,0,65,0.6); border:1px solid rgba(249,180,15,0.15);
-    border-radius:10px; padding:10px 14px;
-    font-family:'DM Sans',sans-serif; font-size:0.82rem; color:#fffbf0;
-    outline:none; transition:border-color .2s, box-shadow .2s;
-}
-.ac-input::placeholder, .ac-textarea::placeholder { color:rgba(255,251,240,0.2); }
-.ac-input:focus, .ac-select:focus, .ac-textarea:focus {
-    border-color:rgba(249,180,15,0.4); box-shadow:0 0 0 3px rgba(249,180,15,0.06);
-}
-.ac-input.err, .ac-select.err, .ac-textarea.err { border-color:rgba(248,113,113,0.5); }
-.ac-select {
-    -webkit-appearance:none; appearance:none;
-    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='rgba(249,180,15,0.5)' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
-    background-repeat:no-repeat; background-position:right 12px center;
-    padding-right:32px;
-}
-.ac-select option { background:#1a0020; }
-.ac-textarea { resize:vertical; min-height:100px; }
-.ac-error { display:flex;align-items:center;gap:5px; margin-top:5px; font-size:0.68rem; color:#f87171; }
-.ac-hint  { display:flex;align-items:center;gap:5px; margin-top:6px; font-size:0.65rem; color:rgba(249,180,15,0.35); }
+    /* ── Fields ── */
+    .ac-label {
+        display:block; font-size:0.6rem; font-weight:700; text-transform:uppercase;
+        letter-spacing:.08em; color:rgba(249,180,15,0.5); margin-bottom:7px;
+    }
+    .ac-label span { color:#f87171; }
+    .ac-input, .ac-select, .ac-textarea {
+        width:100%; background:rgba(56,0,65,0.6); border:1px solid rgba(249,180,15,0.15);
+        border-radius:10px; padding:10px 14px;
+        font-family:'DM Sans',sans-serif; font-size:0.82rem; color:#fffbf0;
+        outline:none; transition:border-color .2s, box-shadow .2s;
+    }
+    .ac-input::placeholder, .ac-textarea::placeholder { color:rgba(255,251,240,0.2); }
+    .ac-input:focus, .ac-select:focus, .ac-textarea:focus {
+        border-color:rgba(249,180,15,0.4); box-shadow:0 0 0 3px rgba(249,180,15,0.06);
+    }
+    .ac-input.err, .ac-select.err, .ac-textarea.err { border-color:rgba(248,113,113,0.5); }
+    .ac-select {
+        -webkit-appearance:none; appearance:none;
+        background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='rgba(249,180,15,0.5)' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
+        background-repeat:no-repeat; background-position:right 12px center;
+        padding-right:32px;
+    }
+    .ac-select option { background:#1a0020; }
+    .ac-textarea { resize:vertical; min-height:100px; }
+    .ac-error { display:flex;align-items:center;gap:5px; margin-top:5px; font-size:0.68rem; color:#f87171; }
+    .ac-hint  { display:flex;align-items:center;gap:5px; margin-top:6px; font-size:0.65rem; color:rgba(249,180,15,0.35); }
 
-/* ── File input ── */
-.ac-file-input {
-    width:100%; background:rgba(56,0,65,0.6); border:1px solid rgba(249,180,15,0.15);
-    border-radius:10px; padding:8px 12px;
-    font-family:'DM Sans',sans-serif; font-size:0.78rem; color:#fffbf0;
-    transition:border-color .2s;
-}
-.ac-file-input:focus { outline:none; border-color:rgba(249,180,15,0.4); }
-.ac-file-input::file-selector-button {
-    padding:4px 12px; border-radius:7px; border:none; cursor:pointer;
-    background:rgba(249,180,15,0.15); color:rgba(249,180,15,0.8);
-    font-family:'DM Sans',sans-serif; font-size:0.72rem; font-weight:700;
-    margin-right:10px; transition:background .18s;
-}
-.ac-file-input::file-selector-button:hover { background:rgba(249,180,15,0.25); }
+    /* ── File input ── */
+    .ac-file-input {
+        width:100%; background:rgba(56,0,65,0.6); border:1px solid rgba(249,180,15,0.15);
+        border-radius:10px; padding:8px 12px;
+        font-family:'DM Sans',sans-serif; font-size:0.78rem; color:#fffbf0;
+        transition:border-color .2s;
+    }
+    .ac-file-input:focus { outline:none; border-color:rgba(249,180,15,0.4); }
+    .ac-file-input::file-selector-button {
+        padding:4px 12px; border-radius:7px; border:none; cursor:pointer;
+        background:rgba(249,180,15,0.15); color:rgba(249,180,15,0.8);
+        font-family:'DM Sans',sans-serif; font-size:0.72rem; font-weight:700;
+        margin-right:10px; transition:background .18s;
+    }
+    .ac-file-input::file-selector-button:hover { background:rgba(249,180,15,0.25); }
 
-/* ── Actions bar ── */
-.ac-actions {
-    background:rgba(26,0,32,0.88); backdrop-filter:blur(24px);
-    border:1px solid rgba(249,180,15,0.18); border-radius:18px;
-    box-shadow:0 4px 32px rgba(0,0,0,0.35), inset 0 1px 0 rgba(249,180,15,0.06);
-    padding:20px 28px; display:flex; align-items:center; gap:12px;
-    animation:fadeUp .52s ease both;
-}
-.ac-btn {
-    display:inline-flex; align-items:center; gap:7px;
-    padding:10px 22px; border-radius:10px;
-    font-family:'DM Sans',sans-serif; font-size:0.78rem; font-weight:700;
-    cursor:pointer; transition:all .18s; text-decoration:none; border:none;
-}
-.ac-btn-primary {
-    background:linear-gradient(135deg,#f9b40f,#fcd558); color:#380041;
-    box-shadow:0 3px 12px rgba(249,180,15,0.3);
-}
-.ac-btn-primary:hover { transform:translateY(-1px); box-shadow:0 5px 18px rgba(249,180,15,0.45); color:#380041; }
-.ac-btn-ghost {
-    background:transparent; border:1px solid rgba(249,180,15,0.2); color:rgba(249,180,15,0.55);
-}
-.ac-btn-ghost:hover { background:rgba(249,180,15,0.06); color:#f9b40f; }
+    /* ── Actions bar ── */
+    .ac-actions {
+        background:rgba(26,0,32,0.88); backdrop-filter:blur(24px);
+        border:1px solid rgba(249,180,15,0.18); border-radius:18px;
+        box-shadow:0 4px 32px rgba(0,0,0,0.35), inset 0 1px 0 rgba(249,180,15,0.06);
+        padding:20px 28px; display:flex; align-items:center; gap:12px;
+        animation:fadeUp .52s ease both;
+    }
+    .ac-btn {
+        display:inline-flex; align-items:center; gap:7px;
+        padding:10px 22px; border-radius:10px;
+        font-family:'DM Sans',sans-serif; font-size:0.78rem; font-weight:700;
+        cursor:pointer; transition:all .18s; text-decoration:none; border:none;
+    }
+    .ac-btn-primary {
+        background:linear-gradient(135deg,#f9b40f,#fcd558); color:#380041;
+        box-shadow:0 3px 12px rgba(249,180,15,0.3);
+    }
+    .ac-btn-primary:hover { transform:translateY(-1px); box-shadow:0 5px 18px rgba(249,180,15,0.45); color:#380041; }
+    .ac-btn-ghost {
+        background:transparent; border:1px solid rgba(249,180,15,0.2); color:rgba(249,180,15,0.55);
+    }
+    .ac-btn-ghost:hover { background:rgba(249,180,15,0.06); color:#f9b40f; }
 </style>
 @endpush
 
@@ -143,6 +143,51 @@
         <div>
             <div class="ac-page-title">Add New Candidate</div>
             <div class="ac-page-sub">Create a new candidate entry</div>
+        </div>
+    </div>
+
+    {{-- Student Search --}}
+    <div class="bg-white dark:bg-violet-950/40 rounded-2xl border border-violet-100 dark:border-violet-800/50 shadow-sm overflow-hidden">
+        <div class="px-6 py-4 border-b border-violet-100 dark:border-violet-800/50
+                    bg-gradient-to-r from-violet-50 to-transparent dark:from-violet-900/20">
+            <h3 class="font-semibold text-gray-800 dark:text-gray-100 flex items-center gap-2">
+                <div class="w-7 h-7 rounded-lg bg-gradient-to-br from-amber-500 to-amber-400
+                            flex items-center justify-center text-white text-xs shadow-sm">
+                    <i class="fas fa-magnifying-glass"></i>
+                </div>
+                Search Student
+            </h3>
+        </div>
+
+        <div class="p-6">
+            <label class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-1.5">
+                Type a name to search
+            </label>
+            <div class="relative">
+                <input type="text" id="student_search_input"
+                    placeholder="e.g. Juan dela Cruz"
+                    autocomplete="off"
+                    class="w-full px-4 py-2.5 rounded-xl text-sm
+                            border border-violet-200 dark:border-violet-700
+                            bg-violet-50/40 dark:bg-violet-900/30
+                            text-gray-800 dark:text-gray-200
+                            focus:outline-none focus:ring-2 focus:ring-violet-400
+                            placeholder-violet-300 dark:placeholder-violet-600">
+
+                {{-- Spinner --}}
+                <div id="search_spinner" class="hidden absolute right-3 top-1/2 -translate-y-1/2">
+                    <i class="fas fa-spinner fa-spin text-violet-400 text-sm"></i>
+                </div>
+
+                {{-- Dropdown results --}}
+                <div id="search_dropdown"
+                    class="hidden absolute z-50 mt-1 w-full bg-white dark:bg-violet-950
+                            border border-violet-200 dark:border-violet-700
+                            rounded-xl shadow-lg overflow-hidden">
+            </div>
+
+            {{-- Status feedback --}}
+            <div id="search_status" class="hidden mt-3 text-sm font-medium flex items-center gap-2"></div>
         </div>
     </div>
 
@@ -302,4 +347,110 @@
     </form>
 
 </div>
+@push('scripts')
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const searchInput = document.getElementById('student_search_input');
+    const dropdown    = document.getElementById('search_dropdown');
+    const spinner     = document.getElementById('search_spinner');
+    const status      = document.getElementById('search_status');
+    let debounceTimer = null;
+
+    function showStatus(type, message) {
+        status.classList.remove('hidden');
+        status.className = 'mt-3 text-sm font-medium flex items-center gap-2';
+
+        const icons = { success: 'fa-circle-check text-emerald-500', error: 'fa-circle-xmark text-rose-500' };
+        const colors = { success: 'text-emerald-600 dark:text-emerald-400', error: 'text-rose-600 dark:text-rose-400' };
+
+        status.innerHTML = `<i class="fas ${icons[type]}"></i><span class="${colors[type]}">${message}</span>`;
+    }
+
+    function hideDropdown() {
+        dropdown.classList.add('hidden');
+        dropdown.innerHTML = '';
+    }
+
+    function fillForm(student) {
+        document.querySelector('[name="first_name"]').value  = student.first_name;
+        document.querySelector('[name="middle_name"]').value = student.middle_name;
+        document.querySelector('[name="last_name"]').value   = student.last_name;
+        document.querySelector('[name="course"]').value      = student.course;
+
+        const collegeSelect = document.querySelector('[name="college_id"]');
+        if (student.college_id) {
+            collegeSelect.value = student.college_id;
+        }
+
+        searchInput.value = student.last_name + ', ' + student.first_name;
+        hideDropdown();
+        showStatus('success', `Filled in: ${student.first_name} ${student.last_name} (${student.course})`);
+    }
+
+    function renderDropdown(results) {
+        dropdown.innerHTML = '';
+
+        if (results.length === 0) {
+            dropdown.innerHTML = `
+                <div class="px-4 py-3 text-sm text-violet-400 dark:text-violet-500 flex items-center gap-2">
+                    <i class="fas fa-circle-info"></i> No students found
+                </div>`;
+            dropdown.classList.remove('hidden');
+            return;
+        }
+
+        results.forEach(student => {
+            const item = document.createElement('button');
+            item.type = 'button';
+            item.className = `w-full text-left px-4 py-3 text-sm
+                hover:bg-violet-50 dark:hover:bg-violet-900/40
+                border-b border-violet-100 dark:border-violet-800/50 last:border-0
+                transition-colors duration-150`;
+            item.innerHTML = `
+                <div class="font-semibold text-gray-800 dark:text-gray-100">
+                    ${student.last_name}, ${student.first_name}${student.middle_name ? ' ' + student.middle_name[0] + '.' : ''}
+                </div>
+                <div class="text-xs text-violet-500 dark:text-violet-400 mt-0.5">
+                    ${student.course} ${ student.college ? '· ' + student.college : ''}
+                </div>`;
+            item.addEventListener('click', () => fillForm(student));
+            dropdown.appendChild(item);
+        });
+
+        dropdown.classList.remove('hidden');
+    }
+
+    async function doSearch(query) {
+        if (query.length < 2) {
+            hideDropdown();
+            return;
+        }
+
+        spinner.classList.remove('hidden');
+
+        try {
+            const res     = await fetch(`{{ route('admin.students.search') }}?q=${encodeURIComponent(query)}`);
+            const results = await res.json();
+            renderDropdown(results);
+        } catch (e) {
+            hideDropdown();
+        } finally {
+            spinner.classList.add('hidden');
+        }
+    }
+
+    searchInput.addEventListener('input', function () {
+        clearTimeout(debounceTimer);
+        debounceTimer = setTimeout(() => doSearch(this.value.trim()), 300);
+    });
+
+    // Close dropdown when clicking outside
+    document.addEventListener('click', function (e) {
+        if (!searchInput.contains(e.target) && !dropdown.contains(e.target)) {
+            hideDropdown();
+        }
+    });
+});
+</script>
+@endpush
 </x-app-layout>

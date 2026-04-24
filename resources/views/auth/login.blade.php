@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" class="dark" style="background:#1e0025;">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -11,6 +11,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
     @vite(['resources/css/app.css','resources/css/auth/login.css', 'resources/js/app.js'])
+    <script>document.documentElement.classList.add('dark');</script>
 </head>
     <body class="antialiased" x-data>
 
@@ -234,28 +235,7 @@
             });
         </script>
         <script>
-            if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
-                document.documentElement.classList.add('dark');
-            } else {
-                document.documentElement.classList.remove('dark');
-            }
-
-            document.addEventListener('alpine:init', () => {
-                Alpine.store('darkMode', {
-                    init() {
-                        const theme = localStorage.getItem('theme');
-                        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-                        this.on = theme === 'dark' || (!theme && prefersDark);
-                        document.documentElement.classList.toggle('dark', this.on);
-                    },
-                    on: false,
-                    toggle() {
-                        this.on = !this.on;
-                        localStorage.setItem('theme', this.on ? 'dark' : 'light');
-                        document.documentElement.classList.toggle('dark', this.on);
-                    }
-                });
-            });
+            document.documentElement.classList.add('dark');
         </script>
 
     </body>

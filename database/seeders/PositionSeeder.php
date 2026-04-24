@@ -21,10 +21,11 @@ class PositionSeeder extends Seeder
             ['name' => 'Treasurer',                  'sort_order' => 8,  'max_votes' => 1],
             ['name' => 'Associate Treasurer',        'sort_order' => 9,  'max_votes' => 1],
             ['name' => 'Auditor',                    'sort_order' => 10, 'max_votes' => 1],
-            ['name' => 'Public Relation Officer',    'sort_order' => 11, 'max_votes' => 1],
-            ['name' => 'Second Year Representative', 'sort_order' => 12, 'max_votes' => 1],
-            ['name' => 'Third Year Representative',  'sort_order' => 13, 'max_votes' => 1],
-            ['name' => 'Fourth Year Representative', 'sort_order' => 14, 'max_votes' => 1],
+            ['name' => 'Associate Auditor',          'sort_order' => 11, 'max_votes' => 1],
+            ['name' => 'Public Relation Officer',    'sort_order' => 12, 'max_votes' => 1],
+            ['name' => 'Second Year Representative', 'sort_order' => 13, 'max_votes' => 1],
+            ['name' => 'Third Year Representative',  'sort_order' => 14, 'max_votes' => 1],
+            ['name' => 'Fourth Year Representative', 'sort_order' => 15, 'max_votes' => 1],
         ];
 
         foreach ($positions as $position) {

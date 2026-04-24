@@ -14,6 +14,7 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->alias([
             'admin' => \App\Http\Middleware\AdminMiddleware::class,
             'voter' => \App\Http\Middleware\VoterMiddleware::class,
+            'election.status' => \App\Http\Middleware\ElectionStatusMiddleware::class,
             
         ]);
         $middleware->trustProxies(at: '*');

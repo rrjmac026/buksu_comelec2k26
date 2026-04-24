@@ -57,7 +57,7 @@
 
         @stack('styles')
     </head>
-    <body class="font-sans antialiased"
+    <body class="font-sans antialiased dark bg-[#0f0a1e]"
           :class="{ 'dark bg-[#0f0a1e]': $store.darkMode.on, 'bg-violet-50/40': !$store.darkMode.on }">
         <div class="min-h-screen flex flex-col w-full">
 

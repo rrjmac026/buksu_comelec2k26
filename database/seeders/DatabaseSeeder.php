@@ -24,11 +24,12 @@ class DatabaseSeeder extends Seeder
         // ]);
 
         $this->call([
+            PartylistSeeder::class,
             CollegeSeeder::class,
             PositionSeeder::class,
             OrganizationSeeder::class,
-            PartylistSeeder::class,
-            TestCandidateSeeder::class
+            CandidateSeeder::class,
+            // TestCandidateSeeder::class
         ]);
 
         // Admin Seeders
@@ -62,28 +63,28 @@ class DatabaseSeeder extends Seeder
             ]
         );
 
-        User::updateOrCreate(
-            ['email' => 'user@student.buksu.edu.ph'],
-            [
-                'first_name' => 'Regular',
-                'last_name' => 'User',
-                'password' => Hash::make('password'),
-                'role' => 'voter',
-            ]
-        );
+        // User::updateOrCreate(
+        //     ['email' => 'user@student.buksu.edu.ph'],
+        //     [
+        //         'first_name' => 'Regular',
+        //         'last_name' => 'User',
+        //         'password' => Hash::make('password'),
+        //         'role' => 'voter',
+        //     ]
+        // );
 
-        \DB::table('users')->updateOrInsert(
-            ['email' => 'prototypecapstone@gmail.com'],
-            [
-                'first_name' => 'Putangina Mo',
-                'last_name' => 'Bobo Ka',
-                'password'   => null,
-                'role'       => 'voter',
-                'status'     => 'active',
-                'created_at' => now(),
-                'updated_at' => now(),
-            ]
-        );
+        // \DB::table('users')->updateOrInsert(
+        //     ['email' => 'prototypecapstone@gmail.com'],
+        //     [
+        //         'first_name' => 'Putangina Mo',
+        //         'last_name' => 'Bobo Ka',
+        //         'password'   => null,
+        //         'role'       => 'voter',
+        //         'status'     => 'active',
+        //         'created_at' => now(),
+        //         'updated_at' => now(),
+        //     ]
+        // );
         
     }
 }

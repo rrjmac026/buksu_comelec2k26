@@ -14,11 +14,39 @@ class AdminCandidateController extends Controller
 {
     public function index()
     {
-        $candidates = Candidate::with(['partylist', 'organization', 'position', 'college'])
-            ->latest()
-            ->paginate(15);
+        $query = Candidate::with(['partylist', 'organization', 'position', 'college']);
 
-        return view('admin.candidates.index', compact('candidates'));
+        // Apply search filter
+        if ($search = request('search')) {
+            $query->where(function ($q) use ($search) {
+                $q->where('first_name', 'like', "%{$search}%")
+                  ->orWhere('last_name', 'like', "%{$search}%")
+                  ->orWhere('course', 'like', "%{$search}%")
+                  ->orWhereHas('position', fn($p) => $p->where('name', 'like', "%{$search}%"));
+            });
+        }
+
+        // Apply college filter
+        if ($college_id = request('college_id')) {
+            $query->where('college_id', $college_id);
+        }
+
+        // Apply partylist filter
+        if ($partylist_id = request('partylist_id')) {
+            $query->where('partylist_id', $partylist_id);
+        }
+
+        // Compute stats from the filtered query
+        $stats = [
+            'total' => $query->count(),
+            'partylists' => $query->distinct('partylist_id')->count('partylist_id'),
+            'colleges' => $query->distinct('college_id')->count('college_id'),
+            'votes' => \App\Models\CastedVote::count(),
+        ];
+
+        $candidates = $query->latest()->paginate(15);
+
+        return view('admin.candidates.index', compact('candidates', 'stats'));
     }
 
     public function create()
@@ -33,6 +61,7 @@ class AdminCandidateController extends Controller
 
     public function store(Request $request)
     {
+        
         $validated = $request->validate([
             'first_name'      => ['required', 'string', 'max:100'],
             'last_name'       => ['required', 'string', 'max:100'],
@@ -43,7 +72,7 @@ class AdminCandidateController extends Controller
             'college_id'      => ['required', 'exists:colleges,id'],         // PK is id ✅
             'course'          => ['required', 'string', 'max:100'],
             'platform'        => ['nullable', 'string'],
-            'photo'           => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:2048'],
+            'photo'           => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:10240'],
         ]);
 
         if ($request->hasFile('photo')) {
@@ -88,7 +117,7 @@ class AdminCandidateController extends Controller
             'college_id'      => ['required', 'exists:colleges,id'],         // PK is id ✅
             'course'          => ['required', 'string', 'max:100'],
             'platform'        => ['nullable', 'string'],
-            'photo'           => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:2048'],
+            'photo'           => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:10240'],
         ]);
 
         if ($request->hasFile('photo')) {
@@ -120,5 +149,38 @@ class AdminCandidateController extends Controller
 
         return redirect()->route('admin.candidates.index')
             ->with('success', 'Candidate deleted successfully.');
+    }
+
+    public function searchStudent(Request $request)
+    {
+        $query = trim($request->query('q', ''));
+
+        if (strlen($query) < 2) {
+            return response()->json([]);
+        }
+
+        $users = \App\Models\User::with('college')
+            ->where('role', 'voter')
+            ->where(function ($q) use ($query) {
+                $q->where('first_name', 'like', "%{$query}%")
+                ->orWhere('last_name', 'like', "%{$query}%")
+                ->orWhere('middle_name', 'like', "%{$query}%")
+                ->orWhereRaw("CONCAT(first_name, ' ', last_name) like ?", ["%{$query}%"])
+                ->orWhereRaw("CONCAT(last_name, ', ', first_name) like ?", ["%{$query}%"]);
+            })
+            ->limit(10)
+            ->get()
+            ->map(fn($u) => [
+                'id'          => $u->id,
+                'first_name'  => $u->first_name,
+                'middle_name' => $u->middle_name ?? '',
+                'last_name'   => $u->last_name,
+                'college_id'  => $u->college_id,
+                'college'     => $u->college?->name ?? '',
+                'course'      => $u->course,
+                'display'     => $u->last_name . ', ' . $u->first_name . ($u->middle_name ? ' ' . $u->middle_name[0] . '.' : '') . ' — ' . $u->course,
+            ]);
+
+        return response()->json($users);
     }
 }
