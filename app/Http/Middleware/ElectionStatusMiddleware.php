@@ -9,10 +9,15 @@ use Symfony\Component\HttpFoundation\Response;
 
 class ElectionStatusMiddleware
 {
+    private function normalizeStatus(string $status): string
+    {
+        return $status === 'upcoming' ? 'not_started' : $status;
+    }
+
     public function handle(Request $request, Closure $next): Response
     {
-        $status       = ElectionSetting::status();
-        $electionName = ElectionSetting::get('election_name', 'Student Council Election');
+        $status       = $this->normalizeStatus(ElectionSetting::status());
+        $electionName = ElectionSetting::get('election_name', 'Student Government Election');
 
         // ── Share with ALL voter views automatically ────────────────
         view()->share('electionStatus', $status);
@@ -29,9 +34,9 @@ class ElectionStatusMiddleware
         );
 
         if ($isVotingRoute) {
-            if ($status === 'upcoming') {
+            if ($status === 'not_started') {
                 return redirect()->route('voter.dashboard')
-                    ->with('election_blocked', 'upcoming');
+                    ->with('election_blocked', 'not_started');
             }
 
             if ($status === 'ended') {

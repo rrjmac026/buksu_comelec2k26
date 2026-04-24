@@ -29,10 +29,17 @@
         </div>
     </div>
 
-    @php $electionStatus = $electionStatus ?? \App\Models\ElectionSetting::status(); @endphp
+    @php
+        $electionStatus = $electionStatus ?? \App\Models\ElectionSetting::status();
+        $normalizedElectionStatus = $electionStatus === 'upcoming' ? 'not_started' : $electionStatus;
+        $voteBlocked = in_array($normalizedElectionStatus, ['not_started', 'ended'], true);
+        $voteTooltip = $normalizedElectionStatus === 'not_started'
+            ? 'Voting will be available once the election starts'
+            : 'Voting is closed because the election has ended';
+    @endphp
 
     {{-- Election Status Banner --}}
-    @if($electionStatus === 'upcoming')
+    @if(in_array($electionStatus, ['upcoming', 'not_started'], true))
     <div style="display:flex;align-items:center;gap:14px;padding:18px 24px;border-radius:16px;
                 background:rgba(249,180,15,0.08);border:1px solid rgba(249,180,15,0.22);
                 margin-bottom:20px;animation:fadeUp .4s ease both;">
@@ -192,11 +199,13 @@
                         </a>
                     </div>
                 @else
-                    @if(($electionStatus ?? \App\Models\ElectionSetting::status()) === 'ongoing')
-                        <a href="{{ route('voter.vote.intro') }}" class="vd-cta-btn vd-cta-btn-full">
+                    <a href="{{ route('voter.vote.intro') }}"
+                       class="vd-cta-btn vd-cta-btn-full {{ $voteBlocked ? 'opacity-70 cursor-not-allowed' : '' }}"
+                       data-election-guard="vote"
+                       title="{{ $voteBlocked ? $voteTooltip : '' }}"
+                       aria-disabled="{{ $voteBlocked ? 'true' : 'false' }}">
                             <i class="fas fa-vote-yea"></i> Cast My Vote Now
-                        </a>
-                    @endif
+                    </a>
                 @endif
             </div>
         </div>

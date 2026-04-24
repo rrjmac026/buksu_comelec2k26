@@ -32,6 +32,10 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/', fn() => view('welcome'))->name('home');
 Route::get('/public/stats', [PublicController::class, 'stats'])->name('public.stats');
+Route::view('/elections', 'public.elections')->name('public.elections');
+Route::view('/how-it-works', 'public.how-it-works')->name('public.how-it-works');
+Route::view('/contact', 'public.contact')->name('public.contact');
+Route::view('/about', 'public.about')->name('public.about');
 
 
 /*

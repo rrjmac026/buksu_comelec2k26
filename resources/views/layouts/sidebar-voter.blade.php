@@ -5,6 +5,12 @@
 @php
     $currentRoute = Route::currentRouteName();
     $hasVoted     = auth()->user()->hasVoted();
+    $rawElectionStatus = $electionStatus ?? \App\Models\ElectionSetting::status();
+    $voteStatus = $rawElectionStatus === 'upcoming' ? 'not_started' : $rawElectionStatus;
+    $voteBlocked = in_array($voteStatus, ['not_started', 'ended'], true);
+    $voteTooltip = $voteStatus === 'not_started'
+        ? 'Voting will be available once the election starts'
+        : 'Voting is closed because the election has ended';
 @endphp
 
 {{-- ── Overview ── --}}
@@ -24,7 +30,10 @@
 
 {{-- Always show Cast My Vote — the intro page handles already-voted state --}}
 <a href="{{ route('voter.vote.intro') }}"
-   class="nav-link {{ Str::startsWith($currentRoute, 'voter.vote') ? 'active' : '' }}">
+   class="nav-link {{ Str::startsWith($currentRoute, 'voter.vote') ? 'active' : '' }} {{ $voteBlocked ? 'opacity-70 cursor-not-allowed' : '' }}"
+   data-election-guard="vote"
+   title="{{ $voteBlocked ? $voteTooltip : '' }}"
+   aria-disabled="{{ $voteBlocked ? 'true' : 'false' }}">
     <div class="nav-link-icon"><i class="fas fa-vote-yea"></i></div>
     <div class="nav-link-text">
         <span class="nav-link-label">Cast My Vote</span>

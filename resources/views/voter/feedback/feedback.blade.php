@@ -3,7 +3,22 @@
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;800;900&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
 *, *::before, *::after { box-sizing: border-box; }
-.fb-wrap { max-width: 700px; margin: 32px auto; padding: 0 16px 60px; }
+
+/* Remove excess top space from shared layout on this page only */
+body main {
+    padding-top: 0 !important;
+}
+
+/* Page container */
+.fb-wrap {
+    max-width: 1120px;
+    margin: 0 auto;
+    padding: -50px 20px 24px;
+    min-height: calc(100vh - 92px);
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+}
 
 @keyframes fadeUp {
     from { opacity: 0; transform: translateY(18px); }
@@ -21,33 +36,33 @@
 
 /* ── Page header ── */
 .page-header {
-    display: flex; align-items: center; gap: 14px; margin-bottom: 24px;
+    display: block;
+    margin-bottom: 14px;
     animation: fadeUp 0.35s ease both;
 }
-.back-btn {
-    display: inline-flex; align-items: center; gap: 6px;
-    padding: 7px 14px; border-radius: 9px;
-    border: 1px solid rgba(249,180,15,0.2); background: transparent;
-    font-size: 0.7rem; font-weight: 600; color: rgba(249,180,15,0.6);
-    text-decoration: none; transition: all 0.18s; font-family: 'DM Sans', sans-serif;
-    flex-shrink: 0;
-}
-.back-btn:hover { border-color: rgba(249,180,15,0.4); color: #f9b40f; background: rgba(249,180,15,0.05); }
 .page-title {
     font-family: 'Playfair Display', serif;
-    font-size: 1.3rem; font-weight: 900; color: #fffbf0;
+    font-size: 1.55rem; font-weight: 900; color: #fffbf0;
+    letter-spacing: 0.01em;
+    line-height: 1.2;
 }
-.page-sub { font-size: 0.72rem; color: rgba(255,251,240,0.4); margin-top: 2px; }
+.page-sub {
+    font-size: 0.8rem;
+    color: rgba(255,251,240,0.62);
+    margin-top: 4px;
+    line-height: 1.5;
+}
 
 /* ── Main card ── */
 .fb-card {
     background: rgba(26,0,32,0.88);
     backdrop-filter: blur(24px);
-    border: 1px solid rgba(249,180,15,0.2);
-    border-radius: 20px;
-    box-shadow: 0 8px 48px rgba(0,0,0,0.45), inset 0 1px 0 rgba(249,180,15,0.07);
+    border: 1px solid rgba(249,180,15,0.24);
+    border-radius: 22px;
+    box-shadow: 0 10px 52px rgba(0,0,0,0.48), inset 0 1px 0 rgba(249,180,15,0.09);
     overflow: hidden;
     animation: fadeUp 0.4s ease both;
+    width: 100%;
 }
 .fb-card::before {
     content: ''; display: block; height: 2px;
@@ -64,15 +79,15 @@
 
 /* ── Card header ── */
 .fb-card-header {
-    padding: 28px 32px 20px;
-    border-bottom: 1px solid rgba(249,180,15,0.08);
-    display: flex; align-items: flex-start; gap: 16px;
+    padding: 26px 32px 20px;
+    border-bottom: 1px solid rgba(249,180,15,0.12);
+    display: flex; align-items: flex-start; gap: 14px;
 }
 .fb-header-icon {
-    width: 50px; height: 50px; border-radius: 14px; flex-shrink: 0;
+    width: 48px; height: 48px; border-radius: 14px; flex-shrink: 0;
     background: rgba(249,180,15,0.1); border: 1px solid rgba(249,180,15,0.25);
     display: flex; align-items: center; justify-content: center;
-    font-size: 1.2rem; color: #f9b40f;
+    font-size: 1.1rem; color: #f9b40f;
 }
 .fb-header-icon.green {
     background: rgba(52,211,153,0.1); border-color: rgba(52,211,153,0.25);
@@ -80,18 +95,19 @@
 }
 .fb-header-title {
     font-family: 'Playfair Display', serif;
-    font-size: 1.15rem; font-weight: 900; color: #fffbf0; margin-bottom: 4px;
+    font-size: 1.2rem; font-weight: 900; color: #fffbf0; margin-bottom: 5px;
 }
-.fb-header-sub { font-size: 0.72rem; color: rgba(255,251,240,0.4); line-height: 1.6; }
+.fb-header-sub { font-size: 0.78rem; color: rgba(255,251,240,0.56); line-height: 1.6; }
 
 /* ── Star Rating ── */
-.rating-section { padding: 24px 32px 0; }
+.rating-section { padding: 22px 32px 0; }
 .rating-label {
     font-size: 0.62rem; font-weight: 700; text-transform: uppercase;
-    letter-spacing: 0.1em; color: rgba(249,180,15,0.5); margin-bottom: 14px;
+    letter-spacing: 0.1em; color: rgba(249,180,15,0.62); margin-bottom: 12px;
 }
 .stars-row {
-    display: flex; gap: 10px; align-items: center; margin-bottom: 8px;
+    display: flex; gap: 12px; align-items: center; margin-bottom: 10px;
+    flex-wrap: wrap;
 }
 .star-btn {
     background: transparent; border: none; cursor: pointer;
@@ -101,7 +117,7 @@
 }
 .star-btn:hover { transform: scale(1.25); }
 .star-btn .star-icon {
-    font-size: 2rem; color: rgba(249,180,15,0.18);
+    font-size: 2.1rem; color: rgba(249,180,15,0.22);
     transition: color 0.18s, text-shadow 0.18s;
 }
 .star-btn.active .star-icon,
@@ -111,41 +127,43 @@
     animation: starPop 0.28s cubic-bezier(0.34,1.56,0.64,1) both;
 }
 .rating-text {
-    font-size: 0.72rem; font-weight: 700; color: rgba(249,180,15,0.55);
+    font-size: 0.74rem; font-weight: 700; color: rgba(249,180,15,0.66);
     margin-top: 4px; min-height: 1.2em; transition: all 0.18s;
 }
 
 /* ── Textarea ── */
-.textarea-section { padding: 20px 32px; }
+.textarea-section { padding: 20px 32px 16px; }
 .textarea-label {
     font-size: 0.62rem; font-weight: 700; text-transform: uppercase;
-    letter-spacing: 0.1em; color: rgba(249,180,15,0.5); margin-bottom: 10px;
+    letter-spacing: 0.1em; color: rgba(249,180,15,0.62); margin-bottom: 10px;
     display: flex; align-items: center; justify-content: space-between;
 }
 .char-counter {
     font-size: 0.62rem; font-weight: 600;
-    color: rgba(255,251,240,0.25); letter-spacing: 0;
+    color: rgba(255,251,240,0.42); letter-spacing: 0;
     text-transform: none;
     transition: color 0.2s;
+    min-width: 62px;
+    text-align: right;
 }
 .char-counter.near-limit { color: rgba(249,180,15,0.6); }
 .char-counter.at-limit   { color: #f87171; }
 
 .fb-textarea {
     width: 100%; min-height: 160px; resize: vertical;
-    background: rgba(56,0,65,0.5);
-    border: 1px solid rgba(249,180,15,0.15);
+    background: rgba(56,0,65,0.58);
+    border: 1px solid rgba(249,180,15,0.2);
     border-radius: 12px;
     padding: 14px 16px;
     font-family: 'DM Sans', sans-serif;
-    font-size: 0.82rem; color: #fffbf0; line-height: 1.65;
+    font-size: 0.82rem; color: rgba(255,251,240,0.92); line-height: 1.65;
     outline: none; transition: border-color 0.2s, box-shadow 0.2s;
     -webkit-appearance: none;
 }
-.fb-textarea::placeholder { color: rgba(255,251,240,0.2); }
+.fb-textarea::placeholder { color: rgba(255,251,240,0.34); }
 .fb-textarea:focus {
     border-color: rgba(249,180,15,0.4);
-    box-shadow: 0 0 0 3px rgba(249,180,15,0.06);
+    box-shadow: 0 0 0 3px rgba(249,180,15,0.09);
 }
 
 /* ── Submit error ── */
@@ -159,8 +177,8 @@
 
 /* ── Footer ── */
 .fb-footer {
-    padding: 16px 32px 28px;
-    border-top: 1px solid rgba(249,180,15,0.07);
+    padding: 16px 32px 24px;
+    border-top: 1px solid rgba(249,180,15,0.1);
     display: flex; align-items: center; justify-content: space-between; gap: 12px;
     flex-wrap: wrap;
 }
@@ -231,13 +249,18 @@
 [x-cloak] { display: none !important; }
 
 @media (max-width: 600px) {
-    .fb-card-header   { padding: 20px; }
-    .rating-section   { padding: 18px 20px 0; }
-    .textarea-section { padding: 16px 20px; }
-    .fb-footer        { padding: 14px 20px 24px; }
+    body main         { padding-top: 0 !important; }
+    .fb-wrap          { padding: 0 14px 18px; min-height: auto; }
+    .fb-card-header   { padding: 20px 18px 16px; }
+    .rating-section   { padding: 18px 18px 0; }
+    .textarea-section { padding: 16px 18px 14px; }
+    .fb-footer        { padding: 14px 18px 20px; }
     .submitted-view   { padding: 20px; }
-    .fb-error         { margin: 0 20px 14px; }
-    .page-title       { font-size: 1.1rem; }
+    .fb-error         { margin: 0 18px 14px; }
+    .page-title       { font-size: 1.22rem; }
+    .page-header      { margin-bottom: 14px; }
+    .stars-row        { gap: 8px; }
+    .star-btn .star-icon { font-size: 1.95rem; }
 }
 </style>
 @endpush
@@ -246,9 +269,6 @@
 
     {{-- Page header --}}
     <div class="page-header">
-        <a href="{{ route('voter.dashboard') }}" class="back-btn">
-            <i class="fas fa-arrow-left" style="font-size:0.6rem;"></i> Back
-        </a>
         <div>
             <div class="page-title">Share Your Feedback</div>
             <div class="page-sub">Help us improve this election experience</div>

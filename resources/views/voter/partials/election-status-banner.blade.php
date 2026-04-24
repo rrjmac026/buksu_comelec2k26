@@ -13,11 +13,16 @@
 @php
     // Fallback in case middleware hasn't shared the variable yet
     $electionStatus ??= \App\Models\ElectionSetting::status();
-    $electionName   ??= \App\Models\ElectionSetting::get('election_name', 'Student Council Election');
+    $electionName   ??= \App\Models\ElectionSetting::get('election_name', 'Student Government Election');
+    $normalizedElectionStatus = $electionStatus === 'upcoming' ? 'not_started' : $electionStatus;
+    $voteBlocked = in_array($normalizedElectionStatus, ['not_started', 'ended'], true);
+    $voteTooltip = $normalizedElectionStatus === 'not_started'
+        ? 'Voting will be available once the election starts'
+        : 'Voting is closed because the election has ended';
 @endphp
 
 {{-- ── Blocked redirect flash ──────────────────────────────────────── --}}
-@if(session('election_blocked') === 'upcoming')
+@if(in_array(session('election_blocked'), ['upcoming', 'not_started'], true))
 <div style="
     display:flex; align-items:center; gap:12px;
     padding:14px 20px; border-radius:14px; margin-bottom:18px;
@@ -45,7 +50,7 @@
 @endif
 
 {{-- ── Main status banner ───────────────────────────────────────────── --}}
-@if($electionStatus === 'upcoming')
+@if(in_array($electionStatus, ['upcoming', 'not_started'], true))
 {{-- ════ UPCOMING ════ --}}
 <div style="
     display:flex; align-items:center; gap:16px;
@@ -133,7 +138,11 @@
     </div>
 
     @if(!auth()->user()->hasVoted())
-    <a href="{{ route('voter.vote.intro') }}" style="
+    <a href="{{ route('voter.vote.intro') }}"
+    data-election-guard="vote"
+    title="{{ $voteBlocked ? $voteTooltip : '' }}"
+    aria-disabled="{{ $voteBlocked ? 'true' : 'false' }}"
+    style="
         display:inline-flex; align-items:center; gap:7px;
         padding:10px 20px; border-radius:10px; flex-shrink:0;
         background:linear-gradient(135deg,#34d399,#6ee7b7);
