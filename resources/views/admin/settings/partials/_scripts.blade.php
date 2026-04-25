@@ -51,6 +51,28 @@
     }
     function closeTestModal() { document.getElementById('testModal').style.display = 'none'; }
 
+    /* ── Status Confirmation Modal ─────────────────────────────────────── */
+    function openStatusConfirmModal(status, statusLabel, statusDescription) {
+        document.getElementById('statusInput').value = status;
+        document.getElementById('statusModalNewStatus').textContent = statusLabel;
+        
+        const warningBox = document.getElementById('statusWarningBox');
+        warningBox.style.display = 'none';
+        
+        if (status === 'ongoing') {
+            warningBox.innerHTML = `<i class="fas fa-triangle-exclamation" style="margin-right:8px;flex-shrink:0;"></i>
+                <span><strong>Warning:</strong> Once you set the status to Ongoing, voters will be able to cast their ballots immediately.</span>`;
+            warningBox.style.display = 'block';
+        } else if (status === 'ended') {
+            warningBox.innerHTML = `<i class="fas fa-triangle-exclamation" style="margin-right:8px;flex-shrink:0;"></i>
+                <span><strong>Important:</strong> Setting the status to Ended will prevent voters from casting any more ballots.</span>`;
+            warningBox.style.display = 'block';
+        }
+        
+        document.getElementById('statusModal').style.display = 'flex';
+    }
+    function closeStatusConfirmModal() { document.getElementById('statusModal').style.display = 'none'; }
+
     function renderTestResults(data) {
         const status = data.overall_status === 'ready';
         const statusColor = status ? '#34d399' : '#f87171';
@@ -112,7 +134,7 @@
     /* ── Keyboard escape ───────────────────────────────────────────── */
     document.addEventListener('keydown', e => {
         if (e.key === 'Escape') {
-            closeCreateModal(); closeDeleteModal(); closeTestModal(); closeErrorModal();
+            closeCreateModal(); closeDeleteModal(); closeTestModal(); closeStatusConfirmModal(); closeErrorModal();
         }
     });
 </script>

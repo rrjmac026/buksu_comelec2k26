@@ -86,35 +86,23 @@
 
                 <div class="status-section-title">Set New Status</div>
                 <div class="status-btns">
-                    <form method="POST" action="{{ route('admin.settings.election.status') }}" style="flex:1;min-width:130px;display:contents;">
-                        @csrf
-                        <input type="hidden" name="status" value="upcoming">
-                        <button type="submit" class="status-btn btn-upcoming {{ $status === 'upcoming' ? 'active' : '' }}">
-                            <i class="fas fa-hourglass-start"></i>
-                            <span>Upcoming</span>
-                            <span style="font-size:0.6rem;opacity:0.65;font-weight:400;">Election Soon</span>
-                        </button>
-                    </form>
+                    <button type="button" onclick="openStatusConfirmModal('upcoming', 'Upcoming', 'Election Soon')" class="status-btn btn-upcoming {{ $status === 'upcoming' ? 'active' : '' }}">
+                        <i class="fas fa-hourglass-start"></i>
+                        <span>Upcoming</span>
+                        <span style="font-size:0.6rem;opacity:0.65;font-weight:400;">Election Soon</span>
+                    </button>
 
-                    <form method="POST" action="{{ route('admin.settings.election.status') }}" style="flex:1;min-width:130px;display:contents;">
-                        @csrf
-                        <input type="hidden" name="status" value="ongoing">
-                        <button type="submit" class="status-btn btn-ongoing {{ $status === 'ongoing' ? 'active' : '' }}">
-                            <i class="fas fa-circle-dot"></i>
-                            <span>Ongoing</span>
-                            <span style="font-size:0.6rem;opacity:0.65;font-weight:400;">Election Live</span>
-                        </button>
-                    </form>
+                    <button type="button" onclick="openStatusConfirmModal('ongoing', 'Ongoing', 'Election Live')" class="status-btn btn-ongoing {{ $status === 'ongoing' ? 'active' : '' }}">
+                        <i class="fas fa-circle-dot"></i>
+                        <span>Ongoing</span>
+                        <span style="font-size:0.6rem;opacity:0.65;font-weight:400;">Election Live</span>
+                    </button>
 
-                    <form method="POST" action="{{ route('admin.settings.election.status') }}" style="flex:1;min-width:130px;display:contents;">
-                        @csrf
-                        <input type="hidden" name="status" value="ended">
-                        <button type="submit" class="status-btn btn-ended {{ $status === 'ended' ? 'active' : '' }}">
-                            <i class="fas fa-flag-checkered"></i>
-                            <span>Ended</span>
-                            <span style="font-size:0.6rem;opacity:0.65;font-weight:400;">Election Done</span>
-                        </button>
-                    </form>
+                    <button type="button" onclick="openStatusConfirmModal('ended', 'Ended', 'Election Done')" class="status-btn btn-ended {{ $status === 'ended' ? 'active' : '' }}">
+                        <i class="fas fa-flag-checkered"></i>
+                        <span>Ended</span>
+                        <span style="font-size:0.6rem;opacity:0.65;font-weight:400;">Election Done</span>
+                    </button>
                 </div>
 
                 @if($status === 'ongoing')
@@ -407,6 +395,41 @@
 </div>
 
 {{-- ═══════════════════════════════════════════ --}}
+{{-- STATUS CONFIRM MODAL                        --}}
+{{-- ═══════════════════════════════════════════ --}}
+<div id="statusModal" class="st-modal-backdrop" style="display:none;"
+     onclick="if(event.target===this) closeStatusConfirmModal()">
+    <div class="st-modal">
+        <div class="st-modal-header">
+            <div style="display:flex;align-items:flex-start;gap:14px;">
+                <div class="abk-del-icon" style="background:rgba(249,180,15,0.1);border:1px solid rgba(249,180,15,0.2);"><i class="fas fa-tower-broadcast" style="color:#f9b40f;"></i></div>
+                <div>
+                    <div class="st-modal-title">Change Election Status</div>
+                    <div class="st-modal-sub">This will affect what voters and the public see.</div>
+                </div>
+            </div>
+        </div>
+        <div class="st-modal-body">
+            <p class="abk-del-body" style="margin-bottom:16px;">
+                Are you sure you want to change the election status to
+                <strong id="statusModalNewStatus" style="color:#fffbf0;"></strong>?
+            </p>
+            <div id="statusWarningBox" style="display:none;padding:10px 14px;border-radius:9px;font-size:0.72rem;background:rgba(248,113,113,0.06);border:1px solid rgba(248,113,113,0.2);color:rgba(248,113,113,0.8);line-height:1.6;">
+            </div>
+        </div>
+        <div class="st-modal-footer">
+            <button class="st-m-cancel" onclick="closeStatusConfirmModal()">Cancel</button>
+            <form id="statusForm" method="POST" action="{{ route('admin.settings.election.status') }}" style="margin:0;">
+                @csrf
+                <input type="hidden" id="statusInput" name="status" value="">
+                <button type="submit" class="st-m-delete" style="background:linear-gradient(135deg,#f9b40f,#fcd558);color:#380041;">
+                    <i class="fas fa-tower-broadcast" style="font-size:.62rem;margin-right:4px;"></i> Confirm
+                </button>
+            </form>
+        </div>
+    </div>
+</div>
+
 {{-- DELETE CONFIRM MODAL                        --}}
 {{-- ═══════════════════════════════════════════ --}}
 <div id="deleteModal" class="st-modal-backdrop" style="display:none;"
