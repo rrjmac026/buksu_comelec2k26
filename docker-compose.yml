@@ -1,18 +1,25 @@
-# buksu_comelec2k26 — Laravel 12 + Vite (PHP-FPM, Nginx, MySQL, Redis)
+# buksu_comelec2k26 — Laravel 12 + Vite (PHP-FPM, Nginx, MySQL 8, Redis)
 #
-# First-time (Ubuntu server):
+# ── First-time deploy on Ubuntu server ──────────────────────────────────────
 #   cp .env.example .env
-#   # edit .env: APP_KEY, APP_URL, DB_*, DB_ROOT_PASSWORD, SESSION_*, etc.
-#   docker compose build
-#   docker compose up -d
+#   # Edit .env: set APP_KEY, APP_URL, DB_PASSWORD, DB_ROOT_PASSWORD
+#   docker compose up -d --build
+#   docker compose exec app php artisan key:generate
 #   docker compose exec app php artisan migrate --force
+#   docker compose exec app php artisan storage:link
+#   docker compose exec app php artisan db:seed --force   # optional
 #
-# Optional: run the queue worker profile
-#   docker compose --profile queue up -d
+# ── Optional profiles ────────────────────────────────────────────────────────
+#   Queue worker:   docker compose --profile queue up -d
+#   Scheduler:      docker compose --profile scheduler up -d
+#   Adminer (DB UI):docker compose --profile adminer up -d
+#   All extras:     docker compose --profile queue --profile scheduler --profile adminer up -d
 #
 name: buksu_comelec2k26
 
 services:
+
+  # ── PHP-FPM (Laravel application) ─────────────────────────────────────────
   app:
     build:
       context: .
@@ -20,13 +27,12 @@ services:
       target: app
     image: buksu_comelec2k26-app:latest
     restart: unless-stopped
-    env_file:
-      - .env
+    env_file: .env
     environment:
-      APP_ENV: ${APP_ENV:-production}
+      APP_ENV:   ${APP_ENV:-production}
       APP_DEBUG: ${APP_DEBUG:-false}
-      DB_HOST: mysql
-      DB_PORT: "3306"
+      DB_HOST:   mysql
+      DB_PORT:   "3306"
       REDIS_HOST: redis
       REDIS_PORT: "6379"
     volumes:
@@ -42,6 +48,7 @@ services:
     expose:
       - "9000"
 
+  # ── Nginx (static files + FastCGI proxy) ──────────────────────────────────
   nginx:
     build:
       context: .
@@ -51,26 +58,31 @@ services:
     restart: unless-stopped
     ports:
       - "${HTTP_PORT:-80}:80"
+    volumes:
+      # Mount storage volume so Nginx can serve uploaded files directly
+      # (see /storage/ alias in docker/nginx/default.conf)
+      - app_storage:/var/www/html/storage:ro
     depends_on:
       - app
     networks:
       - internal
 
+  # ── MySQL 8 ───────────────────────────────────────────────────────────────
   mysql:
     image: mysql:8.4
     restart: unless-stopped
     environment:
-      MYSQL_DATABASE: ${DB_DATABASE:-comelec2k26}
-      MYSQL_USER: ${DB_USERNAME:-comelec}
-      MYSQL_PASSWORD: ${DB_PASSWORD}
-      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD}
+      MYSQL_DATABASE:      ${DB_DATABASE:-comelec2k26}
+      MYSQL_USER:          ${DB_USERNAME:-comelec}
+      MYSQL_PASSWORD:      ${DB_PASSWORD:?DB_PASSWORD must be set in .env}
+      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD:?DB_ROOT_PASSWORD must be set in .env}
     volumes:
       - mysql_data:/var/lib/mysql
     healthcheck:
       test:
         [
           "CMD-SHELL",
-          'mysqladmin ping -h 127.0.0.1 -uroot -p"$$MYSQL_ROOT_PASSWORD" || exit 1',
+          "mysqladmin ping -h 127.0.0.1 -uroot -p\"$$MYSQL_ROOT_PASSWORD\" || exit 1"
         ]
       interval: 5s
       timeout: 5s
@@ -81,10 +93,15 @@ services:
     expose:
       - "3306"
 
+  # ── Redis 7 (cache / sessions / queues) ───────────────────────────────────
   redis:
     image: redis:7-alpine
     restart: unless-stopped
-    command: redis-server --appendonly yes --maxmemory 256mb --maxmemory-policy allkeys-lru
+    command: >
+      redis-server
+        --appendonly yes
+        --maxmemory 256mb
+        --maxmemory-policy allkeys-lru
     volumes:
       - redis_data:/data
     networks:
@@ -92,22 +109,21 @@ services:
     expose:
       - "6379"
 
+  # ── Queue worker (opt-in via --profile queue) ─────────────────────────────
   queue:
-    profiles:
-      - queue
+    profiles: [queue]
     build:
       context: .
       dockerfile: Dockerfile
       target: app
     image: buksu_comelec2k26-app:latest
     restart: unless-stopped
-    env_file:
-      - .env
+    env_file: .env
     environment:
-      APP_ENV: ${APP_ENV:-production}
+      APP_ENV:   ${APP_ENV:-production}
       APP_DEBUG: ${APP_DEBUG:-false}
-      DB_HOST: mysql
-      DB_PORT: "3306"
+      DB_HOST:   mysql
+      DB_PORT:   "3306"
       REDIS_HOST: redis
       REDIS_PORT: "6379"
     volumes:
@@ -116,20 +132,70 @@ services:
     depends_on:
       mysql:
         condition: service_healthy
-      app:
-        condition: service_started
       redis:
+        condition: service_started
+      app:
         condition: service_started
     command:
       [
-        "php",
-        "artisan",
-        "queue:work",
+        "php", "artisan", "queue:work",
         "--sleep=3",
         "--tries=3",
         "--max-time=3600",
-        "--no-interaction",
+        "--no-interaction"
       ]
+    networks:
+      - internal
+
+  # ── Laravel scheduler (opt-in via --profile scheduler) ────────────────────
+  scheduler:
+    profiles: [scheduler]
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: app
+    image: buksu_comelec2k26-app:latest
+    restart: unless-stopped
+    env_file: .env
+    environment:
+      APP_ENV:   ${APP_ENV:-production}
+      APP_DEBUG: ${APP_DEBUG:-false}
+      DB_HOST:   mysql
+      DB_PORT:   "3306"
+      REDIS_HOST: redis
+      REDIS_PORT: "6379"
+    volumes:
+      - app_storage:/var/www/html/storage
+      - app_bootstrap_cache:/var/www/html/bootstrap/cache
+    depends_on:
+      mysql:
+        condition: service_healthy
+      redis:
+        condition: service_started
+      app:
+        condition: service_started
+    # Runs `php artisan schedule:run` every minute (mimics cron inside Docker)
+    entrypoint: ["/bin/sh", "-c"]
+    command:
+      - |
+        while true; do
+          php artisan schedule:run --no-interaction >> /dev/null 2>&1
+          sleep 60
+        done
+    networks:
+      - internal
+
+  # ── Adminer — lightweight DB UI (opt-in via --profile adminer) ────────────
+  adminer:
+    profiles: [adminer]
+    image: adminer:latest
+    restart: unless-stopped
+    ports:
+      - "${ADMINER_PORT:-8080}:8080"
+    environment:
+      ADMINER_DEFAULT_SERVER: mysql
+    depends_on:
+      - mysql
     networks:
       - internal
 

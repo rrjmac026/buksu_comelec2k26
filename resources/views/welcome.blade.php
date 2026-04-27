@@ -269,7 +269,7 @@
                                 'email' => null,
                             ],
                             [
-                                'name' => 'Khyle Ivan Kim Amacna',
+                                'name' => 'Khyle Ivan Khim V. Amacna',
                                 'role' => 'Head System Developer',
                                 'avatar' => asset('assets/team/dev2.jpg'),
                                 'initials' => 'KA',
