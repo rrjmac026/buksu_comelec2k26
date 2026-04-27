@@ -32,6 +32,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     libonig-dev \
     libxml2-dev \
     libssl-dev \
+    libcurl4-openssl-dev \
     $PHPIZE_DEPS \
     && docker-php-ext-configure gd --with-freetype --with-jpeg \
     && docker-php-ext-install -j"$(nproc)" \
@@ -44,6 +45,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
         zip \
         intl \
         opcache \
+        curl \
     && pecl install redis \
     && docker-php-ext-enable redis \
     && apt-get purge -y --auto-remove $PHPIZE_DEPS \
@@ -61,6 +63,8 @@ COPY composer.json composer.lock ./
 COPY . .
 
 COPY --from=frontend /app/public/build ./public/build
+
+ENV COMPOSER_MEMORY_LIMIT=-1
 
 RUN composer install \
         --no-dev \
