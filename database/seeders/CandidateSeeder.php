@@ -50,11 +50,13 @@ class CandidateSeeder extends Seeder
 
         // ── Positions ─────────────────────────────────────────────────
         // SQL position_id mapping:
-        //   2 = Vice President, 3 = Senator, 4 = Governor, 5 = Vice Governor
-        //   6 = Secretary, 7 = Associate Secretary, 8 = Treasurer
-        //   9 = Associate Treasurer, 10 = Auditor, 11 = Associate Auditor
-        //   12 = Public Relation Officer, 13 = Second Year Representative
-        //   14 = Third Year Representative, 15 = Fourth Year Representative
+        //   1 = President, 2 = Vice President, 3 = Senator, 4 = Governor
+        //   5 = Vice Governor, 6 = Secretary, 7 = Associate Secretary
+        //   8 = Treasurer, 9 = Associate Treasurer, 10 = Auditor
+        //   11 = Associate Auditor, 12 = Public Relation Officer
+        //   13 = Second Year Representative, 14 = Third Year Representative
+        //   15 = Fourth Year Representative
+        $president      = $resolve(Position::class, 'name', 'President');
         $vicePresident  = $resolve(Position::class, 'name', 'Vice President');
         $senator        = $resolve(Position::class, 'name', 'Senator');
         $governor       = $resolve(Position::class, 'name', 'Governor');
@@ -72,7 +74,7 @@ class CandidateSeeder extends Seeder
 
         $this->command->info('✅ All IDs resolved. Seeding candidates...');
 
-        // ── Candidates — mirrors SQL dump (candidate_id 1–79) ─────────
+        // ── Candidates — mirrors SQL dump (candidate_id 1–69) ─────────
         $candidates = [
 
             // ══════════════════════════════════════════════════════════
@@ -247,6 +249,13 @@ class CandidateSeeder extends Seeder
             ['first_name' => 'Gabriela Kim',         'last_name' => 'Casundo',    'middle_name' => 'Maston',      'partylist_id' => $hiraya, 'organization_id' => $sbo, 'position_id' => $thirdYearRep,   'college_id' => $cpag, 'course' => 'BPA',          'photo' => null],
             // 79
             ['first_name' => 'Lynci',                'last_name' => 'Edralin',    'middle_name' => 'Sibayan',     'partylist_id' => $hiraya, 'organization_id' => $sbo, 'position_id' => $secondYearRep,  'college_id' => $cpag, 'course' => 'BPA',          'photo' => null],
+
+            // ══════════════════════════════════════════════════════════
+            //  ID 69 (SQL) | SSC PRESIDENT — HIRAYA / SSC — CPAG
+            // ══════════════════════════════════════════════════════════
+
+            // 69 (SQL candidate_id)
+            ['first_name' => 'Jan Kenneth',          'last_name' => 'Vargas',     'middle_name' => 'Mondares',    'partylist_id' => $hiraya, 'organization_id' => $ssc, 'position_id' => $president,      'college_id' => $cpag, 'course' => 'BPA',          'photo' => '1777094906_Vargas.png'],
         ];
 
         // ── Insert / Update ───────────────────────────────────────────

@@ -44,7 +44,7 @@ class DatabaseSeeder extends Seeder
         );
 
         User::updateOrCreate(
-            ['email' => 'onlinelubong@gmail.com'],
+            ['email' => 'amacna.khyle@gmail.com'],
             [
                 'first_name' => 'Admin Khyle',
                 'last_name' => 'Amacna',
