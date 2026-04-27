@@ -7,10 +7,11 @@
             --violet:    #380041;
             --violet-md: #520060;
             --violet-lt: #6b0080;
+            --violet-xl: #0d0018;
             --cream:     #fffbf0;
             --ink:       #1a0020;
-            --glass:     rgba(30,0,37,0.7);
-            --glass-border: rgba(249,180,15,0.15);
+            --glass:     rgba(26,0,32,0.72);
+            --glass-border: rgba(249,180,15,0.16);
             --radius-lg: 16px;
             --radius-md: 12px;
             --radius-sm: 8px;
@@ -22,17 +23,78 @@
         @keyframes vd-quoteSlide { from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:translateY(0)} }
         @keyframes vd-spin       { to{transform:rotate(360deg)} }
         @keyframes vd-shimmer    { 0%{background-position:200% 0} 100%{background-position:-200% 0} }
+        @keyframes vd-orbFloat1  { 0%,100%{transform:translate(0,0)} 50%{transform:translate(30px,20px)} }
+        @keyframes vd-orbFloat2  { 0%,100%{transform:translate(0,0)} 50%{transform:translate(-25px,-30px)} }
+        @keyframes vd-glow-pulse { 0%,100%{box-shadow:0 0 20px rgba(249,180,15,0.25)} 50%{box-shadow:0 0 40px rgba(249,180,15,0.5)} }
 
         body { font-family: 'DM Sans', sans-serif; }
 
+        /* ══════════════════════════════════════════════════════════════
+           VOTER PAGES — Landing-Page-Matching Background & Grid Theme
+           (This CSS is only loaded on voter dashboard routes)
+        ══════════════════════════════════════════════════════════════ */
+
+        /* Exact landing-page background: #0d0018 base + vivid violet radial glows + gold grid */
+        html.dark body[data-role="voter"] {
+            background-color: #0d0018 !important;
+            background-image:
+                linear-gradient(rgba(249,180,15,0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(249,180,15,0.03) 1px, transparent 1px),
+                radial-gradient(ellipse 70% 60% at 5% 10%, rgba(90,0,140,0.6) 0%, transparent 60%),
+                radial-gradient(ellipse 50% 50% at 95% 85%, rgba(55,0,90,0.5) 0%, transparent 55%),
+                radial-gradient(ellipse 40% 40% at 50% 50%, rgba(30,0,55,0.25) 0%, transparent 70%) !important;
+            background-size: 52px 52px, 52px 52px, 100% 100%, 100% 100%, 100% 100% !important;
+            background-attachment: fixed !important;
+        }
+
+        /* Noise texture overlay — subtle film grain like landing page */
+        html.dark body[data-role="voter"]::before {
+            content: '';
+            position: fixed; inset: 0; z-index: 0; pointer-events: none;
+            opacity: 0.022;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+            background-size: 200px 200px;
+        }
+
+        /* Ambient glow orbs — exact match to admin/landing page orb sizes & colors */
+        .vd-orb {
+            position: fixed; border-radius: 50%; pointer-events: none;
+            z-index: 0; filter: blur(90px);
+        }
+        .vd-orb-1 {
+            width: 700px; height: 700px; top: -250px; left: -200px;
+            background: radial-gradient(circle, rgba(90,0,140,0.85), rgba(55,0,90,0.5), transparent 70%);
+            opacity: 0.6;
+            animation: vd-orbFloat1 20s ease-in-out infinite alternate;
+        }
+        .vd-orb-2 {
+            width: 500px; height: 500px; bottom: -150px; right: -150px;
+            background: radial-gradient(circle, rgba(249,180,15,0.10), rgba(55,0,90,0.35), transparent 70%);
+            opacity: 0.55;
+            animation: vd-orbFloat2 25s ease-in-out infinite alternate;
+        }
+        .vd-orb-3 {
+            width: 350px; height: 350px; top: 45%; left: 58%;
+            background: radial-gradient(circle, rgba(249,180,15,0.07), rgba(56,0,65,0.2), transparent 70%);
+            opacity: 0.5;
+            animation: vd-orbFloat1 18s ease-in-out 5s infinite alternate;
+        }
+
+        /* All main content must sit above fixed background elements */
+        .vd-page-content { position: relative; z-index: 1; }
+
         /* ── Glass Card ── */
         .vd-gc {
-            background: var(--glass);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            border: 1px solid var(--glass-border);
+            background: linear-gradient(135deg, rgba(30,0,37,0.75), rgba(20,0,28,0.85));
+            backdrop-filter: blur(24px) saturate(1.6);
+            -webkit-backdrop-filter: blur(24px) saturate(1.6);
+            border: 1px solid rgba(249,180,15,0.16);
             border-radius: var(--radius-lg);
-            box-shadow: 0 4px 30px rgba(0,0,0,0.3), inset 0 1px 0 rgba(249,180,15,0.06);
+            box-shadow:
+                0 4px 30px rgba(0,0,0,0.45),
+                0 0 0 1px rgba(249,180,15,0.06) inset,
+                0 0 80px rgba(100,0,150,0.06),
+                inset 0 1px 0 rgba(249,180,15,0.08);
             animation: vd-fadeUp .5s ease both;
             position: relative;
             overflow: hidden;
@@ -40,7 +102,7 @@
         .vd-gc::before {
             content:'';
             position:absolute; top:0; left:0; right:0; height:1px;
-            background:linear-gradient(90deg,transparent,rgba(249,180,15,0.3),transparent);
+            background:linear-gradient(90deg,transparent,rgba(249,180,15,0.35),transparent);
             pointer-events:none;
         }
 
@@ -79,11 +141,19 @@
         }
         .vd-status-banner::after {
             content:''; position:absolute; top:0; left:0; right:0; height:1px;
-            background:linear-gradient(90deg,transparent,rgba(249,180,15,0.4),transparent);
+            background:linear-gradient(90deg,transparent,rgba(249,180,15,0.45),transparent);
             pointer-events:none;
         }
-        .vd-status-banner.voted     { background:linear-gradient(135deg,rgba(52,211,153,0.12),rgba(16,185,129,0.06)); border:1px solid rgba(52,211,153,0.2); }
-        .vd-status-banner.not-voted { background:linear-gradient(135deg,rgba(56,0,65,0.8),rgba(82,0,96,0.6)); border:1px solid rgba(249,180,15,0.2); }
+        .vd-status-banner.voted {
+            background: linear-gradient(135deg, rgba(22,163,74,0.1), rgba(16,185,129,0.06));
+            border: 1px solid rgba(52,211,153,0.22);
+            box-shadow: 0 0 40px rgba(52,211,153,0.04), 0 4px 20px rgba(0,0,0,0.3);
+        }
+        .vd-status-banner.not-voted {
+            background: linear-gradient(135deg, rgba(56,0,65,0.88), rgba(82,0,96,0.7));
+            border: 1px solid rgba(249,180,15,0.22);
+            box-shadow: 0 0 40px rgba(249,180,15,0.05), 0 4px 20px rgba(0,0,0,0.35);
+        }
 
         .vd-check-icon {
             width:52px; height:52px; border-radius:50%;
@@ -94,15 +164,23 @@
 
         /* ── CTA Button ── */
         .vd-cta-btn {
-            display:inline-flex; align-items:center; gap:7px;
-            padding:11px 20px; border-radius:var(--radius-sm);
-            background:linear-gradient(135deg,#f9b40f,#fcd558);
-            color:#380041; font-size:.78rem; font-weight:700; text-decoration:none;
-            box-shadow:0 4px 20px rgba(249,180,15,0.35), inset 0 1px 0 rgba(255,255,255,0.2);
-            border:1px solid rgba(249,180,15,0.5);
-            transition:all .2s; white-space:nowrap;
+            display:inline-flex; align-items:center; gap:8px;
+            padding:12px 22px; border-radius:var(--radius-sm);
+            background: linear-gradient(135deg, #f9b40f, #fcd558);
+            color:#2a0030; font-size:.78rem; font-weight:800; text-decoration:none;
+            box-shadow: 0 4px 20px rgba(249,180,15,0.38), 0 0 0 1px rgba(249,180,15,0.3), inset 0 1px 0 rgba(255,255,255,0.25);
+            border: none;
+            transition: all .22s;
+            white-space:nowrap;
+            font-family: 'DM Sans', sans-serif;
+            letter-spacing: 0.02em;
         }
-        .vd-cta-btn:hover { transform:translateY(-2px); box-shadow:0 8px 28px rgba(249,180,15,0.5); }
+        .vd-cta-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 32px rgba(249,180,15,0.55), 0 0 0 1px rgba(249,180,15,0.4);
+            background: linear-gradient(135deg, #fac020, #fde070);
+        }
+        .vd-cta-btn:active { transform: translateY(0); }
         .vd-cta-btn-full { width:100%; justify-content:center; }
 
         /* ── Countdown ── */
@@ -128,31 +206,53 @@
         /* ── Info Row ── */
         .vd-info-row {
             display:flex; align-items:center; justify-content:space-between;
-            padding:9px 0; border-bottom:1px solid rgba(249,180,15,0.07);
+            padding:9px 0; border-bottom:1px solid rgba(249,180,15,0.08);
         }
         .vd-info-row:last-child { border-bottom:none; }
 
         /* ══════════════════════════════════════
-           WELCOME BANNER
+           WELCOME BANNER — Landing Page Hero Style
         ══════════════════════════════════════ */
         .welcome-banner {
-            background:linear-gradient(135deg,rgba(56,0,65,0.85),rgba(82,0,96,0.75));
-            border:1px solid rgba(249,180,15,0.2);
-            border-radius:var(--radius-lg);
-            padding:20px;
-            margin-bottom:16px;
-            animation:vd-fadeUp .5s ease both;
-            position:relative; overflow:hidden;
+            background: linear-gradient(135deg, rgba(56,0,65,0.92), rgba(82,0,96,0.82));
+            border: 1px solid rgba(249,180,15,0.22);
+            border-radius: var(--radius-lg);
+            padding: 22px 24px;
+            margin-bottom: 16px;
+            animation: vd-fadeUp .5s ease both;
+            position: relative; overflow: hidden;
+            box-shadow:
+                0 0 0 1px rgba(249,180,15,0.06) inset,
+                0 8px 40px rgba(0,0,0,0.4),
+                0 0 80px rgba(100,0,150,0.08);
         }
         .welcome-banner::before {
-            content:''; position:absolute; top:0; left:0; right:0; height:1px;
-            background:linear-gradient(90deg,transparent,rgba(249,180,15,0.35),transparent);
+            content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
+            background: linear-gradient(90deg, transparent, rgba(249,180,15,0.5), rgba(249,180,15,0.2), transparent);
         }
-        .welcome-inner { display:flex; flex-direction:column; gap:14px; }
+        /* Decorative radial glow behind banner */
+        .welcome-banner::after {
+            content: ''; position: absolute; inset: 0;
+            background: radial-gradient(ellipse 60% 80% at 10% 50%, rgba(249,180,15,0.04) 0%, transparent 70%);
+            pointer-events: none;
+        }
+        /* Grid pattern inside banner */
+        .welcome-banner-grid {
+            position: absolute; inset: 0; pointer-events: none; z-index: 0;
+            background-image:
+                linear-gradient(rgba(249,180,15,0.025) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(249,180,15,0.025) 1px, transparent 1px);
+            background-size: 40px 40px;
+        }
+        .welcome-inner {
+            display: flex; flex-direction: column; gap: 14px;
+            position: relative; z-index: 1;
+        }
         .welcome-date {
-            display:inline-flex; align-self:flex-start;
-            padding:8px 16px; border-radius:var(--radius-sm);
-            background:rgba(249,180,15,0.1); border:1px solid rgba(249,180,15,0.25);
+            display: inline-flex; align-self: flex-start;
+            padding: 8px 18px; border-radius: var(--radius-sm);
+            background: rgba(249,180,15,0.1); border: 1px solid rgba(249,180,15,0.28);
+            box-shadow: 0 0 20px rgba(249,180,15,0.1);
         }
 
         /* ══════════════════════════════════════
@@ -201,52 +301,61 @@
         .countdown-boxes { display:flex; gap:6px; margin-bottom:14px; }
 
         /* ══════════════════════════════════════
-           BIBLE QUOTE CARD
+           BIBLE QUOTE CARD — Premium Version
         ══════════════════════════════════════ */
         .bible-card {
-            background: linear-gradient(135deg, rgba(26,0,32,0.9), rgba(56,0,65,0.8));
-            border: 1px solid rgba(249,180,15,0.15);
+            background: linear-gradient(135deg, rgba(20,0,26,0.92), rgba(56,0,65,0.85));
+            border: 1px solid rgba(249,180,15,0.16);
             border-radius: var(--radius-lg);
-            padding: 18px 20px;
+            padding: 20px 22px;
             position: relative; overflow: hidden;
             animation: vd-fadeUp .5s ease .2s both;
+            box-shadow:
+                0 4px 30px rgba(0,0,0,0.45),
+                0 0 80px rgba(100,0,150,0.07),
+                inset 0 1px 0 rgba(249,180,15,0.08);
         }
         .bible-card::before {
-            content:''; position:absolute; top:0; left:0; right:0; height:1px;
-            background:linear-gradient(90deg,transparent,rgba(249,180,15,0.3),transparent);
+            content:''; position:absolute; top:0; left:0; right:0; height:2px;
+            background:linear-gradient(90deg,transparent,rgba(249,180,15,0.4),transparent);
         }
         .bible-card::after {
             content: '\201C'; position: absolute; top: -10px; right: 12px;
             font-family: 'Playfair Display', serif; font-size: 7rem; font-weight: 900;
-            color: rgba(249,180,15,0.04); line-height: 1; pointer-events:none; user-select:none;
+            color: rgba(249,180,15,0.045); line-height: 1; pointer-events:none; user-select:none;
         }
         .bible-card-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:14px; }
         .bible-card-label {
             display:flex; align-items:center; gap:7px;
             font-size:.78rem; font-weight:700; letter-spacing:.1em;
-            text-transform:uppercase; color:rgba(249,180,15,0.5);
+            text-transform:uppercase; color:rgba(249,180,15,0.55);
         }
-        .bible-card-label i { font-size:.72rem; color:rgba(249,180,15,0.65); }
+        .bible-card-label i { font-size:.72rem; color:rgba(249,180,15,0.7); }
         .bible-refresh-btn {
             display:inline-flex; align-items:center; gap:4px;
             padding:4px 10px; border-radius:6px;
-            border:1px solid rgba(249,180,15,0.18); background:transparent;
-            font-size:.6rem; font-weight:700; color:rgba(249,180,15,0.45);
+            border:1px solid rgba(249,180,15,0.2); background:transparent;
+            font-size:.6rem; font-weight:700; color:rgba(249,180,15,0.5);
             cursor:pointer; transition:all .18s; font-family:'DM Sans',sans-serif;
         }
-        .bible-refresh-btn:hover { border-color:rgba(249,180,15,0.4); color:#f9b40f; background:rgba(249,180,15,0.06); }
+        .bible-refresh-btn:hover {
+            border-color:rgba(249,180,15,0.45); color:#f9b40f;
+            background:rgba(249,180,15,0.07);
+            box-shadow: 0 0 12px rgba(249,180,15,0.15);
+        }
         .bible-refresh-btn.spinning i { animation:vd-spin .6s linear infinite; }
         .bible-quote-text {
             font-family:'Playfair Display',serif;
             font-size:1.15rem; font-style:italic; font-weight:700;
-            color:rgba(255,251,240,0.75); line-height:1.75;
+            color:rgba(255,251,240,0.78); line-height:1.75;
             margin-bottom:14px; position:relative; z-index:1;
         }
         .bible-quote-ref {
             display:inline-flex; align-items:center; gap:6px;
             padding:6px 16px; border-radius:99px;
-            background:rgba(249,180,15,0.08); border:1px solid rgba(249,180,15,0.18);
-            font-size:.85rem; font-weight:700; color:rgba(249,180,15,0.75); letter-spacing:.04em;
+            background:rgba(249,180,15,0.09); border:1px solid rgba(249,180,15,0.2);
+            font-size:.85rem; font-weight:700; color:rgba(249,180,15,0.8); letter-spacing:.04em;
+            box-shadow: 0 0 16px rgba(249,180,15,0.08);
         }
         .bible-skeleton {
             height:12px; border-radius:6px;
@@ -255,25 +364,123 @@
         }
 
         /* ══════════════════════════════════════
+           ELECTION STATUS BANNERS — Premium Glow
+        ══════════════════════════════════════ */
+        .vd-election-banner {
+            display: flex; align-items: center; gap: 14px;
+            padding: 18px 22px; border-radius: var(--radius-lg);
+            margin-bottom: 18px; animation: vd-fadeUp .4s ease both;
+            position: relative; overflow: hidden;
+        }
+        .vd-election-banner::before {
+            content: ''; position: absolute; top: 0; left: 0; right: 0; height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(249,180,15,0.4), transparent);
+        }
+        .vd-election-banner-icon {
+            width: 46px; height: 46px; border-radius: 12px; flex-shrink: 0;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.1rem;
+        }
+        .vd-election-banner-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 0.95rem; font-weight: 900; margin-bottom: 3px;
+        }
+        .vd-election-banner-sub {
+            font-size: 0.72rem; line-height: 1.6; opacity: 0.65;
+        }
+        .vd-election-banner-chip {
+            padding: 5px 14px; border-radius: 99px; margin-left: auto; flex-shrink: 0;
+            font-size: 0.62rem; font-weight: 800; letter-spacing: 0.09em;
+            white-space: nowrap; text-transform: uppercase;
+        }
+
+        /* Live election styles */
+        .vd-election-banner.live {
+            background: rgba(52,211,153,0.07);
+            border: 1px solid rgba(52,211,153,0.24);
+            box-shadow: 0 0 50px rgba(52,211,153,0.05), 0 4px 20px rgba(0,0,0,0.3);
+        }
+        .vd-election-banner.live .vd-election-banner-icon {
+            background: rgba(52,211,153,0.12); border: 1px solid rgba(52,211,153,0.28); color: #34d399;
+        }
+        .vd-election-banner.live .vd-election-banner-title { color: #34d399; }
+        .vd-election-banner.live .vd-election-banner-sub { color: #34d399; }
+        .vd-election-banner.live .vd-election-banner-chip {
+            background: rgba(52,211,153,0.12); border: 1px solid rgba(52,211,153,0.28); color: #34d399;
+        }
+        .vd-live-dot {
+            width: 8px; height: 8px; border-radius: 50%; background: #34d399;
+            box-shadow: 0 0 10px rgba(52,211,153,0.8);
+            animation: vd-pulse 2s ease-in-out infinite; display: inline-block; margin-right: 4px;
+        }
+
+        /* Upcoming election styles */
+        .vd-election-banner.upcoming {
+            background: rgba(249,180,15,0.07);
+            border: 1px solid rgba(249,180,15,0.22);
+            box-shadow: 0 0 50px rgba(249,180,15,0.04), 0 4px 20px rgba(0,0,0,0.3);
+        }
+        .vd-election-banner.upcoming .vd-election-banner-icon {
+            background: rgba(249,180,15,0.1); border: 1px solid rgba(249,180,15,0.25); color: #f9b40f;
+        }
+        .vd-election-banner.upcoming .vd-election-banner-title { color: #f9b40f; }
+        .vd-election-banner.upcoming .vd-election-banner-sub { color: #f9b40f; }
+        .vd-election-banner.upcoming .vd-election-banner-chip {
+            background: rgba(249,180,15,0.1); border: 1px solid rgba(249,180,15,0.25); color: #f9b40f;
+        }
+
+        /* Ended election styles */
+        .vd-election-banner.ended {
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(255,255,255,0.1);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+        }
+        .vd-election-banner.ended .vd-election-banner-icon {
+            background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); color: rgba(255,255,255,0.38);
+        }
+        .vd-election-banner.ended .vd-election-banner-title { color: rgba(255,255,255,0.45); }
+        .vd-election-banner.ended .vd-election-banner-sub { color: rgba(255,255,255,0.3); }
+        .vd-election-banner.ended .vd-election-banner-chip {
+            background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); color: rgba(255,255,255,0.3);
+        }
+
+        /* ══════════════════════════════════════
            MISC
         ══════════════════════════════════════ */
         .mb-3{margin-bottom:12px} .mb-4{margin-bottom:16px} .mb-5{margin-bottom:20px}
         .p-4{padding:16px} .p-5{padding:20px}
         ::-webkit-scrollbar{width:4px} ::-webkit-scrollbar-track{background:transparent}
-        ::-webkit-scrollbar-thumb{background:rgba(249,180,15,0.2);border-radius:99px}
+        ::-webkit-scrollbar-thumb{background:rgba(249,180,15,0.25);border-radius:99px}
 
-        /* ══════════════════════════════════════════════════════════
+        /* Flash message box */
+        .vd-flash {
+            display: flex; align-items: center; gap: 10px;
+            padding: 12px 18px; border-radius: var(--radius-md);
+            margin-bottom: 14px; animation: vd-fadeUp .4s ease both;
+            font-size: 0.75rem; font-weight: 600;
+        }
+        .vd-flash.info {
+            background: rgba(249,180,15,0.09); border: 1px solid rgba(249,180,15,0.22); color: #fcd558;
+        }
+        .vd-flash.error {
+            background: rgba(239,68,68,0.1); border: 1px solid rgba(239,68,68,0.28); color: #f87171;
+        }
+        .vd-flash.success {
+            background: rgba(52,211,153,0.08); border: 1px solid rgba(52,211,153,0.25); color: #34d399;
+        }
+
+        /* ══════════════════════════════════════════════════════════════
            LIGHT MODE OVERRIDES
-           The status banner, profile card, bible card and welcome
-           banner all become nearly invisible in light mode because
-           they use cream (#fffbf0) text on light backgrounds.
-           These rules fix contrast across every component.
+        ══════════════════════════════════════════════════════════════ */
 
-           Targets:
-             - html:not(.dark)  (Tailwind dark mode strategy: class)
-             - html[data-theme="light"]  (custom theme attribute)
-             - body.light  (explicit light class)
-        ══════════════════════════════════════════════════════════ */
+        html:not(.dark) body[data-role="voter"] {
+            background-color: #f5f0ff !important;
+            background-image:
+                radial-gradient(ellipse 90% 70% at 0% 0%, rgba(200,160,220,0.4) 0%, transparent 55%),
+                radial-gradient(ellipse 70% 60% at 100% 100%, rgba(180,130,210,0.3) 0%, transparent 55%) !important;
+            background-size: 100% 100%, 100% 100% !important;
+            background-attachment: fixed !important;
+        }
 
         /* ── Status banner backgrounds ── */
         html:not(.dark) .vd-status-banner.voted,
@@ -289,17 +496,14 @@
             border: 1px solid rgba(107,0,128,0.16) !important;
         }
 
-        /* ── Status banner: title ── */
         html:not(.dark) .status-banner-title,
         html[data-theme="light"] .status-banner-title,
         body.light .status-banner-title { color: #1a0020 !important; }
 
-        /* ── Status banner: subtitle ── */
         html:not(.dark) .status-banner-sub,
         html[data-theme="light"] .status-banner-sub,
         body.light .status-banner-sub { color: rgba(26,0,32,0.58) !important; }
 
-        /* ── Voted-on timestamp box ── */
         html:not(.dark) .voted-on-box,
         html[data-theme="light"] .voted-on-box,
         body.light .voted-on-box {
@@ -314,7 +518,6 @@
         html[data-theme="light"] .voted-on-date,
         body.light .voted-on-date { color: #047857 !important; }
 
-        /* ── Check icon ── */
         html:not(.dark) .vd-status-banner .vd-check-icon,
         html[data-theme="light"] .vd-status-banner .vd-check-icon,
         body.light .vd-status-banner .vd-check-icon {
@@ -322,7 +525,6 @@
             border-color: rgba(16,185,129,0.38) !important;
         }
 
-        /* ── Glass cards ── */
         html:not(.dark) .vd-gc,
         html[data-theme="light"] .vd-gc,
         body.light .vd-gc {
@@ -347,7 +549,6 @@
         html[data-theme="light"] .vd-info-row,
         body.light .vd-info-row { border-bottom-color: rgba(56,0,65,0.07) !important; }
 
-        /* ── Profile card: name / email / info icon / label ── */
         html:not(.dark) .profile-name,
         html[data-theme="light"] .profile-name,
         body.light .profile-name { color: #1a0020 !important; }
@@ -364,7 +565,6 @@
         html[data-theme="light"] .info-icon,
         body.light .info-icon { color: rgba(107,0,128,0.4) !important; }
 
-        /* Profile "Edit" link */
         html:not(.dark) .profile-edit-link,
         html[data-theme="light"] .profile-edit-link,
         body.light .profile-edit-link {
@@ -372,12 +572,12 @@
             border-color: rgba(107,0,128,0.16) !important;
         }
 
-        /* ── Welcome banner ── */
         html:not(.dark) .welcome-banner,
         html[data-theme="light"] .welcome-banner,
         body.light .welcome-banner {
             background: linear-gradient(135deg, rgba(245,240,255,0.82), rgba(235,224,255,0.55)) !important;
             border-color: rgba(107,0,128,0.14) !important;
+            box-shadow: 0 4px 20px rgba(107,0,128,0.08) !important;
         }
         html:not(.dark) .welcome-banner::before,
         html[data-theme="light"] .welcome-banner::before,
@@ -399,7 +599,6 @@
             border-color: rgba(249,180,15,0.28) !important;
         }
 
-        /* ── Bible card ── */
         html:not(.dark) .bible-card,
         html[data-theme="light"] .bible-card,
         body.light .bible-card {
@@ -455,7 +654,6 @@
             background-size: 200% 100% !important;
         }
 
-        /* ── Countdown boxes ── */
         html:not(.dark) .vd-countdown-box,
         html[data-theme="light"] .vd-countdown-box,
         body.light .vd-countdown-box {
@@ -470,7 +668,6 @@
         html[data-theme="light"] .vd-countdown-sep,
         body.light .vd-countdown-sep { color: rgba(56,0,65,0.22) !important; }
 
-        /* ── Progress track ── */
         html:not(.dark) .vd-prog-track,
         html[data-theme="light"] .vd-prog-track,
         body.light .vd-prog-track { background: rgba(56,0,65,0.07) !important; }

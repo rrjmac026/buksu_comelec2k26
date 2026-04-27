@@ -16,7 +16,7 @@ RUN npm run build
 # =============================================================================
 # Stage 2 — PHP-FPM (Laravel application)
 # =============================================================================
-FROM php:8.3-fpm-bookworm AS app
+FROM php:8.4-fpm-bookworm AS app
 
 ARG DEBIAN_FRONTEND=noninteractive
 
@@ -32,6 +32,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     libonig-dev \
     libxml2-dev \
     libssl-dev \
+    libcurl4-openssl-dev \
     $PHPIZE_DEPS \
     && docker-php-ext-configure gd --with-freetype --with-jpeg \
     && docker-php-ext-install -j"$(nproc)" \
@@ -44,6 +45,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
         zip \
         intl \
         opcache \
+        curl \
     && pecl install redis \
     && docker-php-ext-enable redis \
     && apt-get purge -y --auto-remove $PHPIZE_DEPS \
@@ -62,6 +64,8 @@ COPY . .
 
 COPY --from=frontend /app/public/build ./public/build
 
+ENV COMPOSER_MEMORY_LIMIT=-1
+
 RUN composer install \
         --no-dev \
         --no-interaction \
@@ -78,7 +82,7 @@ RUN chmod +x /usr/local/bin/docker-entrypoint-app.sh
 RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache
 
 ENTRYPOINT ["/usr/local/bin/docker-entrypoint-app.sh"]
-CMD ["php-fpm"]
+CMD ["php-fpm", "--nodaemonize"]
 
 # =============================================================================
 # Stage 3 — Nginx (static files + FastCGI to `app:9000`)

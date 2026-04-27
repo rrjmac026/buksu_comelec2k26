@@ -6,12 +6,14 @@ export default defineConfig({
         laravel({
             input: [
                 'resources/css/app.css',
+                'resources/css/public-pages.css',
                 'resources/css/welcome.css',
                 'resources/css/admin/dashboard.css',
                 'resources/css/voter/ballot/step.css',
                 'resources/css/voter/dashboard.css',
                 'resources/css/auth/login.css',
                 'resources/js/app.js',
+                'resources/js/public-pages.js',
                 'resources/js/welcome.js',
             ],
             refresh: true,

@@ -53,6 +53,29 @@
             @media (max-width: 640px)  { html { font-size: 14px; } }
             @media (min-width: 641px) and (max-width: 768px) { html { font-size: 15px; } }
             @media (min-width: 769px) { html { font-size: 16px; } }
+
+            /* ── Voter pages: exact landing-page background (dark mode) ── */
+            html.dark body[data-role="voter"] {
+                background-color: #0d0018 !important;
+                background-image:
+                    linear-gradient(rgba(249,180,15,0.03) 1px, transparent 1px),
+                    linear-gradient(90deg, rgba(249,180,15,0.03) 1px, transparent 1px),
+                    radial-gradient(ellipse 70% 60% at 5% 10%, rgba(90,0,140,0.6) 0%, transparent 60%),
+                    radial-gradient(ellipse 50% 50% at 95% 85%, rgba(55,0,90,0.5) 0%, transparent 55%),
+                    radial-gradient(ellipse 40% 40% at 50% 50%, rgba(30,0,55,0.25) 0%, transparent 70%) !important;
+                background-size: 52px 52px, 52px 52px, 100% 100%, 100% 100%, 100% 100% !important;
+                background-attachment: fixed !important;
+            }
+
+            /* Voter pages: light mode background */
+            html:not(.dark) body[data-role="voter"] {
+                background-color: #f5f0ff !important;
+                background-image:
+                    radial-gradient(ellipse 90% 70% at 0% 0%, rgba(200,160,220,0.35) 0%, transparent 55%),
+                    radial-gradient(ellipse 70% 60% at 100% 100%, rgba(180,130,210,0.25) 0%, transparent 55%) !important;
+                background-size: 100% 100%, 100% 100% !important;
+                background-attachment: fixed !important;
+            }
         </style>
 
         @stack('styles')
@@ -64,10 +87,11 @@
         $blockedStatus = session('election_blocked');
     @endphp
 
-    <body class="font-sans antialiased dark bg-[#0f0a1e]"
+    <body class="font-sans antialiased dark bg-[#0d0018]"
           data-election-status="{{ $normalizedElectionStatus }}"
           data-election-blocked="{{ $blockedStatus }}"
-          :class="{ 'dark bg-[#0f0a1e]': $store.darkMode.on, 'bg-violet-50/40': !$store.darkMode.on }">
+          data-role="{{ auth()->check() ? auth()->user()->role : 'guest' }}"
+          :class="{ 'dark bg-[#0d0018]': $store.darkMode.on, 'bg-violet-50/40': !$store.darkMode.on }">
         <div class="min-h-screen flex flex-col w-full">
 
             @include('layouts.navigation')
