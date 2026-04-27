@@ -468,4 +468,86 @@
         .vd-flash.success {
             background: rgba(52,211,153,0.08); border: 1px solid rgba(52,211,153,0.25); color: #34d399;
         }
+        .vd-countdown-card {
+            background: rgba(26,0,32,0.88);
+            border: 1px solid rgba(249,180,15,0.18);
+            border-radius: 18px;
+            padding: 20px 24px;
+            margin-bottom: 20px;
+            text-align: center;
+            animation: vd-fadeUp .4s ease both;
+            box-shadow: 0 4px 32px rgba(0,0,0,0.3), inset 0 1px 0 rgba(249,180,15,0.06);
+            position: relative;
+            overflow: hidden;
+        }
+        .vd-countdown-card::before {
+            content: '';
+            display: block;
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, #f9b40f, #fcd558, transparent);
+        }
+        @keyframes vd-fadeUp {
+            from { opacity:0; transform:translateY(12px); }
+            to   { opacity:1; transform:translateY(0); }
+        }
+        .vd-cd-unit {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-width: 64px;
+        }
+        .vd-cd-num {
+            font-family: 'Playfair Display', serif;
+            font-size: 2rem;
+            font-weight: 900;
+            line-height: 1;
+            background: linear-gradient(135deg, #f9b40f, #fcd558);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            min-width: 2ch;
+            text-align: center;
+        }
+        .vd-cd-lbl {
+            font-size: 0.58rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: rgba(249,180,15,0.4);
+            margin-top: 4px;
+        }
+        .vd-cd-sep {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.6rem;
+            font-weight: 900;
+            color: rgba(249,180,15,0.3);
+            align-self: flex-start;
+            margin-top: 4px;
+            line-height: 1;
+        }
+        .vd-cd-chip {
+            padding: 2px 8px;
+            border-radius: 99px;
+            font-size: 0.58rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+        }
+        .vd-cd-chip.live {
+            background: rgba(52,211,153,0.12);
+            border: 1px solid rgba(52,211,153,0.25);
+            color: #34d399;
+        }
+        .vd-cd-chip.soon {
+            background: rgba(249,180,15,0.1);
+            border: 1px solid rgba(249,180,15,0.2);
+            color: rgba(249,180,15,0.8);
+        }
+        .vd-cd-chip.ended {
+            background: rgba(255,255,255,0.04);
+            border: 1px solid rgba(255,255,255,0.1);
+            color: rgba(255,255,255,0.35);
+        }
 

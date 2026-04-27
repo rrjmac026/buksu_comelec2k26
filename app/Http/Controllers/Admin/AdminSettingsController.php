@@ -29,6 +29,8 @@ class AdminSettingsController extends Controller
         // Election
         $status       = ElectionSetting::status();
         $electionName = ElectionSetting::get('election_name', 'Student Council Election');
+        $electionStart  = ElectionSetting::get('election_start');
+        $electionEnd    = ElectionSetting::get('election_end');
 
         // Backups
         $query = DataBackup::with('creator')->latest();
@@ -48,6 +50,7 @@ class AdminSettingsController extends Controller
 
         return view('admin.settings.index', compact(
             'status', 'electionName',
+            'electionStart', 'electionEnd',
             'backups', 'stats',
             'activeTab'
         ));
@@ -73,6 +76,20 @@ class AdminSettingsController extends Controller
 
         return redirect()->route('admin.settings.index', ['tab' => 'election'])
             ->with('success', $labels[$request->status]);
+    }
+
+    public function updateSchedule(Request $request)
+    {
+        $request->validate([
+            'election_start' => ['nullable', 'date'],
+            'election_end'   => ['nullable', 'date', 'after_or_equal:election_start'],
+        ]);
+
+        ElectionSetting::set('election_start', $request->election_start ?? '');
+        ElectionSetting::set('election_end',   $request->election_end   ?? '');
+
+        return redirect()->route('admin.settings.index', ['tab' => 'election'])
+            ->with('success', 'Election schedule updated.');
     }
 
     public function updateName(Request $request)

@@ -27,7 +27,8 @@ class PublicController extends Controller
             'status'         => $status,
             'status_label'   => ElectionSetting::statusLabel(),
             'election_name'  => ElectionSetting::get('election_name', 'Student Government Election'),
-            'election_start' => $electionStart ? date('c', strtotime($electionStart)) : null,
+            'election_start' => ElectionSetting::get('election_start') ?: null,
+            'election_end'   => ElectionSetting::get('election_end')   ?: null,
         ]);
     }
 }

@@ -118,6 +118,8 @@ Route::middleware(['auth', 'admin'])
  
             // Main page (tab=election | tab=backups)
             Route::get('/', [AdminSettingsController::class, 'index'])->name('index');
+            Route::post('/election/schedule', [AdminSettingsController::class, 'updateSchedule'])
+                ->name('election.schedule');
         
             // Election sub-routes
             Route::post('/election/status', [AdminSettingsController::class, 'updateStatus'])->name('election.status');

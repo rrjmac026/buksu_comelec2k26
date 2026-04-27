@@ -147,6 +147,65 @@
                 </form>
             </div>
         </div>
+        {{-- Election Schedule Card --}}
+        <div class="ec-card">
+            <div class="ec-header">
+                <div class="ec-title">Election Schedule</div>
+                <div class="ec-sub">Set the start and end date/time. The countdown on the public page uses these.</div>
+            </div>
+            <div class="ec-body">
+                <form method="POST" action="{{ route('admin.settings.election.schedule') }}">
+                    @csrf
+                    <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px;">
+                        <div>
+                            <label class="field-label">Start Date &amp; Time</label>
+                            <input type="datetime-local"
+                                name="election_start"
+                                class="field-input"
+                                value="{{ $electionStart ? \Carbon\Carbon::parse($electionStart)->format('Y-m-d\TH:i') : '' }}">
+                            @error('election_start')
+                                <div style="font-size:0.68rem;color:#f87171;margin-top:4px;">{{ $message }}</div>
+                            @enderror
+                        </div>
+                        <div>
+                            <label class="field-label">End Date &amp; Time</label>
+                            <input type="datetime-local"
+                                name="election_end"
+                                class="field-input"
+                                value="{{ $electionEnd ? \Carbon\Carbon::parse($electionEnd)->format('Y-m-d\TH:i') : '' }}">
+                            @error('election_end')
+                                <div style="font-size:0.68rem;color:#f87171;margin-top:4px;">{{ $message }}</div>
+                            @enderror
+                        </div>
+                    </div>
+
+                    @if($electionStart || $electionEnd)
+                    <div style="display:flex;gap:12px;align-items:center;padding:10px 14px;border-radius:10px;
+                                background:rgba(249,180,15,0.06);border:1px solid rgba(249,180,15,0.12);
+                                margin-bottom:16px;font-size:0.72rem;color:rgba(255,251,240,0.5);">
+                        <i class="fas fa-clock" style="color:rgba(249,180,15,0.5);flex-shrink:0;"></i>
+                        <div>
+                            @if($electionStart)
+                                <span>Start: <strong style="color:rgba(249,180,15,0.8);">
+                                    {{ \Carbon\Carbon::parse($electionStart)->format('M d, Y · g:i A') }}
+                                </strong></span>
+                            @endif
+                            @if($electionStart && $electionEnd) &nbsp;·&nbsp; @endif
+                            @if($electionEnd)
+                                <span>End: <strong style="color:rgba(249,180,15,0.8);">
+                                    {{ \Carbon\Carbon::parse($electionEnd)->format('M d, Y · g:i A') }}
+                                </strong></span>
+                            @endif
+                        </div>
+                    </div>
+                    @endif
+
+                    <button type="submit" class="save-btn">
+                        <i class="fas fa-calendar-check"></i> Save Schedule
+                    </button>
+                </form>
+            </div>
+        </div>
 
     </div>
 
