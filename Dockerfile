@@ -16,7 +16,7 @@ RUN npm run build
 # =============================================================================
 # Stage 2 — PHP-FPM (Laravel application)
 # =============================================================================
-FROM php:8.3-fpm-bookworm AS app
+FROM php:8.4-fpm-bookworm AS app
 
 ARG DEBIAN_FRONTEND=noninteractive
 
