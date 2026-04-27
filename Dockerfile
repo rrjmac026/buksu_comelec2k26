@@ -82,7 +82,7 @@ RUN chmod +x /usr/local/bin/docker-entrypoint-app.sh
 RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache
 
 ENTRYPOINT ["/usr/local/bin/docker-entrypoint-app.sh"]
-CMD ["php-fpm"]
+CMD ["php-fpm", "--nodaemonize"]
 
 # =============================================================================
 # Stage 3 — Nginx (static files + FastCGI to `app:9000`)
