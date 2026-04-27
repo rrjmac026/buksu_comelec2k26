@@ -2,28 +2,9 @@
 //  WELCOME PAGE — resources/js/welcome.js
 // ═══════════════════════════════════════════
 
-// ── Dark mode (Alpine) ──────────────────────────────────────
-if (
-    localStorage.theme === 'dark' ||
-    (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)
-) {
-    document.documentElement.classList.add('dark');
-}
-
-document.addEventListener('alpine:init', () => {
-    Alpine.store('darkMode', {
-        init() {
-            this.on = localStorage.getItem('theme') === 'dark';
-            document.documentElement.classList.toggle('dark', this.on);
-        },
-        on: false,
-        toggle() {
-            this.on = !this.on;
-            localStorage.setItem('theme', this.on ? 'dark' : 'light');
-            document.documentElement.classList.toggle('dark', this.on);
-        },
-    });
-});
+// ── Theme policy: dark-only ──────────────────────────────────
+localStorage.setItem('theme', 'dark');
+document.documentElement.classList.add('dark');
 
 // ── Smooth scroll utility (global) ─────────────────────────
 window.smoothScrollTo = function (sectionId) {

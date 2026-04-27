@@ -17,7 +17,6 @@
     }
     @keyframes backdrop-in { from { opacity: 0; } to { opacity: 1; } }
 
-    html:not(.dark) .sidebar-backdrop { background: rgba(80, 0, 100, 0.35); }
 
     /* ── Sidebar shell ── */
     .sidebar-shell {
@@ -36,11 +35,6 @@
                     box-shadow 0.3s ease;
     }
 
-    html:not(.dark) .sidebar-shell {
-        background: rgba(255, 250, 245, 0.99);
-        border-right-color: rgba(180, 100, 0, 0.2);
-        box-shadow: 4px 0 40px rgba(100, 0, 80, 0.1), 0 0 0 0.5px rgba(180, 100, 0, 0.08);
-    }
 
     /* ── Decorative top accent ── */
     .sidebar-shell::before {
@@ -61,10 +55,6 @@
         transition: background 0.3s, border-color 0.3s;
     }
 
-    html:not(.dark) .sidebar-header {
-        background: linear-gradient(180deg, rgba(255, 235, 200, 0.5) 0%, transparent 100%);
-        border-bottom-color: rgba(180, 100, 0, 0.15);
-    }
 
     .sidebar-brand { display: flex; align-items: center; gap: 10px; text-decoration: none; }
     .sidebar-brand-dot {
@@ -83,10 +73,6 @@
         -webkit-background-clip: text; -webkit-text-fill-color: transparent;
     }
 
-    html:not(.dark) .sidebar-brand-label {
-        background: linear-gradient(105deg, #c98a00 0%, #f9b40f 100%);
-        -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-    }
 
     /* ── Nav scroll area ── */
     .sidebar-nav {
@@ -99,8 +85,6 @@
     .sidebar-nav::-webkit-scrollbar-track { background: transparent; }
     .sidebar-nav::-webkit-scrollbar-thumb { background: rgba(249,180,15,0.15); border-radius: 99px; }
 
-    html:not(.dark) .sidebar-nav { scrollbar-color: rgba(180,100,0,0.15) transparent; }
-    html:not(.dark) .sidebar-nav::-webkit-scrollbar-thumb { background: rgba(180,100,0,0.15); }
 
     /* ── Section label ── */
     .nav-section-label {
@@ -115,8 +99,6 @@
         transition: background 0.3s;
     }
 
-    html:not(.dark) .nav-section-label { color: rgba(140, 70, 0, 0.6); }
-    html:not(.dark) .nav-section-label::after { background: linear-gradient(90deg, rgba(180,100,0,0.2) 0%, transparent 100%); }
 
     /* ── Nav link base ── */
     .nav-link {
@@ -134,10 +116,6 @@
         border-color: rgba(249, 180, 15, 0.15);
     }
 
-    html:not(.dark) .nav-link:hover {
-        background: rgba(180, 100, 0, 0.07);
-        border-color: rgba(180, 100, 0, 0.15);
-    }
 
     /* ── Active state ── */
     .nav-link.active {
@@ -152,14 +130,6 @@
         background: linear-gradient(180deg, #f9b40f, #fcd558);
     }
 
-    html:not(.dark) .nav-link.active {
-        background: linear-gradient(105deg, rgba(180,100,0,0.12) 0%, rgba(180,100,0,0.06) 100%);
-        border-color: rgba(180, 100, 0, 0.25);
-        box-shadow: 0 2px 12px rgba(180, 100, 0, 0.1), inset 0 0 0 0.5px rgba(180,100,0,0.1);
-    }
-    html:not(.dark) .nav-link.active::before {
-        background: linear-gradient(180deg, #c98a00, #f9b40f);
-    }
 
     /* ── Nav icon ── */
     .nav-link-icon {
@@ -183,21 +153,6 @@
         box-shadow: 0 3px 12px rgba(249, 180, 15, 0.4);
     }
 
-    html:not(.dark) .nav-link-icon {
-        background: rgba(180, 100, 0, 0.08);
-        color: rgba(160, 80, 0, 0.75);
-        border-color: rgba(180, 100, 0, 0.14);
-    }
-    html:not(.dark) .nav-link:hover .nav-link-icon {
-        background: rgba(180, 100, 0, 0.14);
-        color: #c98a00;
-    }
-    html:not(.dark) .nav-link.active .nav-link-icon {
-        background: linear-gradient(135deg, #f9b40f, #fcd558);
-        color: #380041;
-        border-color: #f9b40f;
-        box-shadow: 0 3px 12px rgba(249, 180, 15, 0.35);
-    }
 
     /* ── Nav text ── */
     .nav-link-text { flex: 1; }
@@ -209,9 +164,6 @@
     .nav-link.active .nav-link-label { color: #fcd558; }
     .nav-link:hover .nav-link-label { color: #fffbf0; }
 
-    html:not(.dark) .nav-link-label { color: rgba(30, 0, 40, 0.75); }
-    html:not(.dark) .nav-link.active .nav-link-label { color: #9a4e00; }
-    html:not(.dark) .nav-link:hover .nav-link-label { color: #1a0020; }
 
     .nav-link-sub {
         font-size: 0.68rem; color: rgba(255, 251, 240, 0.3); display: block; margin-top: 0.5px;
@@ -220,9 +172,6 @@
     .nav-link.active .nav-link-sub { color: rgba(249, 180, 15, 0.6); }
     .nav-link:hover .nav-link-sub { color: rgba(255, 251, 240, 0.5); }
 
-    html:not(.dark) .nav-link-sub { color: rgba(30, 0, 40, 0.38); }
-    html:not(.dark) .nav-link.active .nav-link-sub { color: rgba(140, 70, 0, 0.65); }
-    html:not(.dark) .nav-link:hover .nav-link-sub { color: rgba(30, 0, 40, 0.55); }
 
     /* ── Badge chip ── */
     .nav-badge {
@@ -266,10 +215,6 @@
         transition: background 0.3s, border-color 0.3s;
     }
 
-    html:not(.dark) .sidebar-footer {
-        background: linear-gradient(0deg, rgba(255, 235, 200, 0.4) 0%, transparent 100%);
-        border-top-color: rgba(180, 100, 0, 0.12);
-    }
 
     .sidebar-footer-inner {
         display: flex; align-items: center; gap: 10px;
@@ -279,10 +224,6 @@
         transition: background 0.3s, border-color 0.3s;
     }
 
-    html:not(.dark) .sidebar-footer-inner {
-        background: rgba(180, 100, 0, 0.06);
-        border-color: rgba(180, 100, 0, 0.14);
-    }
 
     .footer-logo-dot {
         width: 28px; height: 28px; border-radius: 8px;
@@ -303,8 +244,6 @@
         transition: color 0.3s;
     }
 
-    html:not(.dark) .footer-app-name { color: rgba(30, 0, 40, 0.8); }
-    html:not(.dark) .footer-version { color: rgba(140, 70, 0, 0.6); }
 
     .footer-status {
         width: 7px; height: 7px; border-radius: 50%;
@@ -323,12 +262,7 @@
         border: none; border-top: 1px solid rgba(249,180,15,0.08);
         transition: border-color 0.3s;
     }
-    html:not(.dark) .sidebar-divider { border-top-color: rgba(180,100,0,0.1); }
 
-    /* ── app.blade.php body light mode ── */
-    html:not(.dark) body {
-        background-color: #fdf6ff !important;
-    }
 </style>
 
 <div x-data class="h-full">

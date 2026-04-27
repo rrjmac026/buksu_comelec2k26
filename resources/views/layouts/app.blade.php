@@ -18,9 +18,9 @@
         <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
 
         <script>
-            if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
-                document.documentElement.classList.add('dark');
-            }
+            // Force dark mode globally for all users/pages.
+            localStorage.setItem('theme', 'dark');
+            document.documentElement.classList.add('dark');
 
             document.addEventListener('alpine:init', () => {
                 Alpine.store('sidebar', {
@@ -30,16 +30,16 @@
 
                 Alpine.store('darkMode', {
                     init() {
-                        const theme = localStorage.getItem('theme');
-                        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-                        this.on = theme === 'dark' || (!theme && prefersDark);
-                        document.documentElement.classList.toggle('dark', this.on);
+                        this.on = true;
+                        localStorage.setItem('theme', 'dark');
+                        document.documentElement.classList.add('dark');
                     },
-                    on: false,
+                    on: true,
                     toggle() {
-                        this.on = !this.on;
-                        localStorage.setItem('theme', this.on ? 'dark' : 'light');
-                        document.documentElement.classList.toggle('dark', this.on);
+                        // Disabled by product decision: app is dark-only.
+                        this.on = true;
+                        localStorage.setItem('theme', 'dark');
+                        document.documentElement.classList.add('dark');
                     }
                 });
             });
@@ -67,15 +67,6 @@
                 background-attachment: fixed !important;
             }
 
-            /* Voter pages: light mode background */
-            html:not(.dark) body[data-role="voter"] {
-                background-color: #f5f0ff !important;
-                background-image:
-                    radial-gradient(ellipse 90% 70% at 0% 0%, rgba(200,160,220,0.35) 0%, transparent 55%),
-                    radial-gradient(ellipse 70% 60% at 100% 100%, rgba(180,130,210,0.25) 0%, transparent 55%) !important;
-                background-size: 100% 100%, 100% 100% !important;
-                background-attachment: fixed !important;
-            }
         </style>
 
         @stack('styles')
@@ -91,7 +82,7 @@
           data-election-status="{{ $normalizedElectionStatus }}"
           data-election-blocked="{{ $blockedStatus }}"
           data-role="{{ auth()->check() ? auth()->user()->role : 'guest' }}"
-          :class="{ 'dark bg-[#0d0018]': $store.darkMode.on, 'bg-violet-50/40': !$store.darkMode.on }">
+          :class="{ 'dark bg-[#0d0018]': true }">
         <div class="min-h-screen flex flex-col w-full">
 
             @include('layouts.navigation')
