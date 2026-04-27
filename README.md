@@ -28,6 +28,10 @@
 
 **COMELEC 2K26** is a comprehensive online voting system designed for educational institutions. It enables students to participate in organizational elections with secure authentication, real-time vote counting, and detailed reporting capabilities.
 
+### System Description
+
+The COMELEC 2K26 system is a complete digital election management platform built to modernize the voting process in educational institutions. This system streamlines the entire election workflow—from candidate registration and voter authentication to vote casting, real-time result tabulation, and comprehensive reporting. It eliminates traditional paper-based voting while maintaining transparency, security, and accuracy. With role-based access control, administrators can manage multiple elections, organizations, and partylists simultaneously, while voters enjoy a user-friendly interface to cast their votes securely. The system provides instant vote counting, detailed audit logs for compliance, and exportable PDF reports for official documentation. Whether conducting student council elections, organizational officer elections, or general assembly voting, COMELEC 2K26 ensures a smooth, secure, and verifiable electoral process tailored to the needs of educational institutions.
+
 **Built with:**
 - Laravel 12 (PHP Framework)
 - MySQL/MariaDB (Database)

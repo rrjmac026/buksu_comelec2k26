@@ -29,6 +29,7 @@ class DatabaseSeeder extends Seeder
             PositionSeeder::class,
             OrganizationSeeder::class,
             CandidateSeeder::class,
+            FacultyStaffSeeder::class,
             // TestCandidateSeeder::class
         ]);
 
