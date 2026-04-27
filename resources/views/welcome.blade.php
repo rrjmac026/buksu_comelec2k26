@@ -251,13 +251,10 @@
                 <div class="team-section-inner">
 
                     <div class="team-header-wrap">
-                        <div class="team-section-tag">
-                            <span class="team-tag-line"></span>
-                            Meet the Team
-                            <span class="team-tag-line"></span>
-                        </div>
+                        <p class="team-section-tag">MEET THE TEAM</p>
                         <h2 class="team-heading">The Minds Behind the System</h2>
-                        <p class="team-subtext">Dedicated developers building a secure and reliable voting platform.</p>
+                        <p class="team-subtext">Dedicated developers and commission members building a secure and transparent voting platform.</p>
+                        <span class="team-header-divider" aria-hidden="true"></span>
                     </div>
 
                     @php
@@ -265,38 +262,29 @@
                             [
                                 'name' => 'Rey Rameses Jude "Jam" Macalutas III',
                                 'role' => 'System Developer / Lead Developer',
-                                'avatar' => asset('assets/team/dev1.jpg'),
                                 'initials' => 'JM',
-                                'linkedin' => '#',
-                                'contributions' => [
-                                    'Built the full-stack system end-to-end',
-                                    'Designed the overall look & feel of the app',
-                                    'Kept the codebase clean & running solid',
-                                ],
+                                'avatar' => asset('assets/team/dev1.png'),
+                                'description' => 'Leads system architecture and ensures secure, smooth platform performance.',
+                                'facebook' => null,
+                                'email' => null,
                             ],
                             [
                                 'name' => 'Khyle Ivan Kim Amacna',
                                 'role' => 'Head System Developer',
                                 'avatar' => asset('assets/team/dev2.jpg'),
                                 'initials' => 'KA',
-                                'linkedin' => '#',
-                                'contributions' => [
-                                    'Led the team and kept everything moving',
-                                    'Crafted intuitive UI/UX experiences',
-                                    'Made sure every screen looks just right',
-                                ],
+                                'description' => 'Directs technical execution, aligning development tasks with project goals.',
+                                'facebook' => null,
+                                'email' => null,
                             ],
                             [
                                 'name' => 'Bernardo DeLa Cerna Jr.',
                                 'role' => 'System Developer / QA',
-                                'avatar' => asset('assets/team/dev3.jpg'),
+                                'avatar' => asset('assets/team/locked.png'),
                                 'initials' => 'BC',
-                                'linkedin' => '#',
-                                'contributions' => [
-                                    'Tested and caught bugs before they cause trouble',
-                                    'Handled and cleaned up all the messy data',
-                                    'Made sure the numbers always add up right',
-                                ],
+                                'description' => 'Handles quality assurance and testing to maintain reliability and trust.',
+                                'facebook' => null,
+                                'email' => null,
                             ],
                         ];
 
@@ -305,182 +293,142 @@
                                 'name' => 'Mark Ian Mukara',
                                 'role' => 'Adviser',
                                 'initials' => 'MM',
-                                'contributions' => [
-                                    'Guided the team throughout the system development',
-                                    'Reviewed the system direction and overall implementation',
-                                    'Provided advice for improvements and final deployment',
-                                ],
+                                'avatar' => asset('assets/team/6.png'),
+                                'description' => 'Provides strategic guidance to keep election operations aligned and effective.',
                             ],
                             [
                                 'name' => 'Roxanne Mae Ortega',
                                 'role' => 'Head Commissioner',
                                 'initials' => 'RO',
-                                'contributions' => [
-                                    'Led the COMELEC team operations',
-                                    'Coordinated election-related tasks and responsibilities',
-                                    'Ensured the voting process followed proper procedures',
-                                ],
+                                'avatar' => asset('assets/team/5.png'),
+                                'description' => 'Leads commission execution and ensures every election process is on track.',
                             ],
                             [
                                 'name' => 'Yassin Naga',
                                 'role' => 'Internal Commissioner',
                                 'initials' => 'YN',
-                                'contributions' => [
-                                    'Managed internal coordination within the commission',
-                                    'Assisted in organizing election records and updates',
-                                    'Supported smooth communication among team members',
-                                ],
+                                'avatar' => asset('assets/team/2.png'),
+                                'description' => 'Coordinates internal workflows and keeps team communication streamlined.',
                             ],
                             [
                                 'name' => 'Steven Bagasbas',
                                 'role' => 'External Commissioner',
                                 'initials' => 'SB',
-                                'contributions' => [
-                                    'Coordinated external communication and concerns',
-                                    'Assisted with election-related announcements',
-                                    'Supported stakeholder coordination during the election period',
-                                ],
+                                'avatar' => asset('assets/team/locked.png'),
+                                'description' => 'Handles external coordination and supports clear public-facing communication.',
                             ],
                             [
                                 'name' => 'Khisia Faith Llanera',
                                 'role' => 'Logistics Commissioner',
                                 'initials' => 'KL',
-                                'contributions' => [
-                                    'Managed logistics and election preparation needs',
-                                    'Assisted in organizing materials and resources',
-                                    'Supported smooth election-day operations',
-                                ],
+                                'avatar' => asset('assets/team/locked.png'),
+                                'description' => 'Manages logistics and ensures election resources are prepared on time.',
                             ],
                             [
                                 'name' => 'Elaine Mae Furog',
                                 'role' => 'Canvass Commissioner',
                                 'initials' => 'EF',
-                                'contributions' => [
-                                    'Assisted in vote canvassing and result validation',
-                                    'Helped ensure accuracy of election data',
-                                    'Supported transparent and organized result processing',
-                                ],
+                                'avatar' => asset('assets/team/locked.png'),
+                                'description' => 'Supports vote canvassing with a focus on accuracy and transparency.',
                             ],
                             [
                                 'name' => 'Rhoda Princess Diones',
                                 'role' => 'Campaign Commissioner',
                                 'initials' => 'RD',
-                                'contributions' => [
-                                    'Managed campaign-related coordination',
-                                    'Helped monitor campaign activities and guidelines',
-                                    'Supported fair and organized campaign implementation',
-                                ],
+                                'avatar' => asset('assets/team/locked.png'),
+                                'description' => 'Oversees campaign activities and enforces fair election participation.',
                             ],
                             [
                                 'name' => 'Marian Gewan',
                                 'role' => 'Creatives Commissioner',
                                 'initials' => 'MG',
-                                'contributions' => [
-                                    'Assisted in creating election visual materials',
-                                    'Supported design and publication needs',
-                                    'Helped maintain a clean and consistent election brand',
-                                ],
+                                'avatar' => asset('assets/team/locked.png'),
+                                'description' => 'Leads creative outputs that keep election communications clear and cohesive.',
                             ],
                             [
                                 'name' => 'Axiel Ivan Pacquiao',
                                 'role' => 'Local Commissioner on Campaign',
                                 'initials' => 'AP',
-                                'contributions' => [
-                                    'Assisted with local campaign coordination',
-                                    'Supported communication with assigned groups',
-                                    'Helped monitor campaign-related activities',
-                                ],
+                                'avatar' => asset('assets/team/4.png'),
+                                'description' => 'Coordinates local campaign initiatives and supports outreach consistency.',
                             ],
                             [
                                 'name' => 'Kurt Kein Daguyo',
                                 'role' => 'Local Commissioner on Campaign',
                                 'initials' => 'KD',
-                                'contributions' => [
-                                    'Assisted with local campaign coordination',
-                                    'Helped ensure campaign guidelines were followed',
-                                    'Supported campaign updates and communication',
-                                ],
+                                'avatar' => asset('assets/team/locked.png'),
+                                'description' => 'Supports local campaign planning and helps maintain compliance standards.',
                             ],
                             [
                                 'name' => 'Owen Jerusalem',
                                 'role' => 'Local Commissioner on Creatives',
                                 'initials' => 'OJ',
-                                'contributions' => [
-                                    'Assisted in preparing creative materials',
-                                    'Supported layout and publication tasks',
-                                    'Helped maintain visual consistency in election materials',
-                                ],
+                                'avatar' => asset('assets/team/3.png'),
+                                'description' => 'Contributes creative assets for local campaigns with consistent branding.',
                             ],
                             [
                                 'name' => 'Gerardo Aranas Jr',
                                 'role' => 'Local Commissioner on Creatives',
                                 'initials' => 'GA',
-                                'contributions' => [
-                                    'Assisted in preparing creative materials',
-                                    'Supported visual design and content preparation',
-                                    'Helped improve the presentation of election materials',
-                                ],
+                                'avatar' => asset('assets/team/locked.png'),
+                                'description' => 'Supports design production for local initiatives and campaign visuals.',
                             ],
                         ];
                     @endphp
 
                     <div class="team-group">
-                        <div class="team-group-title-wrap">
-                            <h3 class="team-group-title">Development Team</h3>
-                            <span class="team-group-divider"></span>
+                        <div class="team-mid-divider team-mid-divider--top" aria-hidden="true">
+                            <span class="team-mid-line"></span>
+                            <span class="team-mid-label"><i class="fas fa-code"></i> Development Team</span>
+                            <span class="team-mid-line"></span>
                         </div>
-                        <div class="team-cards-grid">
+                        <div class="team-cards-grid team-cards-grid--development">
                             @foreach ($developmentTeam as $member)
                                 <article class="team-card team-card-animate">
-                                    <div class="tc-left">
-                                        <div class="tc-avatar-ring">
-                                            <img src="{{ $member['avatar'] }}" alt="{{ $member['name'] }}" class="tc-avatar"
-                                                onerror="this.style.display='none'; this.parentElement.querySelector('.tc-av-fallback').style.display='flex';">
-                                            <div class="tc-av-fallback" style="display:none;">{{ $member['initials'] }}</div>
-                                        </div>
-                                        @if (!empty($member['linkedin']) && $member['linkedin'] !== '#')
-                                            <a href="{{ $member['linkedin'] }}" class="tc-linkedin-btn" title="LinkedIn" target="_blank" rel="noopener noreferrer">
-                                                <i class="fab fa-linkedin-in"></i>
-                                            </a>
-                                        @endif
+                                    <div class="tc-image-wrap">
+                                        <img src="{{ $member['avatar'] }}" alt="{{ $member['name'] }}" class="tc-image"
+                                            onerror="this.style.display='none'; this.parentElement.querySelector('.tc-av-fallback').style.display='flex';">
+                                        <div class="tc-image-overlay"></div>
+                                        <div class="tc-av-fallback" style="display:none;">{{ $member['initials'] }}</div>
                                     </div>
-                                    <div class="tc-right">
+                                    <div class="tc-content">
                                         <h4 class="tc-name">{{ $member['name'] }}</h4>
                                         <p class="tc-role">{{ $member['role'] }}</p>
-                                        <p class="tc-contrib-label">Key Contributions</p>
-                                        <ul class="tc-contribs">
-                                            @foreach ($member['contributions'] as $contribution)
-                                                <li class="tc-contrib">{{ $contribution }}</li>
-                                            @endforeach
-                                        </ul>
+                                        <p class="tc-description">{{ $member['description'] }}</p>
+                                        <div class="tc-socials">
+                                            <a href="#" class="tc-social" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
+                                            <a href="#" class="tc-social" aria-label="Email"><i class="fas fa-envelope"></i></a>
+                                        </div>
                                     </div>
                                 </article>
                             @endforeach
                         </div>
                     </div>
 
+                    <div class="team-mid-divider" aria-hidden="true">
+                        <span class="team-mid-line"></span>
+                        <span class="team-mid-label"><i class="fas fa-shield-halved"></i> COMELEC Commission Team</span>
+                        <span class="team-mid-line"></span>
+                    </div>
+
                     <div class="team-group">
-                        <div class="team-group-title-wrap">
-                            <h3 class="team-group-title">COMELEC Commission Team</h3>
-                            <span class="team-group-divider"></span>
-                        </div>
                         <div class="team-cards-grid">
                             @foreach ($commissionTeam as $member)
                                 <article class="team-card team-card-animate">
-                                    <div class="tc-left">
-                                        <div class="tc-avatar-ring">
-                                            <div class="tc-av-fallback">{{ $member['initials'] }}</div>
-                                        </div>
+                                    <div class="tc-image-wrap">
+                                        <img src="{{ $member['avatar'] }}" alt="{{ $member['name'] }}" class="tc-image"
+                                            onerror="this.style.display='none'; this.parentElement.querySelector('.tc-av-fallback').style.display='flex';">
+                                        <div class="tc-image-overlay"></div>
+                                        <div class="tc-av-fallback" style="display:none;">{{ $member['initials'] }}</div>
                                     </div>
-                                    <div class="tc-right">
+                                    <div class="tc-content">
                                         <h4 class="tc-name">{{ $member['name'] }}</h4>
                                         <p class="tc-role">{{ $member['role'] }}</p>
-                                        <p class="tc-contrib-label">Key Contributions</p>
-                                        <ul class="tc-contribs">
-                                            @foreach ($member['contributions'] as $contribution)
-                                                <li class="tc-contrib">{{ $contribution }}</li>
-                                            @endforeach
-                                        </ul>
+                                        <p class="tc-description">{{ $member['description'] }}</p>
+                                        <div class="tc-socials">
+                                            <a href="#" class="tc-social" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
+                                            <a href="#" class="tc-social" aria-label="Email"><i class="fas fa-envelope"></i></a>
+                                        </div>
                                     </div>
                                 </article>
                             @endforeach
