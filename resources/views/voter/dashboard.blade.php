@@ -2,27 +2,36 @@
 <x-app-layout>
     {{-- Fonts --}}
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;800;900&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-  @vite(['resources/css/voter/dashboard.css'])
+    @vite(['resources/css/voter/dashboard.css'])
+
+    {{-- ── Background ambient orbs (exact admin/landing page sizes) ── --}}
+    <div class="vd-orb vd-orb-1"></div>
+    <div class="vd-orb vd-orb-2"></div>
+    <div class="vd-orb vd-orb-3"></div>
+
+    {{-- ── Page content wrapper ── --}}
+    <div class="vd-page-content">
 
     {{-- ═══════════════════════════════════════════
          WELCOME BANNER
     ═══════════════════════════════════════════ --}}
     <div class="welcome-banner">
+        <div class="welcome-banner-grid"></div>
         <div class="welcome-inner">
             <div>
                 <h2 class="welcome-title"
-                    style="font-family:'Playfair Display',serif;font-size:1.35rem;font-weight:900;color:#fffbf0;margin:0 0 6px 0;line-height:1.25;">
+                    style="font-family:'Playfair Display',serif;font-size:1.4rem;font-weight:900;color:#fffbf0;margin:0 0 7px 0;line-height:1.25;text-shadow:0 2px 20px rgba(249,180,15,0.15);">
                     Welcome, {{ $voter->full_name }}! 👋
                 </h2>
                 <p class="welcome-sub"
-                   style="font-size:.8rem;color:rgba(255,251,240,0.6);margin:0;line-height:1.6;">
+                   style="font-size:.82rem;color:rgba(255,251,240,0.62);margin:0;line-height:1.65;max-width:520px;">
                     {{ $hasVoted
                         ? "Thank you for casting your vote! Your participation helps shape the future of our organization."
                         : "You're invited to participate in this important election. Your voice matters—cast your vote now!" }}
                 </p>
             </div>
             <div class="welcome-date">
-                <span style="font-family:'Playfair Display',serif;font-size:.88rem;font-weight:800;background:linear-gradient(135deg,#f9b40f,#fcd558);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;">
+                <span style="font-family:'Playfair Display',serif;font-size:.9rem;font-weight:800;background:linear-gradient(135deg,#f9b40f,#fcd558);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;">
                     {{ now()->format('l, F j, Y') }}
                 </span>
             </div>
@@ -38,107 +47,52 @@
             : 'Voting is closed because the election has ended';
     @endphp
 
-    {{-- Election Status Banner --}}
+    {{-- ── Election Status Banner ── --}}
     @if(in_array($electionStatus, ['upcoming', 'not_started'], true))
-    <div style="display:flex;align-items:center;gap:14px;padding:18px 24px;border-radius:16px;
-                background:rgba(249,180,15,0.08);border:1px solid rgba(249,180,15,0.22);
-                margin-bottom:20px;animation:fadeUp .4s ease both;">
-        <div style="width:44px;height:44px;border-radius:12px;flex-shrink:0;
-                    background:rgba(249,180,15,0.12);border:1px solid rgba(249,180,15,0.25);
-                    display:flex;align-items:center;justify-content:center;color:#f9b40f;font-size:1.1rem;">
-            <i class="fas fa-hourglass-start"></i>
-        </div>
+    <div class="vd-election-banner upcoming">
+        <div class="vd-election-banner-icon"><i class="fas fa-hourglass-start"></i></div>
         <div style="flex:1;">
-            <div style="font-family:'Playfair Display',serif;font-size:0.95rem;font-weight:900;color:#f9b40f;margin-bottom:3px;">
-                Election Coming Soon
-            </div>
-            <div style="font-size:0.72rem;color:rgba(249,180,15,0.6);line-height:1.6;">
-                The election has not opened yet. Voting will be enabled once the election begins. Stay tuned!
-            </div>
+            <div class="vd-election-banner-title">Election Coming Soon</div>
+            <div class="vd-election-banner-sub">The election has not opened yet. Voting will be enabled once it begins. Stay tuned!</div>
         </div>
-        <div style="padding:6px 16px;border-radius:99px;background:rgba(249,180,15,0.1);
-                    border:1px solid rgba(249,180,15,0.25);font-size:0.65rem;font-weight:800;
-                    color:#f9b40f;letter-spacing:0.08em;white-space:nowrap;">
-            UPCOMING
-        </div>
+        <span class="vd-election-banner-chip">UPCOMING</span>
     </div>
 
     @elseif($electionStatus === 'ended')
-    <div style="display:flex;align-items:center;gap:14px;padding:18px 24px;border-radius:16px;
-                background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.1);
-                margin-bottom:20px;animation:fadeUp .4s ease both;">
-        <div style="width:44px;height:44px;border-radius:12px;flex-shrink:0;
-                    background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);
-                    display:flex;align-items:center;justify-content:center;color:rgba(255,255,255,0.4);font-size:1.1rem;">
-            <i class="fas fa-flag-checkered"></i>
-        </div>
+    <div class="vd-election-banner ended">
+        <div class="vd-election-banner-icon"><i class="fas fa-flag-checkered"></i></div>
         <div style="flex:1;">
-            <div style="font-family:'Playfair Display',serif;font-size:0.95rem;font-weight:900;
-                        color:rgba(255,255,255,0.5);margin-bottom:3px;">
-                Election Has Ended
-            </div>
-            <div style="font-size:0.72rem;color:rgba(255,255,255,0.3);line-height:1.6;">
-                The voting period is now closed. Thank you to everyone who participated!
-            </div>
+            <div class="vd-election-banner-title">Election Has Ended</div>
+            <div class="vd-election-banner-sub">The voting period is now closed. Thank you to everyone who participated!</div>
         </div>
-        <div style="padding:6px 16px;border-radius:99px;background:rgba(255,255,255,0.05);
-                    border:1px solid rgba(255,255,255,0.1);font-size:0.65rem;font-weight:800;
-                    color:rgba(255,255,255,0.3);letter-spacing:0.08em;white-space:nowrap;">
-            ENDED
-        </div>
+        <span class="vd-election-banner-chip">ENDED</span>
     </div>
 
     @elseif($electionStatus === 'ongoing')
-    <div style="display:flex;align-items:center;gap:14px;padding:18px 24px;border-radius:16px;
-                background:rgba(52,211,153,0.06);border:1px solid rgba(52,211,153,0.22);
-                margin-bottom:20px;animation:fadeUp .4s ease both;">
-        <div style="width:44px;height:44px;border-radius:12px;flex-shrink:0;
-                    background:rgba(52,211,153,0.1);border:1px solid rgba(52,211,153,0.25);
-                    display:flex;align-items:center;justify-content:center;color:#34d399;font-size:1.1rem;">
+    <div class="vd-election-banner live">
+        <div class="vd-election-banner-icon">
+            <span class="vd-live-dot"></span>
             <i class="fas fa-circle-dot"></i>
         </div>
         <div style="flex:1;">
-            <div style="font-family:'Playfair Display',serif;font-size:0.95rem;font-weight:900;color:#34d399;margin-bottom:3px;">
-                Election is Live!
-            </div>
-            <div style="font-size:0.72rem;color:rgba(52,211,153,0.6);line-height:1.6;">
-                Voting is now open. Cast your ballot before the election closes.
-            </div>
+            <div class="vd-election-banner-title">Election is Live!</div>
+            <div class="vd-election-banner-sub">Voting is now open. Cast your ballot before the election closes.</div>
         </div>
-        @if(!auth()->user()->hasVoted())
-        <!-- <a href="{{ route('voter.vote.intro') }}"
-        style="padding:9px 20px;border-radius:10px;background:linear-gradient(135deg,#34d399,#6ee7b7);
-                color:#064e3b;font-size:0.72rem;font-weight:800;text-decoration:none;
-                white-space:nowrap;box-shadow:0 4px 16px rgba(52,211,153,0.3);">
-                @if(($electionStatus ?? \App\Models\ElectionSetting::status()) === 'ongoing')
-                <i class="fas fa-vote-yea"></i> Vote Now
-                @endif
-        </a> -->
-        @endif
-    </div>
-    @endif
-
-    {{-- Flash info message --}}
-    @if(session('info'))
-    <div style="display:flex;align-items:center;gap:10px;padding:12px 18px;border-radius:12px;
-                background:rgba(99,102,241,0.08);border:1px solid rgba(99,102,241,0.2);
-                margin-bottom:16px;">
-        <i class="fas fa-circle-info" style="color:#818cf8;flex-shrink:0;"></i>
-        <span style="font-size:0.73rem;font-weight:600;color:#818cf8;">{{ session('info') }}</span>
+        <span class="vd-election-banner-chip">LIVE NOW</span>
     </div>
     @endif
 
     {{-- Flash Messages --}}
     @if(session('error'))
-    <div style="display:flex;align-items:center;gap:10px;padding:12px 16px;border-radius:var(--radius-sm);background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.25);margin-bottom:14px;animation:vd-fadeUp .4s ease both;">
-        <i class="fas fa-circle-xmark" style="color:#f87171;font-size:.85rem;flex-shrink:0;"></i>
-        <span style="font-size:.75rem;font-weight:600;color:#f87171;">{{ session('error') }}</span>
+    <div class="vd-flash error">
+        <i class="fas fa-circle-xmark" style="flex-shrink:0;"></i>
+        <span>{{ session('error') }}</span>
     </div>
     @endif
     @if(session('info'))
-    <div style="display:flex;align-items:center;gap:10px;padding:12px 16px;border-radius:var(--radius-sm);background:rgba(249,180,15,0.08);border:1px solid rgba(249,180,15,0.2);margin-bottom:14px;animation:vd-fadeUp .4s ease both;">
-        <i class="fas fa-circle-info" style="color:#f9b40f;font-size:.85rem;flex-shrink:0;"></i>
-        <span style="font-size:.75rem;font-weight:600;color:#f9b40f;">{{ session('info') }}</span>
+    <div class="vd-flash info">
+        <i class="fas fa-circle-info" style="flex-shrink:0;"></i>
+        <span>{{ session('info') }}</span>
     </div>
     @endif
 
@@ -319,6 +273,9 @@
         </div>
         {{-- END BIBLE QUOTE CARD --}}
 
+    </div>
+
+    {{-- close .vd-page-content --}}
     </div>
 
 </x-app-layout>

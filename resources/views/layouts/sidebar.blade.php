@@ -25,7 +25,7 @@
         width: 18rem;
         z-index: 45;
         display: flex; flex-direction: column;
-        background: rgba(26, 0, 32, 0.97);
+        background: linear-gradient(180deg, rgba(20,0,36,0.98) 0%, rgba(10,0,20,0.99) 100%);
         backdrop-filter: blur(24px) saturate(1.6);
         -webkit-backdrop-filter: blur(24px) saturate(1.6);
         border-right: 1px solid rgba(249, 180, 15, 0.18);

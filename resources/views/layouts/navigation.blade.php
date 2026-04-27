@@ -20,7 +20,7 @@
     }
 
     .nav-root {
-        background: rgba(26, 0, 32, 0.97);
+        background: linear-gradient(90deg, rgba(18,0,32,0.97) 0%, rgba(10,0,20,0.98) 100%);
         backdrop-filter: blur(24px) saturate(1.6);
         -webkit-backdrop-filter: blur(24px) saturate(1.6);
         border-bottom: 1px solid rgba(249, 180, 15, 0.2);
@@ -116,7 +116,7 @@
         left: 8px;
         right: 8px;
         z-index: 99999;
-        background: rgba(18, 0, 24, 0.99);
+        background: rgba(12, 0, 22, 0.99);
         backdrop-filter: blur(28px) saturate(1.8);
         -webkit-backdrop-filter: blur(28px) saturate(1.8);
         border: 1px solid rgba(249,180,15,0.28);

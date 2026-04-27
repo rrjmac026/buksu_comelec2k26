@@ -11,8 +11,262 @@
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
         @vite(['resources/css/app.css', 'resources/css/welcome.css', 'resources/js/app.js', 'resources/js/welcome.js'])
         <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+        <style>
+        /* ══ LOGIN MODAL ══════════════════════════════════════════════════════ */
+        .lm-overlay {
+            position: fixed; inset: 0; z-index: 300;
+            background: rgba(8, 0, 16, 0.78);
+            backdrop-filter: blur(10px) saturate(1.2);
+            display: flex; align-items: center; justify-content: center;
+            padding: 16px;
+        }
+        /* Backdrop fade */
+        .lm-ef  { opacity: 0; }
+        .lm-et  { opacity: 1; }
+        .lm-enter { transition: opacity 0.3s ease; }
+        .lm-leave { transition: opacity 0.2s ease; }
+        /* Box scale+fade */
+        .lm-box-from { opacity: 0; transform: scale(0.96) translateY(14px); }
+        .lm-box-to   { opacity: 1; transform: scale(1)    translateY(0); }
+        .lm-box-enter { transition: opacity 0.32s cubic-bezier(.22,1,.36,1), transform 0.32s cubic-bezier(.22,1,.36,1); }
+        .lm-box-leave { transition: opacity 0.2s ease, transform 0.2s ease; }
+        /* Panel fade */
+        .lm-panel-from { opacity: 0; transform: translateY(8px); }
+        .lm-panel-to   { opacity: 1; transform: translateY(0); }
+        .lm-panel-enter { transition: opacity 0.22s ease, transform 0.22s ease; }
+
+        .lm-box {
+            position: relative; width: 100%; max-width: 980px;
+            display: grid; grid-template-columns: 1fr 1fr;
+            border-radius: 22px; overflow: hidden;
+            background: #1a0026;
+            box-shadow: 0 0 0 1px rgba(249,180,15,0.18), 0 40px 90px rgba(0,0,0,0.75), 0 0 60px rgba(120,0,180,0.2);
+            max-height: 92vh; overflow-y: auto;
+        }
+        @media (max-width: 700px) {
+            .lm-box { grid-template-columns: 1fr; max-width: 420px; }
+            .lm-left-panel { display: none; }
+        }
+
+        /* Close button */
+        .lm-close {
+            position: absolute; top: 14px; right: 14px; z-index: 20;
+            width: 34px; height: 34px; border-radius: 8px;
+            background: rgba(249,180,15,0.07);
+            border: 1px solid rgba(249,180,15,0.2);
+            color: rgba(249,180,15,0.65);
+            display: flex; align-items: center; justify-content: center;
+            cursor: pointer; font-size: 0.9rem;
+            transition: all 0.22s;
+        }
+        .lm-close:hover {
+            background: rgba(249,180,15,0.18); color: #fcd558;
+            transform: rotate(90deg);
+            box-shadow: 0 0 12px rgba(249,180,15,0.2);
+        }
+
+        /* ── Left info panel ── */
+        .lm-left-panel {
+            background: linear-gradient(160deg, #380041 0%, #1e0025 55%, #0c0014 100%);
+            padding: 46px 36px; display: flex; flex-direction: column;
+            position: relative; overflow: hidden;
+        }
+        .lm-left-panel::before {
+            content: ''; position: absolute; inset: 0; pointer-events: none;
+            background:
+                radial-gradient(ellipse 80% 60% at 20% 15%, rgba(249,180,15,0.09), transparent 60%),
+                radial-gradient(ellipse 60% 50% at 80% 85%, rgba(82,0,96,0.55), transparent 55%);
+        }
+        .lm-left-panel::after {
+            content: ''; position: absolute; top: 0; right: 0;
+            width: 1px; height: 100%;
+            background: linear-gradient(180deg, transparent, rgba(249,180,15,0.45), rgba(249,180,15,0.18), transparent);
+        }
+        .lm-side-grid {
+            position: absolute; inset: 0; pointer-events: none;
+            background-image:
+                linear-gradient(rgba(249,180,15,0.04) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(249,180,15,0.04) 1px, transparent 1px);
+            background-size: 40px 40px;
+        }
+        .lm-side-inner { position: relative; z-index: 1; }
+        .lm-logo-wrap { display: flex; align-items: center; gap: 12px; margin-bottom: 34px; }
+        .lm-logo-img {
+            width: 44px; height: 44px; border-radius: 11px; object-fit: cover;
+            border: 2px solid rgba(249,180,15,0.35);
+            box-shadow: 0 0 18px rgba(249,180,15,0.18);
+        }
+        .lm-app-nm {
+            font-family: 'Playfair Display', serif;
+            font-size: 1rem; font-weight: 700; color: #fffbf0;
+        }
+        .lm-app-nm span { color: #f9b40f; }
+        .lm-gold-rule { width: 44px; height: 3px; border-radius: 2px; background: linear-gradient(90deg, #f9b40f, #fcd558); margin-bottom: 18px; }
+        .lm-headline {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.8rem; font-weight: 900; color: #fffbf0;
+            line-height: 1.15; margin-bottom: 12px; letter-spacing: -0.01em;
+        }
+        .lm-hl-accent {
+            background: linear-gradient(105deg, #f9b40f, #fcd558);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+        }
+        .lm-lead { font-size: 0.83rem; color: rgba(255,251,240,0.55); line-height: 1.72; margin-bottom: 28px; font-weight: 300; }
+        .lm-features { display: flex; flex-direction: column; gap: 10px; }
+        .lm-feat {
+            display: flex; align-items: flex-start; gap: 12px;
+            padding: 12px 14px;
+            background: rgba(249,180,15,0.05); border: 1px solid rgba(249,180,15,0.12);
+            border-radius: 10px; transition: all 0.2s;
+        }
+        .lm-feat:hover { background: rgba(249,180,15,0.1); transform: translateX(4px); border-color: rgba(249,180,15,0.28); }
+        .lm-feat-icon {
+            width: 32px; height: 32px; border-radius: 8px; flex-shrink: 0;
+            background: linear-gradient(135deg, #f9b40f, #fcd558);
+            display: flex; align-items: center; justify-content: center;
+            color: #380041; font-size: 0.78rem;
+            box-shadow: 0 2px 12px rgba(249,180,15,0.3);
+        }
+        .lm-feat-title { font-size: 0.77rem; font-weight: 700; color: #fcd558; margin-bottom: 2px; }
+        .lm-feat-desc  { font-size: 0.69rem; color: rgba(255,251,240,0.5); line-height: 1.5; }
+
+        /* ── Right form panel ── */
+        .lm-right-panel {
+            background: rgba(24, 0, 34, 0.97);
+            padding: 46px 40px;
+            display: flex; flex-direction: column; justify-content: center;
+            border-left: 1px solid rgba(249,180,15,0.1);
+            position: relative;
+        }
+        /* Tabs */
+        .lm-tabs {
+            display: flex;
+            background: rgba(56,0,65,0.8); border: 1px solid rgba(249,180,15,0.18);
+            border-radius: 12px; padding: 5px; gap: 5px; margin-bottom: 26px;
+        }
+        .lm-tab {
+            flex: 1; padding: 9px 10px; border: none; cursor: pointer;
+            border-radius: 8px; font-size: 0.78rem; font-weight: 700; letter-spacing: 0.02em;
+            display: flex; align-items: center; justify-content: center; gap: 6px;
+            transition: all 0.22s; background: transparent; color: rgba(249,180,15,0.5);
+            font-family: 'DM Sans', sans-serif;
+        }
+        .lm-tab--active {
+            background: linear-gradient(135deg, #f9b40f, #fcd558);
+            color: #380041; box-shadow: 0 4px 18px rgba(249,180,15,0.3);
+        }
+        .lm-tab:not(.lm-tab--active):hover { background: rgba(249,180,15,0.08); color: #f9b40f; }
+
+        /* Form header */
+        .lm-eyebrow {
+            display: inline-flex; align-items: center; gap: 7px;
+            padding: 4px 11px; border-radius: 4px; margin-bottom: 10px;
+            background: rgba(249,180,15,0.1); border: 1px solid rgba(249,180,15,0.25);
+            font-size: 0.6rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase;
+            color: #f9b40f;
+        }
+        .lm-eyebrow-dot {
+            width: 5px; height: 5px; border-radius: 50%; background: #f9b40f;
+            box-shadow: 0 0 6px rgba(249,180,15,0.8);
+            animation: lm-ep 2s ease-in-out infinite;
+        }
+        @keyframes lm-ep { 0%,100%{box-shadow:0 0 5px rgba(249,180,15,0.5)} 50%{box-shadow:0 0 14px rgba(249,180,15,1)} }
+        .lm-form-heading {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.7rem; font-weight: 900; color: #fffbf0; margin: 0 0 6px;
+        }
+        .lm-h-accent { background: linear-gradient(105deg, #f9b40f, #fcd558); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .lm-form-sub { font-size: 0.8rem; color: rgba(255,251,240,0.5); margin-bottom: 24px; font-weight: 300; }
+
+        /* Google button */
+        .lm-google-wrap { display: flex; flex-direction: column; align-items: center; gap: 1rem; margin-top: 1.5rem; }
+        .lm-google-btn {
+            display: flex; align-items: center; justify-content: center; gap: 0.75rem;
+            width: 100%; padding: 0.88rem 1.5rem;
+            background: #fff; color: #3c4043;
+            font-size: 0.92rem; font-weight: 600;
+            border: 1.5px solid #dadce0; border-radius: 0.65rem;
+            text-decoration: none; transition: box-shadow 0.22s, background 0.2s, border-color 0.2s;
+            cursor: pointer;
+        }
+        .lm-google-btn:hover {
+            background: #f8f9fa;
+            box-shadow: 0 3px 20px rgba(0,0,0,0.13), 0 0 0 2px rgba(249,180,15,0.18);
+            border-color: #bbb;
+        }
+        .lm-google-icon { width: 1.2rem; height: 1.2rem; flex-shrink: 0; }
+        .lm-google-hint { font-size: 0.73rem; color: rgba(255,251,240,0.32); text-align: center; display: flex; align-items: center; gap: 0.4rem; }
+
+        /* Admin badge */
+        .lm-admin-badge {
+            display: flex; align-items: center; gap: 10px; padding: 10px 14px;
+            background: rgba(249,180,15,0.07); border: 1px solid rgba(249,180,15,0.25);
+            border-radius: 10px; margin-bottom: 16px;
+            font-size: 0.74rem; font-weight: 600; color: #fcd558;
+        }
+        .lm-admin-icon {
+            width: 28px; height: 28px; border-radius: 8px; flex-shrink: 0;
+            background: linear-gradient(135deg, #f9b40f, #fcd558);
+            display: flex; align-items: center; justify-content: center;
+            color: #380041; font-size: 0.72rem;
+        }
+
+        /* Fields */
+        .lm-field { margin-bottom: 15px; }
+        .lm-label {
+            display: block; font-size: 0.7rem; font-weight: 700;
+            color: rgba(255,251,240,0.8); margin-bottom: 6px;
+            letter-spacing: 0.04em; text-transform: uppercase;
+        }
+        .lm-input-wrap { position: relative; }
+        .lm-input-icon {
+            position: absolute; left: 13px; top: 50%; transform: translateY(-50%);
+            color: rgba(249,180,15,0.4); font-size: 0.78rem; pointer-events: none;
+            transition: color 0.2s;
+        }
+        .lm-input-wrap:focus-within .lm-input-icon { color: #f9b40f; }
+        .lm-input {
+            width: 100%; padding: 11px 13px 11px 38px;
+            border-radius: 10px; border: 1.5px solid rgba(249,180,15,0.15);
+            background: rgba(56,0,65,0.5); color: #fffbf0;
+            font-size: 0.85rem; font-family: 'DM Sans', sans-serif;
+            transition: all 0.2s; outline: none;
+        }
+        .lm-input::placeholder { color: rgba(255,251,240,0.22); }
+        .lm-input:focus {
+            border-color: rgba(249,180,15,0.6);
+            background: rgba(56,0,65,0.8);
+            box-shadow: 0 0 0 3px rgba(249,180,15,0.09);
+        }
+        .lm-input--error { border-color: rgba(248,113,113,0.6); }
+        .lm-field-error { font-size: 0.69rem; color: #f87171; margin-top: 5px; display: flex; align-items: center; gap: 4px; }
+        .lm-remember { display: flex; align-items: center; gap: 7px; font-size: 0.75rem; color: rgba(255,251,240,0.45); cursor: pointer; }
+        .lm-remember-cb { width: 15px; height: 15px; accent-color: #f9b40f; cursor: pointer; }
+
+        /* Submit button */
+        .lm-submit {
+            width: 100%; padding: 12px 20px; border: none; border-radius: 10px;
+            cursor: pointer; font-size: 0.85rem; font-weight: 700; letter-spacing: 0.03em;
+            color: #2a0030;
+            background: linear-gradient(135deg, #c98a00, #f9b40f, #fcd558);
+            box-shadow: 0 4px 24px rgba(249,180,15,0.32);
+            display: flex; align-items: center; justify-content: center; gap: 8px;
+            transition: all 0.22s; font-family: 'DM Sans', sans-serif;
+        }
+        .lm-submit:hover { transform: translateY(-2px); box-shadow: 0 10px 32px rgba(249,180,15,0.48); }
+        .lm-submit:active { transform: translateY(0); }
+
+        /* Session status */
+        .lm-session-status {
+            padding: 9px 13px; border-radius: 8px; margin-bottom: 14px;
+            font-size: 0.77rem; font-weight: 600;
+            background: rgba(249,180,15,0.1); border: 1px solid rgba(249,180,15,0.25); color: #fcd558;
+        }
+        </style>
     </head>
-    <body class="antialiased" x-data>
+    <body class="antialiased"
+          x-data="{ loginOpen: false, loginTab: 'voter' }"
+          x-init="$watch('loginOpen', function(v){ document.body.style.overflow = v ? 'hidden' : ''; })">
 
         {{-- ══ NAVBAR ══ --}}
         @if (Route::has('login'))
@@ -49,7 +303,8 @@
                         </a>
                     @endif
                 @else
-                    <a href="{{ route('login') }}" class="nav-cta-btn">
+                    <a href="{{ route('login') }}" class="nav-cta-btn"
+                       @click.prevent="loginOpen = true; loginTab = 'voter'">
                         <i class="fas fa-right-to-bracket"></i> <span>Login</span>
                     </a>
                 @endauth
@@ -93,7 +348,8 @@
                         </a>
                     @endif
                 @else
-                    <a href="{{ route('login') }}" class="mobile-nav-cta">
+                    <a href="{{ route('login') }}" class="mobile-nav-cta"
+                       @click.prevent="loginOpen = true; loginTab = 'voter'">
                         <i class="fas fa-right-to-bracket"></i> Login
                     </a>
                 @endauth
@@ -142,7 +398,8 @@
                                         </a>
                                     @endif
                                 @else
-                                    <a href="{{ route('login') }}" class="btn-primary">
+                                    <a href="{{ route('login') }}" class="btn-primary"
+                                       @click.prevent="loginOpen = true; loginTab = 'voter'">
                                         Vote Now <i class="fas fa-arrow-right"></i>
                                     </a>
                                 @endauth
@@ -591,7 +848,8 @@
                                         <a href="{{ route('admin.dashboard') }}" class="btn-primary">Dashboard</a>
                                     @endif
                                 @else
-                                    <a href="{{ route('login') }}" class="btn-primary" id="ls-vote-btn" title="Login to vote">Vote Now</a>
+                                    <a href="{{ route('login') }}" class="btn-primary" id="ls-vote-btn"
+                                       @click.prevent="loginOpen = true; loginTab = 'voter'">Vote Now</a>
                                 @endauth
                             </div>
                             <p class="ls-vote-hint" id="ls-vote-hint">Voting will be available once the election starts.</p>
@@ -626,7 +884,8 @@
                                 <div class="ls-progress-fill" id="ls-fill"></div>
                             </div>
 
-                            <a href="{{ route('login') }}" class="btn-primary" style="display:inline-block;margin-top:20px;text-decoration:none;">
+                            <a href="{{ route('login') }}" class="btn-primary" style="display:inline-block;margin-top:20px;text-decoration:none;"
+                               @click.prevent="loginOpen = true; loginTab = 'voter'">
                                 View Election Details <i class="fas fa-arrow-right"></i>
                             </a>
                         </div>
@@ -829,6 +1088,218 @@
 
         {{-- Toast container --}}
         <div class="ls-toast-stack" id="ls-toast-stack"></div>
+
+        {{-- ══ LOGIN MODAL ══════════════════════════════════════════════════ --}}
+        @guest
+        <div x-show="loginOpen"
+             class="lm-overlay"
+             x-transition:enter="lm-enter"
+             x-transition:enter-start="lm-ef"
+             x-transition:enter-end="lm-et"
+             x-transition:leave="lm-leave"
+             x-transition:leave-start="lm-et"
+             x-transition:leave-end="lm-ef"
+             @click.self="loginOpen = false"
+             @keydown.escape.window="loginOpen = false"
+             style="display:none;"
+             role="dialog" aria-modal="true" aria-label="Login">
+
+            <div class="lm-box"
+                 x-transition:enter="lm-box-enter"
+                 x-transition:enter-start="lm-box-from"
+                 x-transition:enter-end="lm-box-to"
+                 x-transition:leave="lm-box-leave"
+                 x-transition:leave-start="lm-box-to"
+                 x-transition:leave-end="lm-box-from"
+                 @click.stop>
+
+                {{-- Close button --}}
+                <button class="lm-close" @click="loginOpen = false" type="button" aria-label="Close modal">
+                    <i class="fas fa-xmark"></i>
+                </button>
+
+                {{-- ── LEFT INFO PANEL ── --}}
+                <div class="lm-left-panel">
+                    <div class="lm-side-grid"></div>
+                    <div class="lm-side-inner">
+                        <div class="lm-logo-wrap">
+                            <img src="{{ asset('assets/app_logo.png') }}" alt="Logo" class="lm-logo-img">
+                            <span class="lm-app-nm">{{ config('app.name', 'BukSU') }} <span>System</span></span>
+                        </div>
+
+                        <div class="lm-gold-rule"></div>
+                        <h2 class="lm-headline">
+                            Your Vote <span class="lm-hl-accent">Shapes</span><br>the Future
+                        </h2>
+                        <p class="lm-lead">
+                            Secure, transparent, and fair — every voice counts in our digital democracy platform.
+                        </p>
+
+                        <div class="lm-features">
+                            <div class="lm-feat">
+                                <div class="lm-feat-icon"><i class="fas fa-shield-alt"></i></div>
+                                <div>
+                                    <div class="lm-feat-title">End-to-End Encrypted</div>
+                                    <div class="lm-feat-desc">Your ballot is secured with SHA-256 hashing and unique transaction numbers.</div>
+                                </div>
+                            </div>
+                            <div class="lm-feat">
+                                <div class="lm-feat-icon"><i class="fas fa-chart-bar"></i></div>
+                                <div>
+                                    <div class="lm-feat-title">Live Results</div>
+                                    <div class="lm-feat-desc">Real-time vote tallying with transparent, verifiable outcomes.</div>
+                                </div>
+                            </div>
+                            <div class="lm-feat">
+                                <div class="lm-feat-icon"><i class="fas fa-user-secret"></i></div>
+                                <div>
+                                    <div class="lm-feat-title">Anonymous Ballots</div>
+                                    <div class="lm-feat-desc">Your identity is protected — only your vote is recorded.</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                {{-- ── RIGHT FORM PANEL ── --}}
+                <div class="lm-right-panel">
+
+                    {{-- Tabs --}}
+                    <div class="lm-tabs" role="tablist">
+                        <button class="lm-tab"
+                                :class="{ 'lm-tab--active': loginTab === 'voter' }"
+                                @click="loginTab = 'voter'"
+                                type="button" role="tab"
+                                :aria-selected="loginTab === 'voter'">
+                            <i class="fas fa-vote-yea"></i> Voter Login
+                        </button>
+                        <button class="lm-tab"
+                                :class="{ 'lm-tab--active': loginTab === 'admin' }"
+                                @click="loginTab = 'admin'"
+                                type="button" role="tab"
+                                :aria-selected="loginTab === 'admin'">
+                            <i class="fas fa-shield-halved"></i> Admin Login
+                        </button>
+                    </div>
+
+                    @if(session('status'))
+                        <div class="lm-session-status">
+                            <i class="fas fa-circle-check" style="margin-right:5px;"></i>{{ session('status') }}
+                        </div>
+                    @endif
+
+                    {{-- ── VOTER PANEL ── --}}
+                    <div x-show="loginTab === 'voter'"
+                         x-transition:enter="lm-panel-enter"
+                         x-transition:enter-start="lm-panel-from"
+                         x-transition:enter-end="lm-panel-to"
+                         style="display:none;">
+                        <div class="lm-eyebrow">
+                            <div class="lm-eyebrow-dot"></div> Voter Portal
+                        </div>
+                        <h1 class="lm-form-heading">Welcome <span class="lm-h-accent">Back</span></h1>
+                        <p class="lm-form-sub">Sign in with your Google account to cast your vote and view election results.</p>
+
+                        @if(session('error'))
+                            <div class="lm-field-error" style="margin-bottom:1rem; font-size:0.8rem; padding:10px 14px; border-radius:8px; background:rgba(248,113,113,0.1); border:1px solid rgba(248,113,113,0.3);">
+                                <i class="fas fa-circle-exclamation"></i> {{ session('error') }}
+                            </div>
+                        @endif
+
+                        <div class="lm-google-wrap">
+                            <a href="{{ route('auth.google') }}" class="lm-google-btn">
+                                <svg class="lm-google-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                    <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+                                    <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+                                    <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z"/>
+                                    <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
+                                </svg>
+                                <span>Continue with Google</span>
+                            </a>
+                            <p class="lm-google-hint">
+                                <i class="fas fa-shield-halved"></i>
+                                Only registered student accounts are allowed to vote.
+                            </p>
+                        </div>
+                    </div>
+
+                    {{-- ── ADMIN PANEL ── --}}
+                    <div x-show="loginTab === 'admin'"
+                         x-transition:enter="lm-panel-enter"
+                         x-transition:enter-start="lm-panel-from"
+                         x-transition:enter-end="lm-panel-to"
+                         style="display:none;">
+                        <div class="lm-eyebrow" style="background:rgba(249,180,15,0.06);border-color:rgba(249,180,15,0.22);">
+                            <div class="lm-eyebrow-dot"></div> Admin Portal
+                        </div>
+                        <h1 class="lm-form-heading">Admin <span class="lm-h-accent">Access</span></h1>
+                        <p class="lm-form-sub">Restricted area — authorized administrators only.</p>
+
+                        <div class="lm-admin-badge">
+                            <div class="lm-admin-icon"><i class="fas fa-shield-halved"></i></div>
+                            <div><strong>Secure Admin Login</strong> — All access is logged and monitored.</div>
+                        </div>
+
+                        <form method="POST" action="{{ route('login') }}">
+                            @csrf
+                            <input type="hidden" name="login_as" value="admin">
+
+                            <div class="lm-field">
+                                <label class="lm-label" for="lm_email">Admin Email</label>
+                                <div class="lm-input-wrap">
+                                    <i class="fas fa-id-badge lm-input-icon"></i>
+                                    <input id="lm_email" name="email" type="email"
+                                           class="lm-input {{ $errors->has('email') ? 'lm-input--error' : '' }}"
+                                           placeholder="admin@domain.com"
+                                           value="{{ old('email') }}"
+                                           required autocomplete="username">
+                                </div>
+                                @error('email')
+                                    <div class="lm-field-error"><i class="fas fa-circle-exclamation"></i> {{ $message }}</div>
+                                @enderror
+                            </div>
+
+                            <div class="lm-field">
+                                <label class="lm-label" for="lm_password">Admin Password</label>
+                                <div class="lm-input-wrap">
+                                    <i class="fas fa-key lm-input-icon"></i>
+                                    <input id="lm_password" name="password" type="password"
+                                           class="lm-input {{ $errors->has('password') ? 'lm-input--error' : '' }}"
+                                           placeholder="••••••••"
+                                           required autocomplete="current-password">
+                                </div>
+                                @error('password')
+                                    <div class="lm-field-error"><i class="fas fa-circle-exclamation"></i> {{ $message }}</div>
+                                @enderror
+                            </div>
+
+                            <div style="margin-bottom:18px;">
+                                <label class="lm-remember">
+                                    <input type="checkbox" name="remember" class="lm-remember-cb"> Remember me
+                                </label>
+                            </div>
+
+                            <button type="submit" class="lm-submit">
+                                <i class="fas fa-shield-halved"></i> Sign In as Admin
+                            </button>
+                        </form>
+                    </div>
+
+                </div>{{-- end .lm-right-panel --}}
+            </div>{{-- end .lm-box --}}
+        </div>{{-- end .lm-overlay --}}
+        @endguest
+
+        {{-- Auto-reopen modal when admin login fails and redirects back here --}}
+        @if($errors->any() && old('login_as') === 'admin')
+        <script>
+            document.addEventListener('alpine:initialized', function () {
+                var vm = Alpine.$data(document.body);
+                vm.loginTab = 'admin';
+                vm.loginOpen = true;
+            });
+        </script>
+        @endif
 
         {{-- ══ Scripts ══ --}}
         <script>
