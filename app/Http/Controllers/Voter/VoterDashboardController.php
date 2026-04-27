@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Voter;
 use App\Http\Controllers\Controller;
 use App\Models\Candidate;
 use App\Models\CastedVote;
+use App\Models\ElectionSetting;
 use App\Models\Position;
 use App\Models\User;
 
@@ -54,6 +55,8 @@ class VoterDashboardController extends Controller
             config('election.end_date', now()->endOfDay())
         );
 
+        $electionStatus = ElectionSetting::status();
+
         return view('voter.dashboard', compact(
             'voter',
             'totalCandidates',
@@ -67,6 +70,7 @@ class VoterDashboardController extends Controller
             'topCandidates',
             'positions',
             'electionEnd',
+            'electionStatus',
         ));
     }
 
