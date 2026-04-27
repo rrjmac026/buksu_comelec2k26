@@ -331,34 +331,11 @@
                         </div>
                     </div>
 
-                    {{-- Team Section --}}
+                    {{-- ── Org Chart ── --}}
                     @php
-                        $developmentTeam = [
-                            [
-                                'name'        => 'Rey Rameses Jude "Jam" Macalutas III',
-                                'role'        => 'System Developer / Lead Developer',
-                                'initials'    => 'JM',
-                                'avatar'      => asset('assets/team/dev1.png'),
-                                'description' => 'Leads system architecture and ensures secure, smooth platform performance.',
-                            ],
-                            [
-                                'name'        => 'Khyle Ivan Khim V. Amacna',
-                                'role'        => 'Head System Developer',
-                                'avatar'      => asset('assets/team/dev2.jpg'),
-                                'initials'    => 'KA',
-                                'description' => 'Directs technical execution, aligning development tasks with project goals.',
-                            ],
-                            [
-                                'name'        => 'Bernardo DeLa Cerna Jr.',
-                                'role'        => 'System Developer / QA',
-                                'avatar'      => asset('assets/team/locked.png'),
-                                'initials'    => 'BC',
-                                'description' => 'Handles quality assurance and testing to maintain reliability and trust.',
-                            ],
-                        ];
+                        $adviser = ['name' => 'Mark Ian Mukara', 'role' => 'Adviser', 'initials' => 'MM', 'avatar' => asset('assets/team/6.png'), 'description' => 'Provides strategic guidance to keep election operations aligned and effective.'];
 
-                        $commissionTeam = [
-                            ['name' => 'Mark Ian Mukara',       'role' => 'Adviser',                          'initials' => 'MM', 'avatar' => asset('assets/team/6.png'),      'description' => 'Provides strategic guidance to keep election operations aligned and effective.'],
+                        $commissionMembers = [
                             ['name' => 'Roxanne Mae Ortega',    'role' => 'Head Commissioner',                'initials' => 'RO', 'avatar' => asset('assets/team/5.png'),      'description' => 'Leads commission execution and ensures every election process is on track.'],
                             ['name' => 'Yassin Naga',           'role' => 'Internal Commissioner',           'initials' => 'YN', 'avatar' => asset('assets/team/2.png'),      'description' => 'Coordinates internal workflows and keeps team communication streamlined.'],
                             ['name' => 'Steven Bagasbas',       'role' => 'External Commissioner',           'initials' => 'SB', 'avatar' => asset('assets/team/locked.png'), 'description' => 'Handles external coordination and supports clear public-facing communication.'],
@@ -371,76 +348,197 @@
                             ['name' => 'Owen Jerusalem',        'role' => 'Local Commissioner on Creatives', 'initials' => 'OJ', 'avatar' => asset('assets/team/3.png'),      'description' => 'Contributes creative assets for local campaigns with consistent branding.'],
                             ['name' => 'Gerardo Aranas Jr',     'role' => 'Local Commissioner on Creatives', 'initials' => 'GA', 'avatar' => asset('assets/team/locked.png'), 'description' => 'Supports design production for local initiatives and campaign visuals.'],
                         ];
+
+                        $developmentTeam = [
+                            ['name' => 'Rey Rameses Jude "Jam" Macalutas III', 'role' => 'System Developer / Lead Developer', 'initials' => 'JM', 'avatar' => asset('assets/team/dev1.png'), 'description' => 'Leads system architecture and ensures secure, smooth platform performance.'],
+                            ['name' => 'Khyle Ivan Khim V. Amacna',            'role' => 'Head System Developer',            'initials' => 'KA', 'avatar' => asset('assets/team/dev2.jpg'),  'description' => 'Directs technical execution, aligning development tasks with project goals.'],
+                            ['name' => 'Bernardo DeLa Cerna Jr.',              'role' => 'System Developer / QA',            'initials' => 'BC', 'avatar' => asset('assets/team/locked.png'),'description' => 'Handles quality assurance and testing to maintain reliability and trust.'],
+                        ];
                     @endphp
 
-                    <div class="team-section-inner ls-reveal">
+                    {{-- ORG CHART CONTAINER --}}
+                    <div class="org-chart ls-reveal">
 
-                        <div class="team-header-wrap">
-                            <p class="team-section-tag">MEET THE TEAM</p>
-                            <h2 class="team-heading">The Minds Behind the System</h2>
-                            <p class="team-subtext">Dedicated developers and commission members building a secure and transparent voting platform.</p>
-                            <span class="team-header-divider" aria-hidden="true"></span>
+                        {{-- Header --}}
+                        <div class="org-header">
+                            <p class="org-eyebrow">MEET THE TEAM</p>
+                            <h2 class="org-title">The Minds Behind <span class="h1-accent">the System</span></h2>
+                            <p class="org-subtitle">Dedicated developers and commission members building a secure and transparent voting platform.</p>
                         </div>
 
-                        <div class="team-group">
-                            <div class="team-mid-divider team-mid-divider--top" aria-hidden="true">
-                                <span class="team-mid-line"></span>
-                                <span class="team-mid-label"><i class="fas fa-code"></i> Development Team</span>
-                                <span class="team-mid-line"></span>
+                        {{-- ── LEVEL 1: University President ── --}}
+                        <div class="org-flow">
+
+                            {{-- ── LEVEL 1: University President ── --}}
+                            <div class="org-node team-card-animate">
+                                <article class="team-card org-leader-card">
+                                    <div class="tc-image-wrap">
+                                        <img src="{{ asset('assets/team/joy.png') }}" alt="Dr. Joy M. Mirasol" class="tc-image"
+                                            onerror="this.style.display='none'; this.nextElementSibling.style.display='none'; this.parentElement.querySelector('.tc-av-fallback').style.display='flex';">
+                                        <div class="tc-image-overlay"></div>
+                                        <div class="tc-av-fallback tc-av-fallback--icon" style="display:none;">
+                                            <i class="fas fa-university"></i>
+                                        </div>
+                                    </div>
+                                    <div class="tc-content">
+                                        <h4 class="tc-name">Dr. Joy M. Mirasol</h4>
+                                        <p class="tc-role">University President</p>
+                                        <p class="tc-description">Provides overall direction and institutional governance for all university-sanctioned activities.</p>
+                                    </div>
+                                </article>
                             </div>
-                            <div class="team-cards-grid team-cards-grid--development">
-                                @foreach ($developmentTeam as $member)
-                                    <article class="team-card team-card-animate">
+
+                            <div class="org-line team-card-animate" aria-hidden="true">
+                                <span class="org-line-dot"></span>
+                                <span class="org-line-track"></span>
+                                <span class="org-line-dot"></span>
+                            </div>
+
+                            {{-- ── LEVEL 2: Vice President ── --}}
+                            <div class="org-node team-card-animate">
+                                <article class="team-card org-leader-card">
+                                    <div class="tc-image-wrap">
+                                        <img src="{{ asset('assets/team/tan.png') }}" alt="Dr. Lincoln V. Tan" class="tc-image"
+                                            onerror="this.style.display='none'; this.nextElementSibling.style.display='none'; this.parentElement.querySelector('.tc-av-fallback').style.display='flex';">
+                                        <div class="tc-image-overlay"></div>
+                                        <div class="tc-av-fallback tc-av-fallback--icon" style="display:none;">
+                                            <i class="fas fa-person-chalkboard"></i>
+                                        </div>
+                                    </div>
+                                    <div class="tc-content">
+                                        <h4 class="tc-name">Dr. Lincoln V. Tan</h4>
+                                        <p class="tc-role">VP &mdash; Culture, Arts &amp; Student Services</p>
+                                        <p class="tc-description">Oversees student welfare initiatives and ensures campus activities align with university values.</p>
+                                    </div>
+                                </article>
+                            </div>
+
+                            <div class="org-line team-card-animate" aria-hidden="true">
+                                <span class="org-line-dot"></span>
+                                <span class="org-line-track"></span>
+                                <span class="org-line-dot"></span>
+                            </div>
+
+                            {{-- ── LEVEL 3: Director ── --}}
+                            <div class="org-node team-card-animate">
+                                <article class="team-card org-leader-card">
+                                    <div class="tc-image-wrap">
+                                        <img src="{{ asset('assets/team/enzo.png') }}" alt="Dr. Lorenzo B. Dinlayan III" class="tc-image"
+                                            onerror="this.style.display='none'; this.nextElementSibling.style.display='none'; this.parentElement.querySelector('.tc-av-fallback').style.display='flex';">
+                                        <div class="tc-image-overlay"></div>
+                                        <div class="tc-av-fallback tc-av-fallback--icon" style="display:none;">
+                                            <i class="fas fa-sitemap"></i>
+                                        </div>
+                                    </div>
+                                    <div class="tc-content">
+                                        <h4 class="tc-name">Dr. Lorenzo B. Dinlayan III</h4>
+                                        <p class="tc-role">Director &mdash; Student Leadership &amp; Dev. Unit</p>
+                                        <p class="tc-description">Guides student organizations and oversees the implementation of student leadership programs.</p>
+                                    </div>
+                                </article>
+                            </div>
+
+                            <div class="org-line org-line--to-section team-card-animate" aria-hidden="true">
+                                <span class="org-line-dot"></span>
+                                <span class="org-line-track"></span>
+                                <span class="org-line-label">COMELEC Commission</span>
+                                <span class="org-line-track"></span>
+                                <span class="org-line-dot"></span>
+                            </div>
+
+                            {{-- ── LEVEL 5: COMELEC Section ── --}}
+                            <div class="org-section team-card-animate">
+
+                                <div class="org-section-header">
+                                    <i class="fas fa-shield-halved"></i>
+                                    <span>COMELEC Commission Team</span>
+                                </div>
+
+                                {{-- ── Adviser (solo, centred) ── --}}
+                                <div class="org-adviser-wrap team-card-animate">
+                                    <article class="team-card org-leader-card">
                                         <div class="tc-image-wrap">
-                                            <img src="{{ $member['avatar'] }}" alt="{{ $member['name'] }}" class="tc-image"
-                                                onerror="this.style.display='none'; this.parentElement.querySelector('.tc-av-fallback').style.display='flex';">
+                                            <img src="{{ $adviser['avatar'] }}" alt="{{ $adviser['name'] }}" class="tc-image"
+                                                onerror="this.style.display='none'; this.nextElementSibling.style.display='none'; this.parentElement.querySelector('.tc-av-fallback').style.display='flex';">
                                             <div class="tc-image-overlay"></div>
-                                            <div class="tc-av-fallback" style="display:none;">{{ $member['initials'] }}</div>
+                                            <div class="tc-av-fallback" style="display:none;">{{ $adviser['initials'] }}</div>
                                         </div>
                                         <div class="tc-content">
-                                            <h4 class="tc-name">{{ $member['name'] }}</h4>
-                                            <p class="tc-role">{{ $member['role'] }}</p>
-                                            <p class="tc-description">{{ $member['description'] }}</p>
+                                            <h4 class="tc-name">{{ $adviser['name'] }}</h4>
+                                            <p class="tc-role">{{ $adviser['role'] }}</p>
+                                            <p class="tc-description">{{ $adviser['description'] }}</p>
                                             <div class="tc-socials">
                                                 <a href="#" class="tc-social" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
                                                 <a href="#" class="tc-social" aria-label="Email"><i class="fas fa-envelope"></i></a>
                                             </div>
                                         </div>
                                     </article>
-                                @endforeach
-                            </div>
-                        </div>
+                                </div>
 
-                        <div class="team-mid-divider" aria-hidden="true">
-                            <span class="team-mid-line"></span>
-                            <span class="team-mid-label"><i class="fas fa-shield-halved"></i> COMELEC Commission Team</span>
-                            <span class="team-mid-line"></span>
-                        </div>
+                                <div class="org-adviser-divider" aria-hidden="true">
+                                    <span class="org-line-dot"></span>
+                                    <span class="org-line-track" style="height:28px;"></span>
+                                    <span class="org-line-dot"></span>
+                                </div>
 
-                        <div class="team-group">
-                            <div class="team-cards-grid">
-                                @foreach ($commissionTeam as $member)
-                                    <article class="team-card team-card-animate">
-                                        <div class="tc-image-wrap">
-                                            <img src="{{ $member['avatar'] }}" alt="{{ $member['name'] }}" class="tc-image"
-                                                onerror="this.style.display='none'; this.parentElement.querySelector('.tc-av-fallback').style.display='flex';">
-                                            <div class="tc-image-overlay"></div>
-                                            <div class="tc-av-fallback" style="display:none;">{{ $member['initials'] }}</div>
-                                        </div>
-                                        <div class="tc-content">
-                                            <h4 class="tc-name">{{ $member['name'] }}</h4>
-                                            <p class="tc-role">{{ $member['role'] }}</p>
-                                            <p class="tc-description">{{ $member['description'] }}</p>
-                                            <div class="tc-socials">
-                                                <a href="#" class="tc-social" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
-                                                <a href="#" class="tc-social" aria-label="Email"><i class="fas fa-envelope"></i></a>
+                                {{-- Commission members grid --}}
+                                <div class="team-cards-grid">
+                                    @foreach ($commissionMembers as $m)
+                                        <article class="team-card team-card-animate">
+                                            <div class="tc-image-wrap">
+                                                <img src="{{ $m['avatar'] }}" alt="{{ $m['name'] }}" class="tc-image"
+                                                    onerror="this.style.display='none'; this.parentElement.querySelector('.tc-av-fallback').style.display='flex';">
+                                                <div class="tc-image-overlay"></div>
+                                                <div class="tc-av-fallback" style="display:none;">{{ $m['initials'] }}</div>
                                             </div>
-                                        </div>
-                                    </article>
-                                @endforeach
-                            </div>
-                        </div>
-                    </div>
+                                            <div class="tc-content">
+                                                <h4 class="tc-name">{{ $m['name'] }}</h4>
+                                                <p class="tc-role">{{ $m['role'] }}</p>
+                                                <p class="tc-description">{{ $m['description'] }}</p>
+                                                <div class="tc-socials">
+                                                    <a href="#" class="tc-social" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
+                                                    <a href="#" class="tc-social" aria-label="Email"><i class="fas fa-envelope"></i></a>
+                                                </div>
+                                            </div>
+                                        </article>
+                                    @endforeach
+                                </div>
+
+                                {{-- Development Team subsection --}}
+                                <div class="org-dev-subsection">
+                                    <div class="org-dev-label">
+                                        <span class="org-dev-line"></span>
+                                        <span class="org-dev-text"><i class="fas fa-code"></i> Development Team</span>
+                                        <span class="org-dev-line"></span>
+                                    </div>
+                                    <div class="team-cards-grid team-cards-grid--development">
+                                        @foreach ($developmentTeam as $m)
+                                            <article class="team-card team-card-animate">
+                                                <div class="tc-image-wrap">
+                                                    <img src="{{ $m['avatar'] }}" alt="{{ $m['name'] }}" class="tc-image"
+                                                        onerror="this.style.display='none'; this.parentElement.querySelector('.tc-av-fallback').style.display='flex';">
+                                                    <div class="tc-image-overlay"></div>
+                                                    <div class="tc-av-fallback" style="display:none;">{{ $m['initials'] }}</div>
+                                                </div>
+                                                <div class="tc-content">
+                                                    <h4 class="tc-name">{{ $m['name'] }}</h4>
+                                                    <p class="tc-role">{{ $m['role'] }}</p>
+                                                    <p class="tc-description">{{ $m['description'] }}</p>
+                                                    <div class="tc-socials">
+                                                        <a href="#" class="tc-social" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
+                                                        <a href="#" class="tc-social" aria-label="Email"><i class="fas fa-envelope"></i></a>
+                                                    </div>
+                                                </div>
+                                            </article>
+                                        @endforeach
+                                    </div>
+                                </div>
+
+                            </div>{{-- end .org-section --}}
+
+                        </div>{{-- end .org-flow --}}
+
+                    </div>{{-- end .org-chart --}}
 
                 </div>
             </section>{{-- end #about --}}

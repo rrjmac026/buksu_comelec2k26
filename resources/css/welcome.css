@@ -780,6 +780,38 @@ body {
   color: #FACC15;
   background: linear-gradient(135deg, #1D0931, #321053);
 }
+.tc-av-fallback--icon {
+  font-size: 2.8rem;
+  background: linear-gradient(145deg, #2a0050, #1a0035);
+}
+.tc-av-fallback--icon i {
+  color: #FACC15;
+  filter: drop-shadow(0 0 10px rgba(250,204,21,0.4));
+}
+
+/* ── Adviser solo node inside COMELEC section ─────────────── */
+.org-adviser-wrap {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 0;
+  padding: 0 16px;
+}
+.org-adviser-wrap .org-leader-card {
+  max-width: 280px;
+}
+.org-adviser-divider {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  padding: 4px 0 8px;
+}
+
+/* ── Leadership cards in org chart (same team-card design) ─── */
+.org-leader-card {
+  width: 100%;
+  max-width: 300px;
+}
 
 /* Content area */
 .tc-content {
@@ -1483,6 +1515,347 @@ html { scroll-behavior: smooth; }
 }
 .footer-center a:hover { color: var(--gold); }
 
+/* ═══════════════════════════════════════════════════════════
+   ORGANIZATIONAL CHART
+═══════════════════════════════════════════════════════════ */
+
+/* Container */
+.org-chart {
+  margin-top: 72px;
+}
+
+/* Header */
+.org-header {
+  text-align: center;
+  margin-bottom: 56px;
+}
+.org-eyebrow {
+  display: inline-block;
+  font-size: 0.58rem;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--gold);
+  background: rgba(249,180,15,0.08);
+  border: 1px solid rgba(249,180,15,0.22);
+  padding: 5px 14px;
+  border-radius: 6px;
+  margin-bottom: 14px;
+}
+.org-title {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: clamp(1.8rem, 3vw, 2.6rem);
+  font-weight: 900;
+  color: var(--cream);
+  margin: 0 0 12px;
+  line-height: 1.12;
+}
+.org-subtitle {
+  color: var(--cream-dim);
+  font-size: 0.96rem;
+  line-height: 1.7;
+  max-width: 620px;
+  margin: 0 auto;
+}
+
+/* Flow column */
+.org-flow {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0;
+}
+
+/* Node wrapper (centers each card) */
+.org-node {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+
+/* ── Leadership Cards ──────────────────────────────────────── */
+.org-card {
+  text-align: center;
+  border-radius: 22px;
+  padding: 32px 28px;
+  backdrop-filter: blur(16px);
+  transition: transform .28s ease, box-shadow .28s ease, border-color .28s ease;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0;
+}
+.org-card:hover {
+  transform: translateY(-6px);
+}
+
+/* All leadership cards — identical size and base style */
+.org-card--president,
+.org-card--vp,
+.org-card--director,
+.org-card--adviser {
+  max-width: 420px;
+  width: 100%;
+  background: linear-gradient(145deg, rgba(26,0,46,0.92), rgba(16,0,32,0.96));
+  border: 1.5px solid rgba(249,180,15,0.38);
+  box-shadow: 0 0 36px rgba(249,180,15,0.1), 0 12px 44px rgba(0,0,0,0.56);
+}
+.org-card--president:hover,
+.org-card--vp:hover,
+.org-card--director:hover,
+.org-card--adviser:hover {
+  box-shadow: 0 0 56px rgba(249,180,15,0.2), 0 18px 54px rgba(0,0,0,0.66);
+  border-color: rgba(249,180,15,0.62);
+}
+
+/* ── Avatars ───────────────────────────────────────────────── */
+.org-avatar {
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  background: linear-gradient(135deg, rgba(80,0,120,0.6), rgba(40,0,70,0.8));
+  border: 2px solid rgba(249,180,15,0.4);
+  margin-bottom: 16px;
+  flex-shrink: 0;
+  overflow: hidden;
+  position: relative;
+}
+/* All leadership avatars — identical size */
+.org-avatar--xl,
+.org-avatar--lg,
+.org-avatar--md {
+  width: 80px; height: 80px;
+  font-size: 1.8rem;
+  color: var(--gold);
+  box-shadow: 0 0 24px rgba(249,180,15,0.18);
+  border-color: rgba(249,180,15,0.48);
+}
+.org-avatar--photo img {
+  width: 100%; height: 100%;
+  object-fit: cover;
+  display: block;
+}
+.org-av-fb {
+  width: 100%; height: 100%;
+  display: flex; align-items: center; justify-content: center;
+  background: linear-gradient(135deg, #371457, #1f1138);
+  color: var(--gold);
+  font-family: 'Playfair Display', Georgia, serif;
+  font-weight: 900;
+  font-size: 1.4rem;
+}
+
+/* ── Card text ─────────────────────────────────────────────── */
+.org-badge {
+  display: inline-flex; align-items: center;
+  border-radius: 999px;
+  padding: 4px 12px;
+  font-size: 0.58rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  margin-bottom: 10px;
+}
+.org-badge--president { background: rgba(249,180,15,0.16); border: 1px solid rgba(249,180,15,0.45); color: var(--gold); }
+.org-badge--vp        { background: rgba(249,180,15,0.12); border: 1px solid rgba(249,180,15,0.36); color: rgba(249,180,15,0.9); }
+.org-badge--director  { background: rgba(249,180,15,0.10); border: 1px solid rgba(249,180,15,0.3);  color: rgba(249,180,15,0.85); }
+.org-badge--adviser   { background: rgba(52,211,153,0.1);  border: 1px solid rgba(52,211,153,0.3);  color: rgba(52,211,153,0.9); }
+
+.org-name {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 1.18rem;
+  font-weight: 800;
+  color: var(--cream);
+  margin: 0 0 4px;
+  line-height: 1.2;
+}
+/* All names same size — no special overrides per level */
+.org-dept {
+  font-size: 0.74rem;
+  color: rgba(249,180,15,0.72);
+  margin: 0 0 10px;
+  font-style: italic;
+}
+.org-desc {
+  font-size: 0.8rem;
+  color: var(--cream-dim);
+  line-height: 1.6;
+  margin: 0;
+}
+
+/* ── Connector lines ───────────────────────────────────────── */
+.org-line {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  padding: 4px 0;
+}
+.org-line-dot {
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  background: var(--gold);
+  box-shadow: 0 0 10px rgba(249,180,15,0.7);
+  flex-shrink: 0;
+}
+.org-line-track {
+  width: 2px;
+  height: 32px;
+  background: linear-gradient(180deg, rgba(249,180,15,0.8), rgba(249,180,15,0.3));
+  flex-shrink: 0;
+  border-radius: 2px;
+}
+.org-line--to-section .org-line-track { height: 22px; }
+.org-line-label {
+  font-size: 0.56rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: rgba(249,180,15,0.65);
+  padding: 3px 10px;
+  border: 1px solid rgba(249,180,15,0.18);
+  border-radius: 4px;
+  background: rgba(249,180,15,0.06);
+  white-space: nowrap;
+}
+
+/* ── COMELEC Section block ─────────────────────────────────── */
+.org-section {
+  width: 100%;
+  background: rgba(14,0,26,0.8);
+  border: 1.5px solid rgba(249,180,15,0.24);
+  border-radius: 24px;
+  padding: 36px 28px 32px;
+  backdrop-filter: blur(14px);
+  box-shadow: 0 16px 56px rgba(0,0,0,0.54), 0 0 40px rgba(249,180,15,0.06);
+}
+
+.org-section-header {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 1.3rem;
+  font-weight: 800;
+  color: var(--cream);
+  margin-bottom: 28px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid rgba(249,180,15,0.16);
+}
+.org-section-header i { color: var(--gold); font-size: 1.1rem; }
+
+/* ── Members grid ──────────────────────────────────────────── */
+.org-members-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0,1fr));
+  gap: 16px;
+  margin-bottom: 0;
+}
+.org-members-grid--dev {
+  grid-template-columns: repeat(3, minmax(0,1fr));
+}
+
+/* ── Member card ───────────────────────────────────────────── */
+.org-member-card {
+  background: rgba(20,0,36,0.78);
+  border: 1px solid rgba(249,180,15,0.16);
+  border-radius: 16px;
+  padding: 20px 16px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  transition: transform .25s ease, border-color .25s ease, box-shadow .25s ease;
+}
+.org-member-card:hover {
+  transform: translateY(-4px);
+  border-color: rgba(249,180,15,0.38);
+  box-shadow: 0 14px 40px rgba(0,0,0,0.5), 0 0 18px rgba(249,180,15,0.1);
+}
+.org-member-card--dev {
+  border-color: rgba(52,211,153,0.18);
+}
+.org-member-card--dev:hover {
+  border-color: rgba(52,211,153,0.4);
+  box-shadow: 0 14px 40px rgba(0,0,0,0.5), 0 0 18px rgba(52,211,153,0.1);
+}
+
+/* member avatar */
+.omc-avatar {
+  width: 60px; height: 60px;
+  border-radius: 50%;
+  border: 2px solid rgba(249,180,15,0.36);
+  overflow: hidden;
+  margin-bottom: 12px;
+  flex-shrink: 0;
+  background: linear-gradient(135deg, rgba(60,0,100,0.7), rgba(30,0,60,0.9));
+}
+.org-member-card--dev .omc-avatar { border-color: rgba(52,211,153,0.4); }
+.omc-avatar img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.omc-av-fb {
+  width: 100%; height: 100%;
+  display: flex; align-items: center; justify-content: center;
+  background: linear-gradient(135deg, #371457, #1f1138);
+  color: var(--gold);
+  font-family: 'Playfair Display', Georgia, serif;
+  font-weight: 900;
+  font-size: 1.1rem;
+}
+.org-member-card--dev .omc-av-fb { color: var(--green); }
+
+.omc-name {
+  font-size: 0.86rem;
+  font-weight: 700;
+  color: var(--cream);
+  margin: 0 0 4px;
+  line-height: 1.25;
+}
+.omc-role {
+  font-size: 0.58rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin: 0 0 8px;
+}
+.org-member-card--dev .omc-role { color: var(--green); }
+.omc-desc {
+  font-size: 0.76rem;
+  color: var(--cream-dim);
+  line-height: 1.55;
+  margin: 0;
+}
+
+/* ── Development Team subsection label ───────────────────── */
+.org-dev-subsection {
+  margin-top: 32px;
+  padding-top: 28px;
+  border-top: 1px solid rgba(249,180,15,0.1);
+}
+.org-dev-label {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+.org-dev-line {
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(52,211,153,0.35), transparent);
+}
+.org-dev-text {
+  font-size: 0.64rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: rgba(52,211,153,0.8);
+  white-space: nowrap;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+.org-dev-text i { font-size: 0.7rem; }
+
 /* ══════════════════════════════════════════════════
    LANDING SECTION RESPONSIVE
 ══════════════════════════════════════════════════ */
@@ -1491,6 +1864,9 @@ html { scroll-behavior: smooth; }
   .ls-steps     { grid-template-columns: repeat(3, minmax(0,1fr)); gap: 16px; }
   .ls-step-connector { display: none; }
   .ls-features  { grid-template-columns: repeat(2, minmax(0,1fr)); }
+
+  .org-members-grid     { grid-template-columns: repeat(3, minmax(0,1fr)); }
+  .org-members-grid--dev{ grid-template-columns: repeat(3, minmax(0,1fr)); }
 }
 
 @media (max-width: 900px) {
@@ -1510,6 +1886,16 @@ html { scroll-behavior: smooth; }
   .footer-inner  { flex-direction: column; text-align: center; gap: 8px; }
 }
 
+@media (max-width: 900px) {
+  .org-members-grid     { grid-template-columns: repeat(2, minmax(0,1fr)); }
+  .org-members-grid--dev{ grid-template-columns: repeat(2, minmax(0,1fr)); }
+  .org-section          { padding: 24px 18px; }
+  .org-card--president,
+  .org-card--vp,
+  .org-card--director,
+  .org-card--adviser    { max-width: 360px; padding: 24px 20px; }
+}
+
 @media (max-width: 640px) {
   .about-values { grid-template-columns: 1fr; }
   .ls-steps     { grid-template-columns: 1fr; }
@@ -1517,4 +1903,21 @@ html { scroll-behavior: smooth; }
   .ls-stats-row { grid-template-columns: 1fr 1fr; }
   .landing-section { padding: 48px 14px; }
   .ls-header { margin-bottom: 36px; }
+
+  .org-members-grid,
+  .org-members-grid--dev { grid-template-columns: 1fr 1fr; gap: 12px; }
+  .org-card--president,
+  .org-card--vp,
+  .org-card--director,
+  .org-card--adviser { max-width: 320px; padding: 20px 16px; }
+  .org-avatar--xl,
+  .org-avatar--lg,
+  .org-avatar--md { width: 64px; height: 64px; font-size: 1.4rem; }
+  .org-section-header { font-size: 1.05rem; }
+  .org-name { font-size: 1rem; }
+}
+
+@media (max-width: 420px) {
+  .org-members-grid,
+  .org-members-grid--dev { grid-template-columns: 1fr; }
 }
