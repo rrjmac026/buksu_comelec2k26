@@ -52,6 +52,120 @@
     function closeTestModal() { document.getElementById('testModal').style.display = 'none'; }
 
     /* ── Status Confirmation Modal ─────────────────────────────────────── */
+    const modalElectionStart = @json($electionStart);
+    const modalElectionEnd   = @json($electionEnd);
+
+    function formatScheduleDate(value) {
+        if (!value) return 'Not set';
+        try {
+            return new Date(value).toLocaleString(undefined, {
+                month: 'short', day: 'numeric', year: 'numeric',
+                hour: 'numeric', minute: '2-digit'
+            });
+        } catch (e) {
+            return value;
+        }
+    }
+
+    function formatDateTimeLocal(value) {
+        if (!value) return '';
+        const date = new Date(value);
+        if (Number.isNaN(date.getTime())) return '';
+        const pad = n => String(n).padStart(2, '0');
+        return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}T${pad(date.getHours())}:${pad(date.getMinutes())}`;
+    }
+
+    function renderStatusModalSchedule(status) {
+        const startText = formatScheduleDate(modalElectionStart);
+        const endText   = formatScheduleDate(modalElectionEnd);
+
+        if (status === 'upcoming') {
+            return `
+                <div style="display:grid;gap:10px;">
+                    <div style="font-size:0.75rem;color:rgba(255,251,240,0.55);">Countdown target: voting start date</div>
+                    <div class="schedule-grid" style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+                        <div style="padding:12px;border-radius:10px;background:rgba(249,180,15,0.08);border:1px solid rgba(249,180,15,0.15);">
+                            <div style="font-size:0.65rem;color:rgba(249,180,15,0.65);margin-bottom:6px;font-weight:600;text-transform:uppercase;letter-spacing:0.05em;">Start</div>
+                            <div style="font-size:0.78rem;font-weight:700;color:#fffbf0;word-break:break-word;">${startText}</div>
+                        </div>
+                        <div style="padding:12px;border-radius:10px;background:rgba(255,255,255,0.03);border:1px dashed rgba(255,255,255,0.08);">
+                            <div style="font-size:0.65rem;color:rgba(255,251,240,0.45);margin-bottom:6px;font-weight:600;text-transform:uppercase;letter-spacing:0.05em;">End</div>
+                            <div style="font-size:0.78rem;font-weight:700;color:rgba(255,251,240,0.5);word-break:break-word;">${endText}</div>
+                        </div>
+                    </div>
+                </div>`;
+        }
+
+        if (status === 'ongoing') {
+            return `
+                <div style="display:grid;gap:10px;">
+                    <div style="font-size:0.75rem;color:rgba(255,251,240,0.55);">Countdown target: voting end date</div>
+                    <div class="schedule-grid" style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+                        <div style="padding:12px;border-radius:10px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);">
+                            <div style="font-size:0.65rem;color:rgba(255,251,240,0.45);margin-bottom:6px;font-weight:600;text-transform:uppercase;letter-spacing:0.05em;">Start</div>
+                            <div style="font-size:0.78rem;font-weight:700;color:rgba(255,251,240,0.5);word-break:break-word;">${startText}</div>
+                        </div>
+                        <div style="padding:12px;border-radius:10px;background:rgba(52,211,153,0.08);border:1px solid rgba(52,211,153,0.15);">
+                            <div style="font-size:0.65rem;color:rgba(52,211,153,0.65);margin-bottom:6px;font-weight:600;text-transform:uppercase;letter-spacing:0.05em;">End</div>
+                            <div style="font-size:0.78rem;font-weight:700;color:#f8fffb;word-break:break-word;">${endText}</div>
+                        </div>
+                    </div>
+                </div>`;
+        }
+
+        return `
+            <div style="display:grid;gap:10px;">
+                <div style="font-size:0.75rem;color:rgba(255,251,240,0.55);">Election schedule summary</div>
+                <div style="padding:12px;border-radius:10px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);">
+                    <div style="margin-bottom:6px;font-size:0.65rem;color:rgba(255,251,240,0.45);font-weight:600;text-transform:uppercase;letter-spacing:0.05em;">Start</div>
+                    <div style="font-size:0.78rem;font-weight:700;color:rgba(255,251,240,0.75);word-break:break-word;">${startText}</div>
+                </div>
+                <div style="padding:12px;border-radius:10px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);">
+                    <div style="margin-bottom:6px;font-size:0.65rem;color:rgba(255,251,240,0.45);font-weight:600;text-transform:uppercase;letter-spacing:0.05em;">End</div>
+                    <div style="font-size:0.78rem;font-weight:700;color:rgba(255,251,240,0.75);word-break:break-word;">${endText}</div>
+                </div>
+            </div>`;
+    }
+
+    function renderStatusModalFields(status) {
+        const startValue = formatDateTimeLocal(modalElectionStart);
+        const endValue = formatDateTimeLocal(modalElectionEnd);
+
+        if (status === 'upcoming') {
+            return `
+                <div style="border-radius:12px;padding:16px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);">
+                    <div style="font-size:0.85rem;font-weight:700;color:#fffbf0;margin-bottom:12px;">Set Upcoming Schedule</div>
+                    <label class="abk-field-label">Voting Start Date &amp; Time</label>
+                    <input type="datetime-local" name="election_start" class="abk-input" value="${startValue}" style="width:100%;margin-bottom:0;">
+                    <div style="font-size:0.7rem;color:rgba(255,251,240,0.45);margin-top:8px;">
+                        This date becomes the countdown target for the upcoming election.
+                    </div>
+                </div>`;
+        }
+
+        if (status === 'ongoing') {
+            return `
+                <div style="border-radius:12px;padding:16px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);">
+                    <div style="font-size:0.85rem;font-weight:700;color:#fffbf0;margin-bottom:12px;">Set Ongoing Schedule</div>
+                    <div class="schedule-grid" style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px;">
+                        <div>
+                            <label class="abk-field-label">Start Date &amp; Time</label>
+                            <input type="datetime-local" name="election_start" class="abk-input" value="${startValue}" style="width:100%;margin-bottom:0;">
+                        </div>
+                        <div>
+                            <label class="abk-field-label">End Date &amp; Time</label>
+                            <input type="datetime-local" name="election_end" class="abk-input" value="${endValue}" style="width:100%;margin-bottom:0;">
+                        </div>
+                    </div>
+                    <div style="font-size:0.7rem;color:rgba(255,251,240,0.45);">
+                        Voters will see a countdown to the end date once the election is set to ongoing.
+                    </div>
+                </div>`;
+        }
+
+        return `<div style="font-size:0.75rem;color:rgba(255,251,240,0.55);padding:12px 16px;border-radius:10px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);">No schedule fields are required for this status.</div>`;
+    }
+
     function openStatusConfirmModal(status, statusLabel, statusDescription) {
         document.getElementById('statusInput').value = status;
         document.getElementById('statusModalNewStatus').textContent = statusLabel;
@@ -68,10 +182,79 @@
                 <span><strong>Important:</strong> Setting the status to Ended will prevent voters from casting any more ballots.</span>`;
             warningBox.style.display = 'block';
         }
+
+        const scheduleCard = document.getElementById('statusModalScheduleCard');
+        const scheduleBadge = document.getElementById('statusModalScheduleBadge');
+        const scheduleContent = document.getElementById('statusModalScheduleContent');
+        const scheduleFields = document.getElementById('statusModalScheduleFields');
+
+        if (scheduleCard && scheduleContent && scheduleBadge) {
+            scheduleBadge.textContent = statusLabel;
+            scheduleContent.innerHTML = renderStatusModalSchedule(status);
+            scheduleCard.style.display = 'block';
+            if (status === 'ongoing') {
+                scheduleBadge.style.background = 'rgba(52,211,153,0.12)';
+                scheduleBadge.style.borderColor = 'rgba(52,211,153,0.25)';
+                scheduleBadge.style.color = '#34d399';
+            } else if (status === 'ended') {
+                scheduleBadge.style.background = 'rgba(255,255,255,0.08)';
+                scheduleBadge.style.borderColor = 'rgba(255,255,255,0.16)';
+                scheduleBadge.style.color = 'rgba(255,255,255,0.75)';
+            } else {
+                scheduleBadge.style.background = 'rgba(249,180,15,0.1)';
+                scheduleBadge.style.borderColor = 'rgba(249,180,15,0.2)';
+                scheduleBadge.style.color = '#f9b40f';
+            }
+        }
+
+        if (scheduleFields) {
+            scheduleFields.innerHTML = renderStatusModalFields(status);
+            scheduleFields.style.display = status === 'ended' ? 'none' : 'block';
+        }
+
+        // Store current status for form submission
+        window._modalStatus = status;
         
         document.getElementById('statusModal').style.display = 'flex';
     }
-    function closeStatusConfirmModal() { document.getElementById('statusModal').style.display = 'none'; }
+    
+    function closeStatusConfirmModal() { 
+        document.getElementById('statusModal').style.display = 'none'; 
+    }
+
+    function submitStatusForm() {
+        const form = document.getElementById('statusForm');
+        const status = window._modalStatus || 'upcoming';
+        
+        // Capture date inputs from the modal
+        const scheduleFields = document.getElementById('statusModalScheduleFields');
+        const startInput = scheduleFields?.querySelector('input[name="election_start"]');
+        const endInput = scheduleFields?.querySelector('input[name="election_end"]');
+        
+        // Remove any existing hidden date inputs
+        document.getElementById('statusForm').querySelectorAll('input[type="hidden"][name^="election_"]').forEach(el => el.remove());
+        
+        // Add hidden inputs for dates
+        if (startInput && startInput.value) {
+            const hiddenStart = document.createElement('input');
+            hiddenStart.type = 'hidden';
+            hiddenStart.name = 'election_start';
+            hiddenStart.value = startInput.value;
+            form.appendChild(hiddenStart);
+        }
+        
+        if (endInput && endInput.value) {
+            const hiddenEnd = document.createElement('input');
+            hiddenEnd.type = 'hidden';
+            hiddenEnd.name = 'election_end';
+            hiddenEnd.value = endInput.value;
+            form.appendChild(hiddenEnd);
+        }
+        
+        // Change form action to schedule endpoint to handle both status and dates
+        form.action = '{{ route('admin.settings.election.schedule') }}';
+        form.submit();
+    }
 
     function renderTestResults(data) {
         const status = data.overall_status === 'ready';

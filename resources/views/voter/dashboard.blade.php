@@ -88,7 +88,6 @@
         $electionEnd   = \App\Models\ElectionSetting::get('election_end');
     @endphp
     
-    @if($electionStart || $electionEnd)
     <div class="vd-countdown-card" id="vd-countdown-card">
         <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px;">
             <i class="fas fa-clock" style="color:rgba(249,180,15,0.7);font-size:0.85rem;"></i>
@@ -128,7 +127,7 @@
         const startTs      = {{ $electionStart ? \Carbon\Carbon::parse($electionStart)->timestamp * 1000 : 'null' }};
         const endTs        = {{ $electionEnd   ? \Carbon\Carbon::parse($electionEnd)->timestamp   * 1000 : 'null' }};
         const serverStatus = '{{ $electionStatus ?? \App\Models\ElectionSetting::status() }}';
-    
+
         const dEl      = document.getElementById('vd-cd-d');
         const hEl      = document.getElementById('vd-cd-h');
         const mEl      = document.getElementById('vd-cd-m');
@@ -136,13 +135,12 @@
         const labelEl  = document.getElementById('vd-cd-label');
         const chipEl   = document.getElementById('vd-cd-chip');
         const blocksEl = document.getElementById('vd-cd-blocks');
-    
+
         function pad(n) { return String(Math.floor(n)).padStart(2, '0'); }
-    
+
         function tick() {
             const now = Date.now();
-    
-            // ── UPCOMING: only count down to start ──────────────────────
+
             if (serverStatus === 'upcoming') {
                 if (startTs && now < startTs) {
                     const diff = startTs - now;
@@ -155,7 +153,6 @@
                     sEl.textContent = pad((diff % 60000) / 1000);
                     blocksEl.style.display = 'flex';
                 } else {
-                    // Start time has passed but admin hasn't flipped status yet
                     labelEl.textContent    = 'Election starting soon';
                     chipEl.textContent     = 'Upcoming';
                     chipEl.className       = 'vd-cd-chip soon';
@@ -163,8 +160,7 @@
                 }
                 return;
             }
-    
-            // ── ONGOING: count down to end ───────────────────────────────
+
             if (serverStatus === 'ongoing') {
                 if (endTs && now < endTs) {
                     const diff = endTs - now;
@@ -177,27 +173,25 @@
                     sEl.textContent = pad((diff % 60000) / 1000);
                     blocksEl.style.display = 'flex';
                 } else {
-                    // No end date set, or already passed
-                    labelEl.textContent    = 'Voting is now open';
-                    chipEl.textContent     = '● Live';
+                    labelEl.textContent    = endTs ? 'Voting has closed' : 'Voting is now open';
+                    chipEl.textContent     = endTs && now >= endTs ? 'Closing' : '● Live';
                     chipEl.className       = 'vd-cd-chip live';
                     blocksEl.style.display = 'none';
                 }
                 return;
             }
-    
-            // ── ENDED ────────────────────────────────────────────────────
+
+            // ended
             labelEl.textContent    = 'Election has ended';
             chipEl.textContent     = 'Closed';
             chipEl.className       = 'vd-cd-chip ended';
             blocksEl.style.display = 'none';
         }
-    
+
         tick();
         setInterval(tick, 1000);
     })();
     </script>
-    @endif
 
     {{-- Flash Messages --}}
     @if(session('error'))

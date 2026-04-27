@@ -64,9 +64,19 @@ class AdminSettingsController extends Controller
     {
         $request->validate([
             'status' => ['required', 'in:upcoming,ongoing,ended'],
+            'election_start' => ['nullable', 'date'],
+            'election_end'   => ['nullable', 'date', 'after_or_equal:election_start'],
         ]);
 
         ElectionSetting::set('status', $request->status);
+
+        if ($request->filled('election_start')) {
+            ElectionSetting::set('election_start', $request->election_start);
+        }
+
+        if ($request->filled('election_end')) {
+            ElectionSetting::set('election_end', $request->election_end);
+        }
 
         $labels = [
             'upcoming' => 'Election set to Upcoming.',
@@ -81,15 +91,32 @@ class AdminSettingsController extends Controller
     public function updateSchedule(Request $request)
     {
         $request->validate([
+            'status'         => ['nullable', 'in:upcoming,ongoing,ended'],
             'election_start' => ['nullable', 'date'],
             'election_end'   => ['nullable', 'date', 'after_or_equal:election_start'],
         ]);
 
+        // Update status if provided (from modal submission)
+        if ($request->filled('status')) {
+            ElectionSetting::set('status', $request->status);
+        }
+
+        // Always update dates
         ElectionSetting::set('election_start', $request->election_start ?? '');
         ElectionSetting::set('election_end',   $request->election_end   ?? '');
 
+        $message = 'Election schedule updated.';
+        if ($request->filled('status')) {
+            $statusLabels = [
+                'upcoming' => 'Election set to Upcoming.',
+                'ongoing'  => 'Election is now LIVE!',
+                'ended'    => 'Election has been marked as Ended.',
+            ];
+            $message = $statusLabels[$request->status];
+        }
+
         return redirect()->route('admin.settings.index', ['tab' => 'election'])
-            ->with('success', 'Election schedule updated.');
+            ->with('success', $message);
     }
 
     public function updateName(Request $request)

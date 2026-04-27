@@ -291,26 +291,45 @@
         position: fixed; inset: 0; z-index: 50;
         background: rgba(0,0,0,0.7); backdrop-filter: blur(4px);
         display: flex; align-items: center; justify-content: center; padding: 16px;
+        overflow-y: auto;
     }
     .st-modal {
         background: rgba(22,0,28,0.98); border: 1px solid rgba(249,180,15,0.25);
-        border-radius: 20px; width: 100%; max-width: 420px;
-        box-shadow: 0 24px 80px rgba(0,0,0,0.7); overflow: hidden;
+        border-radius: 20px; width: 100%; max-width: 520px;
+        box-shadow: 0 24px 80px rgba(0,0,0,0.7); overflow: visible;
         animation: fadeUp .3s ease both;
+        margin: 16px auto;
+        max-height: 90vh;
+        display: flex;
+        flex-direction: column;
     }
     .st-modal::before { content: ''; display: block; height: 2px; background: linear-gradient(90deg, transparent, #f9b40f, #fcd558, transparent); }
-    .st-modal-header { padding: 22px 24px 16px; border-bottom: 1px solid rgba(249,180,15,0.08); background: linear-gradient(to right, rgba(56,0,65,0.4), transparent); }
+    .st-modal-header { padding: 22px 24px 16px; border-bottom: 1px solid rgba(249,180,15,0.08); background: linear-gradient(to right, rgba(56,0,65,0.4), transparent); flex-shrink: 0; }
     .st-modal-title  { font-family: 'Playfair Display', serif; font-size: 1.05rem; font-weight: 900; color: #fffbf0; }
     .st-modal-sub    { font-size: 0.7rem; color: rgba(255,251,240,0.4); margin-top: 3px; }
-    .st-modal-body   { padding: 20px 24px; }
-    .st-modal-footer { padding: 16px 24px; border-top: 1px solid rgba(249,180,15,0.08); display: flex; gap: 10px; justify-content: flex-end; }
+    .st-modal-body   { padding: 20px 24px; overflow-y: auto; flex: 1; }
+    .st-modal-footer { padding: 16px 24px; border-top: 1px solid rgba(249,180,15,0.08); display: flex; gap: 10px; justify-content: flex-end; flex-wrap: wrap; flex-shrink: 0; }
+    
+    /* Responsive modals */
+    @media(max-width: 640px) {
+        .st-modal { max-width: 100%; border-radius: 16px; }
+        .st-modal-header { padding: 18px 18px 14px; }
+        .st-modal-title { font-size: 1rem; }
+        .st-modal-body { padding: 16px 18px; }
+        .st-modal-footer { padding: 14px 18px; flex-direction: column; }
+        .st-modal-footer button,
+        .st-modal-footer form { width: 100%; }
+    }
 
     .abk-field-label { display: block; font-size: 0.6rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: rgba(249,180,15,0.5); margin-bottom: 7px; }
     .abk-select, .abk-input {
         width: 100%; background: rgba(56,0,65,0.6); border: 1px solid rgba(249,180,15,0.15);
         border-radius: 10px; padding: 10px 14px;
         font-family: 'DM Sans', sans-serif; font-size: 0.82rem; color: #fffbf0;
-        outline: none; transition: border-color .2s; margin-bottom: 14px;
+        outline: none; transition: border-color .2s; margin-bottom: 14px; box-sizing: border-box;
+    }
+    @media(max-width: 640px) {
+        .abk-select, .abk-input { font-size: 16px; padding: 12px 14px; }
     }
     .abk-select:focus, .abk-input:focus { border-color: rgba(249,180,15,0.4); }
     .abk-select {
@@ -331,16 +350,20 @@
         padding: 9px 18px; border-radius: 9px; cursor: pointer;
         background: transparent; border: 1px solid rgba(249,180,15,0.18);
         color: rgba(249,180,15,0.55); font-family: 'DM Sans', sans-serif;
-        font-size: 0.75rem; font-weight: 700; transition: all .18s;
+        font-size: 0.75rem; font-weight: 700; transition: all .18s; white-space: nowrap;
     }
     .st-m-cancel:hover { background: rgba(249,180,15,0.06); color: #f9b40f; }
     .st-m-delete {
         padding: 9px 20px; border-radius: 9px; cursor: pointer;
         background: linear-gradient(135deg, #ef4444, #f87171); border: none;
         color: #fff; font-family: 'DM Sans', sans-serif; font-size: 0.75rem; font-weight: 700;
-        box-shadow: 0 3px 10px rgba(239,68,68,0.3); transition: all .18s;
+        box-shadow: 0 3px 10px rgba(239,68,68,0.3); transition: all .18s; white-space: nowrap;
     }
     .st-m-delete:hover { transform: translateY(-1px); box-shadow: 0 5px 16px rgba(239,68,68,0.45); }
+    
+    @media(max-width: 640px) {
+        .st-m-cancel, .st-m-delete { padding: 11px 16px; font-size: 0.78rem; width: 100%; }
+    }
 
     .abk-test-panel { background: rgba(26,0,32,0.88); border: 1px solid rgba(249,180,15,0.18); border-radius: 14px; overflow: hidden; margin-bottom: 0; }
     .abk-test-row { display: flex; align-items: center; justify-content: space-between; padding: 12px 20px; border-bottom: 1px solid rgba(249,180,15,0.07); font-size: 0.78rem; }

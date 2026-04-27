@@ -1423,6 +1423,12 @@
                         if (ecOrbWrap) ecOrbWrap.style.display = 'none';
                         return;
                     }
+                } else if (status === 'upcoming') {
+                    if (cdHeaderText) cdHeaderText.textContent = 'Election Starting Soon';
+                    if (cdIcon)       cdIcon.className         = 'fas fa-hourglass-start';
+                    if (ecCdWrap)  ecCdWrap.style.display  = 'block';
+                    if (ecOrbWrap) ecOrbWrap.style.display = 'none';
+                    return;
                 }
 
                 // ── ONGOING: count down to end ─────────────────────────────────

@@ -1,6 +1,15 @@
 <x-app-layout>
 @push('styles')
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;800;900&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+    /* Mobile improvements for modals */
+    @media(max-width: 640px) {
+        .schedule-grid {
+            grid-template-columns: 1fr !important;
+            gap: 10px !important;
+        }
+    }
+</style>
 @endpush
 @include('admin.settings.partials._styles')
 
@@ -147,66 +156,6 @@
                 </form>
             </div>
         </div>
-        {{-- Election Schedule Card --}}
-        <div class="ec-card">
-            <div class="ec-header">
-                <div class="ec-title">Election Schedule</div>
-                <div class="ec-sub">Set the start and end date/time. The countdown on the public page uses these.</div>
-            </div>
-            <div class="ec-body">
-                <form method="POST" action="{{ route('admin.settings.election.schedule') }}">
-                    @csrf
-                    <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px;">
-                        <div>
-                            <label class="field-label">Start Date &amp; Time</label>
-                            <input type="datetime-local"
-                                name="election_start"
-                                class="field-input"
-                                value="{{ $electionStart ? \Carbon\Carbon::parse($electionStart)->format('Y-m-d\TH:i') : '' }}">
-                            @error('election_start')
-                                <div style="font-size:0.68rem;color:#f87171;margin-top:4px;">{{ $message }}</div>
-                            @enderror
-                        </div>
-                        <div>
-                            <label class="field-label">End Date &amp; Time</label>
-                            <input type="datetime-local"
-                                name="election_end"
-                                class="field-input"
-                                value="{{ $electionEnd ? \Carbon\Carbon::parse($electionEnd)->format('Y-m-d\TH:i') : '' }}">
-                            @error('election_end')
-                                <div style="font-size:0.68rem;color:#f87171;margin-top:4px;">{{ $message }}</div>
-                            @enderror
-                        </div>
-                    </div>
-
-                    @if($electionStart || $electionEnd)
-                    <div style="display:flex;gap:12px;align-items:center;padding:10px 14px;border-radius:10px;
-                                background:rgba(249,180,15,0.06);border:1px solid rgba(249,180,15,0.12);
-                                margin-bottom:16px;font-size:0.72rem;color:rgba(255,251,240,0.5);">
-                        <i class="fas fa-clock" style="color:rgba(249,180,15,0.5);flex-shrink:0;"></i>
-                        <div>
-                            @if($electionStart)
-                                <span>Start: <strong style="color:rgba(249,180,15,0.8);">
-                                    {{ \Carbon\Carbon::parse($electionStart)->format('M d, Y · g:i A') }}
-                                </strong></span>
-                            @endif
-                            @if($electionStart && $electionEnd) &nbsp;·&nbsp; @endif
-                            @if($electionEnd)
-                                <span>End: <strong style="color:rgba(249,180,15,0.8);">
-                                    {{ \Carbon\Carbon::parse($electionEnd)->format('M d, Y · g:i A') }}
-                                </strong></span>
-                            @endif
-                        </div>
-                    </div>
-                    @endif
-
-                    <button type="submit" class="save-btn">
-                        <i class="fas fa-calendar-check"></i> Save Schedule
-                    </button>
-                </form>
-            </div>
-        </div>
-
     </div>
 
     {{-- ══════════════════════════════════════
@@ -425,18 +374,18 @@
             <div class="st-modal-title">Create New Backup</div>
             <div class="st-modal-sub">Configure and run a new database backup</div>
         </div>
-        <form method="POST" action="{{ route('admin.settings.backups.store') }}">
+        <form method="POST" action="{{ route('admin.settings.backups.store') }}" style="display:flex;flex-direction:column;min-height:0;">
             @csrf
             <div class="st-modal-body">
                 <label class="abk-field-label">Backup Type</label>
-                <select name="backup_type" class="abk-select">
+                <select name="backup_type" class="abk-select" style="margin-bottom:16px;">
                     <option value="database">Database only</option>
                     <option value="full">Full backup (database + files)</option>
                 </select>
                 <label class="abk-field-label">Retention Period (days)</label>
-                <input type="number" name="retention_days" value="30" min="1" max="365" class="abk-input">
+                <input type="number" name="retention_days" value="30" min="1" max="365" class="abk-input" style="margin-bottom:6px;">
                 <div class="abk-hint">Backup will auto-delete after this many days</div>
-                <div class="abk-checkbox-row">
+                <div class="abk-checkbox-row" style="margin-bottom:0;">
                     <input type="checkbox" name="async" value="1" id="asyncCheck">
                     <label for="asyncCheck" class="abk-checkbox-label">
                         Run in background <span style="color:rgba(249,180,15,0.4);">(requires queue:work)</span>
@@ -445,7 +394,7 @@
             </div>
             <div class="st-modal-footer">
                 <button type="button" class="st-m-cancel" onclick="closeCreateModal()">Cancel</button>
-                <button type="submit" class="abk-btn abk-btn-primary" style="padding:9px 22px;">
+                <button type="submit" class="abk-btn abk-btn-primary" style="padding:9px 22px;white-space:nowrap;">
                     <i class="fas fa-play" style="font-size:.62rem;"></i> Run Backup
                 </button>
             </div>
@@ -460,28 +409,43 @@
      onclick="if(event.target===this) closeStatusConfirmModal()">
     <div class="st-modal">
         <div class="st-modal-header">
-            <div style="display:flex;align-items:flex-start;gap:14px;">
+            <div style="display:flex;align-items:flex-start;gap:12px;">
                 <div class="abk-del-icon" style="background:rgba(249,180,15,0.1);border:1px solid rgba(249,180,15,0.2);"><i class="fas fa-tower-broadcast" style="color:#f9b40f;"></i></div>
-                <div>
+                <div style="min-width:0;flex:1;">
                     <div class="st-modal-title">Change Election Status</div>
                     <div class="st-modal-sub">This will affect what voters and the public see.</div>
                 </div>
             </div>
         </div>
         <div class="st-modal-body">
-            <p class="abk-del-body" style="margin-bottom:16px;">
+            <p class="abk-del-body" style="margin-bottom:16px;margin-top:0;">
                 Are you sure you want to change the election status to
                 <strong id="statusModalNewStatus" style="color:#fffbf0;"></strong>?
             </p>
-            <div id="statusWarningBox" style="display:none;padding:10px 14px;border-radius:9px;font-size:0.72rem;background:rgba(248,113,113,0.06);border:1px solid rgba(248,113,113,0.2);color:rgba(248,113,113,0.8);line-height:1.6;">
+            <div id="statusWarningBox" style="display:none;padding:12px 14px;border-radius:9px;font-size:0.72rem;background:rgba(248,113,113,0.06);border:1px solid rgba(248,113,113,0.2);color:rgba(248,113,113,0.8);line-height:1.6;">
             </div>
+            <div id="statusModalScheduleCard" style="display:none;margin-top:16px;">
+                <div style="border-radius:14px;padding:16px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);">
+                    <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:10px;margin-bottom:12px;flex-wrap:wrap;">
+                        <div style="min-width:0;flex:1;">
+                            <div style="font-size:0.88rem;font-weight:700;color:#fffbf0;">Election Schedule</div>
+                            <div style="font-size:0.7rem;color:rgba(255,251,240,0.55);margin-top:2px;">Review the current countdown target.</div>
+                        </div>
+                        <div id="statusModalScheduleBadge" style="font-size:0.62rem;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;padding:6px 11px;border-radius:999px;background:rgba(249,180,15,0.1);color:#f9b40f;border:1px solid rgba(249,180,15,0.2);white-space:nowrap;flex-shrink:0;">
+                            Upcoming
+                        </div>
+                    </div>
+                    <div id="statusModalScheduleContent" style="font-size:0.75rem;color:rgba(255,251,240,0.7);line-height:1.6;"></div>
+                </div>
+            </div>
+            <div id="statusModalScheduleFields" style="display:none;margin-top:16px;"></div>
         </div>
         <div class="st-modal-footer">
             <button class="st-m-cancel" onclick="closeStatusConfirmModal()">Cancel</button>
             <form id="statusForm" method="POST" action="{{ route('admin.settings.election.status') }}" style="margin:0;">
                 @csrf
                 <input type="hidden" id="statusInput" name="status" value="">
-                <button type="submit" class="st-m-delete" style="background:linear-gradient(135deg,#f9b40f,#fcd558);color:#380041;">
+                <button type="button" class="st-m-delete" style="background:linear-gradient(135deg,#f9b40f,#fcd558);color:#380041;" onclick="submitStatusForm()">
                     <i class="fas fa-tower-broadcast" style="font-size:.62rem;margin-right:4px;"></i> Confirm
                 </button>
             </form>
@@ -495,16 +459,16 @@
      onclick="if(event.target===this) closeDeleteModal()">
     <div class="st-modal">
         <div class="st-modal-header">
-            <div style="display:flex;align-items:flex-start;gap:14px;">
+            <div style="display:flex;align-items:flex-start;gap:12px;">
                 <div class="abk-del-icon"><i class="fas fa-trash"></i></div>
-                <div>
+                <div style="min-width:0;flex:1;">
                     <div class="st-modal-title">Delete Backup</div>
                     <div class="st-modal-sub">This action cannot be undone.</div>
                 </div>
             </div>
         </div>
         <div class="st-modal-body">
-            <p class="abk-del-body">
+            <p class="abk-del-body" style="margin-top:0;">
                 Are you sure you want to delete
                 <strong id="deleteBackupName" style="color:#fffbf0;"></strong>?
                 The backup file will be permanently removed from storage.
@@ -512,9 +476,9 @@
         </div>
         <div class="st-modal-footer">
             <button class="st-m-cancel" onclick="closeDeleteModal()">Cancel</button>
-            <form id="deleteForm" method="POST" style="margin:0;">
+            <form id="deleteForm" method="POST" style="margin:0;flex:1;min-width:140px;">
                 @csrf @method('DELETE')
-                <button type="submit" class="st-m-delete">
+                <button type="submit" class="st-m-delete" style="width:100%;">
                     <i class="fas fa-trash" style="font-size:.62rem;margin-right:4px;"></i> Delete
                 </button>
             </form>
@@ -527,7 +491,7 @@
 {{-- ═══════════════════════════════════════════ --}}
 <div id="testModal" class="st-modal-backdrop" style="display:none;"
      onclick="if(event.target===this) closeTestModal()">
-    <div class="st-modal" style="max-width:500px;">
+    <div class="st-modal" style="max-width:540px;">
         <div class="st-modal-header">
             <div class="st-modal-title">System Diagnostics</div>
             <div class="st-modal-sub">Checking backup system health</div>
@@ -557,7 +521,7 @@
         <div class="st-modal-body">
             <div id="errorMessage" style="font-size:0.78rem;color:rgba(255,251,240,0.65);
                  background:rgba(248,113,113,0.06);border:1px solid rgba(248,113,113,0.15);
-                 border-radius:10px;padding:14px 16px;line-height:1.7;word-break:break-all;">
+                 border-radius:10px;padding:14px 16px;line-height:1.7;word-break:break-word;margin:0;">
             </div>
         </div>
         <div class="st-modal-footer">
