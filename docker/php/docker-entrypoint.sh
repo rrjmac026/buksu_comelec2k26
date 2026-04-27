@@ -20,10 +20,10 @@ chmod -R ug+rwX storage bootstrap/cache
 
 # ---------------------------------------------------------------------------
 # 2. Create the public/storage symlink so uploaded files are web-accessible.
-#    The nginx container serves /storage/* via an alias directly from the
-#    volume, so this symlink is mainly for PHP-served contexts.
+#    Must run as root because public/ is owned by root in the image.
+#    Nginx serves /storage/* directly via a volume alias anyway.
 # ---------------------------------------------------------------------------
-su -s /bin/sh www-data -c "php artisan storage:link --no-interaction" 2>/dev/null || true
+php artisan storage:link --no-interaction --force 2>/dev/null || true
 
 # ---------------------------------------------------------------------------
 # 3. Warm production caches.
