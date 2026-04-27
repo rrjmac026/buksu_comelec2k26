@@ -33,7 +33,7 @@ class PartylistSeeder extends Seeder
     ];
 
         foreach ($partylists as $partylist) {
-            Partylist::create($partylist);
+            Partylist::firstOrCreate(['name' => $partylist['name']], $partylist);
         }
     }
 }

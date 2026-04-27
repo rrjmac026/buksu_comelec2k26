@@ -30,7 +30,11 @@ class OrganizationSeeder extends Seeder
             
         ];
 
-        // Insert data into the organizations table
-        DB::table('organizations')->insert($organizations);
+        foreach ($organizations as $org) {
+            DB::table('organizations')->updateOrInsert(
+                ['acronym' => $org['acronym']],
+                $org
+            );
+        }
     }
 }
