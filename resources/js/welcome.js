@@ -44,7 +44,7 @@ document.addEventListener('DOMContentLoaded', () => {
     animateCards('.ls-reveal');
 
     // ── Active nav link via IntersectionObserver ────────────
-    const sections   = ['home', 'about', 'elections', 'how-it-works', 'contact'];
+    const sections   = ['home', 'about', 'election', 'how-it-works', 'meet-the-team', 'contact'];
     const navLinks   = document.querySelectorAll('.nav-link[data-section]');
     const mobileLinks = document.querySelectorAll('.mobile-nav-link[data-section]');
 

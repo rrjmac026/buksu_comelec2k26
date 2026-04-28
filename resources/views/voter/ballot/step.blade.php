@@ -16,7 +16,11 @@
     }
 @endphp
 
-<div class="ballot-wrap"
+@php
+    $isMainPhase = $step >= 4;
+@endphp
+
+<div class="ballot-wrap {{ $isMainPhase ? 'is-main-phase' : '' }}"
      x-data="stepPage()"
      x-init="init()"
      @keydown.escape.window="showVoted = false">
@@ -27,20 +31,20 @@
     </div>
 
     {{-- Step dots --}}
-    <div class="step-pagination">
+    <div class="step-pagination {{ $isMainPhase ? 'is-main-phase' : '' }}">
         @foreach($steps as $s)
             @php
-                $isPast      = $s['step'] < $step;
-                $isCurrent   = $s['step'] === $step;
-                $wasSelected = $isPast && $s['status'] === 'selected';
+                $isCurrent    = $s['step'] === $step;
+                $isReachable  = $s['step'] <= $highestReachedStep;
+                $wasSelected  = $isReachable && $s['status'] === 'selected';
                 $dotClass    = $isCurrent    ? 'current'
                              : ($wasSelected ? 'selected-past'
-                             : ($isPast      ? 'past' : 'pending'));
+                             : ($isReachable ? 'past' : 'pending'));
             @endphp
-            @if($isPast)
+            @if($isReachable && !$isCurrent)
                 <a href="{{ route('voter.vote.step', $s['step']) }}"
                    class="step-dot {{ $dotClass }}"
-                   title="Go back to: {{ $s['name'] }}">{{ $s['step'] }}</a>
+                   title="Go to: {{ $s['name'] }}">{{ $s['step'] }}</a>
             @else
                 <span class="step-dot {{ $dotClass }}" title="{{ $s['name'] }}">{{ $s['step'] }}</span>
             @endif
@@ -55,12 +59,21 @@
     </div>
     @endif
 
+    @if($isMainPhase)
+    <div class="phase-divider" aria-hidden="true">
+        <span class="phase-divider-line"></span>
+    </div>
+    @endif
+
     {{-- Main card --}}
-    <div class="ballot-card">
+    <div class="ballot-card {{ $isMainPhase ? 'phase-elevated' : '' }}">
 
         {{-- Header --}}
         <div class="card-header">
             <div>
+                @if($isMainPhase)
+                    <div class="phase-tag">Student Body Position</div>
+                @endif
                 <div class="pos-badge">
                     <i class="fas fa-circle-dot"></i>
                     Position {{ $step }} of {{ $totalSteps }}
@@ -79,15 +92,6 @@
                     <div class="pos-hint">Select one candidate below, or skip this position.</div>
                 @endif
             </div>
-
-            {{-- Skip button --}}
-            <form method="POST" action="{{ route('voter.vote.step.save', $step) }}">
-                @csrf
-                <input type="hidden" name="action" value="skip">
-                <button type="submit" class="skip-btn">
-                    Skip <i class="fas fa-forward-step"></i>
-                </button>
-            </form>
         </div>
 
         {{-- Candidates grid --}}
@@ -165,7 +169,7 @@
 
         {{-- Footer --}}
         <div class="card-footer">
-            <div>
+            <div class="footer-meta">
                 @if($isMulti)
                     <div class="selection-hint" x-show="chosenCount === 0">
                         <i class="fas fa-hand-pointer" style="font-size:.65rem;"></i>
@@ -203,10 +207,19 @@
                 </a>
                 @endif
 
+                {{-- Skip --}}
+                <form method="POST" action="{{ route('voter.vote.step.save', $step) }}" style="margin:0;">
+                    @csrf
+                    <input type="hidden" name="action" value="skip">
+                    <button type="submit" class="btn btn-skip">
+                        Skip <i class="fas fa-forward-step"></i>
+                    </button>
+                </form>
+
                 {{-- Next / View All --}}
                 @if($step === $totalSteps)
                     <button type="button" class="btn btn-primary" @click="showVoted = true">
-                        <i class="fas fa-list-check"></i> View All Candidates Voted
+                        <i class="fas fa-list-check"></i> Review
                     </button>
                 @else
                     <button type="button" class="btn btn-primary"

@@ -72,6 +72,7 @@ class VoterCastedVoteController extends Controller
         }
 
         session()->forget('ballot');
+        session()->forget(['current_step', 'highest_reached_step']);
 
         return view('voter.ballot.intro', compact('totalPositions'));
     }
@@ -84,13 +85,26 @@ class VoterCastedVoteController extends Controller
         }
 
         $positions = $this->getVoterPositions();
+        $totalSteps = $positions->count();
 
-        if ($step < 1 || $step > $positions->count()) {
+        if ($step < 1 || $step > $totalSteps) {
             return redirect()->route('voter.vote.intro');
         }
 
+        $highestReachedStep = (int) session('highest_reached_step', 1);
+        $highestReachedStep = max(1, min($highestReachedStep, $totalSteps));
+
+        if ($step > $highestReachedStep) {
+            return redirect()->route('voter.vote.step', $highestReachedStep);
+        }
+
+        session([
+            'current_step' => $step,
+            'highest_reached_step' => max($highestReachedStep, $step),
+        ]);
+        $highestReachedStep = (int) session('highest_reached_step', 1);
+
         $position    = $positions->get($step - 1);
-        $totalSteps  = $positions->count();
         $ballot      = session('ballot', []);
         $rawSelected = $ballot[$position->id] ?? null;
 
@@ -100,25 +114,31 @@ class VoterCastedVoteController extends Controller
             $selectedId = ($rawSelected && $rawSelected !== 'skip') ? $rawSelected : null;
         }
 
-        $steps = $positions->map(function ($pos, $idx) use ($ballot, $step) {
+        $steps = $positions->map(function ($pos, $idx) use ($ballot, $step, $highestReachedStep) {
+            $stepNumber = $idx + 1;
             $status = 'pending';
-            if (isset($ballot[$pos->id])) {
-                $val = $ballot[$pos->id];
-                if ($val === 'skip') {
-                    $status = 'skipped';
-                } elseif (is_array($val) && count($val) > 0) {
-                    $status = 'selected';
-                } elseif (is_numeric($val)) {
-                    $status = 'selected';
-                }
-            } elseif ($idx + 1 < $step) {
-                $status = 'skipped';
-            } elseif ($idx + 1 === $step) {
+
+            if ($stepNumber === $step) {
                 $status = 'current';
+            } elseif ($stepNumber <= $highestReachedStep) {
+                if (!isset($ballot[$pos->id])) {
+                    $status = 'past';
+                } else {
+                    $val = $ballot[$pos->id];
+                    if ($val === 'skip') {
+                    $status = 'skipped';
+                    } elseif (is_array($val) && count($val) > 0) {
+                    $status = 'selected';
+                    } elseif (is_numeric($val)) {
+                    $status = 'selected';
+                    } else {
+                    $status = 'past';
+                    }
+                }
             }
 
             return [
-                'step'        => $idx + 1,
+                'step'        => $stepNumber,
                 'name'        => $pos->name,
                 'status'      => $status,
                 'position_id' => $pos->id,
@@ -147,6 +167,7 @@ class VoterCastedVoteController extends Controller
             'steps',
             'selectedId',
             'ballotCandidates',
+            'highestReachedStep',
         ));
     }
 
@@ -167,10 +188,18 @@ class VoterCastedVoteController extends Controller
         $position = $positions->get($step - 1);
         $ballot   = session('ballot', []);
         $action   = $request->input('action');
+        $highestReachedStep = (int) session('highest_reached_step', 1);
+        $highestReachedStep = max($highestReachedStep, $step);
 
         if ($action === 'back') {
+            $targetStep = max(1, $step - 1);
+            session([
+                'current_step' => $targetStep,
+                'highest_reached_step' => $highestReachedStep,
+            ]);
+
             return $step > 1
-                ? redirect()->route('voter.vote.step', $step - 1)
+                ? redirect()->route('voter.vote.step', $targetStep)
                 : redirect()->route('voter.vote.intro');
         }
 
@@ -238,10 +267,20 @@ class VoterCastedVoteController extends Controller
         ]);
 
         if ($step === $totalSteps) {
+            session([
+                'current_step' => $step,
+                'highest_reached_step' => max($highestReachedStep, $step),
+            ]);
             return redirect()->route('voter.vote.review');
         }
 
-        return redirect()->route('voter.vote.step', $step + 1);
+        $nextStep = $step + 1;
+        session([
+            'current_step' => $nextStep,
+            'highest_reached_step' => max($highestReachedStep, $nextStep),
+        ]);
+
+        return redirect()->route('voter.vote.step', $nextStep);
     }
 
     public function review()

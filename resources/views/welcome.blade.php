@@ -282,8 +282,9 @@
             <div class="nav-links" id="nav-links">
                 <a href="#home"         class="nav-link is-active" data-section="home">Home</a>
                 <a href="#about"        class="nav-link"           data-section="about">About</a>
-                <a href="#elections"    class="nav-link"           data-section="elections">Elections</a>
+                <a href="#election"     class="nav-link"           data-section="election">Election</a>
                 <a href="#how-it-works" class="nav-link"           data-section="how-it-works">How It Works</a>
+                <a href="#meet-the-team" class="nav-link"          data-section="meet-the-team">Meet the Team</a>
                 <a href="#contact"      class="nav-link"           data-section="contact">Contact</a>
             </div>
 
@@ -303,10 +304,10 @@
                         </a>
                     @endif
                 @else
-                    <a href="{{ route('login') }}" class="nav-cta-btn"
-                       @click.prevent="loginOpen = true; loginTab = 'voter'">
+                    <button type="button" class="nav-cta-btn"
+                       @click="loginOpen = true; loginTab = 'voter'">
                         <i class="fas fa-right-to-bracket"></i> <span>Login</span>
-                    </a>
+                    </button>
                 @endauth
 
                 {{-- Mobile hamburger --}}
@@ -327,11 +328,14 @@
                 <a href="#about"        class="mobile-nav-link" data-section="about">
                     <i class="fas fa-shield-halved"></i> About
                 </a>
-                <a href="#elections"    class="mobile-nav-link" data-section="elections">
-                    <i class="fas fa-vote-yea"></i> Elections
+                <a href="#election"     class="mobile-nav-link" data-section="election">
+                    <i class="fas fa-vote-yea"></i> Election
                 </a>
                 <a href="#how-it-works" class="mobile-nav-link" data-section="how-it-works">
                     <i class="fas fa-circle-question"></i> How It Works
+                </a>
+                <a href="#meet-the-team" class="mobile-nav-link" data-section="meet-the-team">
+                    <i class="fas fa-users"></i> Meet the Team
                 </a>
                 <a href="#contact"      class="mobile-nav-link" data-section="contact">
                     <i class="fas fa-envelope"></i> Contact
@@ -348,10 +352,10 @@
                         </a>
                     @endif
                 @else
-                    <a href="{{ route('login') }}" class="mobile-nav-cta"
-                       @click.prevent="loginOpen = true; loginTab = 'voter'">
+                    <button type="button" class="mobile-nav-cta"
+                       @click="loginOpen = true; loginTab = 'voter'">
                         <i class="fas fa-right-to-bracket"></i> Login
-                    </a>
+                    </button>
                 @endauth
             </div>
         </div>
@@ -363,8 +367,8 @@
             {{-- ════════════════════════════════════════════
                  HOME SECTION
             ════════════════════════════════════════════ --}}
-            <section id="home" class="section-scroll-target">
-                <div class="outer">
+            <section id="home" class="section-scroll-target scroll-mt-24">
+                <div class="outer w-full px-4 sm:px-6 lg:px-8">
                     <div class="grid-bg"></div>
                     <div class="grid-dots"></div>
 
@@ -377,12 +381,12 @@
                                 Trusted Online Voting Platform
                             </div>
 
-                            <h1 class="hero-h1">
+                            <h1 class="hero-h1 text-3xl sm:text-4xl lg:text-6xl break-words">
                                 Your Vote<br>
                                 <span class="h1-accent">Matters</span>
                             </h1>
 
-                            <p class="hero-lead">
+                            <p class="hero-lead text-sm sm:text-base break-words">
                                 We ensure fair, transparent, and secure elections for every student voice. Built with integrity, powered by technology.
                             </p>
 
@@ -398,10 +402,10 @@
                                         </a>
                                     @endif
                                 @else
-                                    <a href="{{ route('login') }}" class="btn-primary"
-                                       @click.prevent="loginOpen = true; loginTab = 'voter'">
+                                    <button type="button" class="btn-primary"
+                                       @click="loginOpen = true; loginTab = 'voter'">
                                         Vote Now <i class="fas fa-arrow-right"></i>
-                                    </a>
+                                    </button>
                                 @endauth
                                 <a href="#about" class="btn-secondary" onclick="smoothScrollTo('about'); return false;">
                                     <i class="fas fa-circle-info"></i> Learn More
@@ -447,7 +451,7 @@
                         {{-- CENTER: Ballot Box Visual --}}
                         <div class="hero-visual">
                             <div class="centerpiece-wrap">
-                                <img src="{{ asset('center.png') }}" alt="Voting ballot box visual" class="centerpiece-img">
+                                <img src="{{ asset('center.png') }}" alt="Voting ballot box visual" class="centerpiece-img w-full max-w-[280px] sm:max-w-[360px] lg:max-w-[460px] mx-auto">
                             </div>
                         </div>
 
@@ -539,7 +543,7 @@
                                 </div>
 
                                 {{-- View details --}}
-                                <a href="#elections" class="ec-details-link" onclick="smoothScrollTo('elections'); return false;">
+                                <a href="#election" class="ec-details-link" onclick="smoothScrollTo('election'); return false;">
                                     View Election Details
                                     <i class="fas fa-arrow-right"></i>
                                 </a>
@@ -555,13 +559,13 @@
             {{-- ════════════════════════════════════════════
                  ABOUT SECTION
             ════════════════════════════════════════════ --}}
-            <section id="about" class="landing-section section-scroll-target">
-                <div class="ls-inner">
+            <section id="about" class="landing-section section-scroll-target scroll-mt-24">
+                <div class="ls-inner w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 
                     <header class="ls-header ls-reveal">
                         <span class="ls-tag"><i class="fas fa-shield-halved"></i> About the System</span>
-                        <h2 class="ls-title">Secure Elections for <span class="h1-accent">Every Student</span></h2>
-                        <p class="ls-subtitle">Built on transparency, powered by technology — ensuring every vote is fair, private, and counted.</p>
+                        <h2 class="ls-title text-2xl sm:text-3xl lg:text-4xl break-words">Secure Elections for <span class="h1-accent">Every Student</span></h2>
+                        <p class="ls-subtitle text-sm sm:text-base break-words">Built on transparency, powered by technology — ensuring every vote is fair, private, and counted.</p>
                     </header>
 
                     {{-- Value cards --}}
@@ -613,190 +617,6 @@
                         ];
                     @endphp
 
-                    {{-- ORG CHART CONTAINER --}}
-                    <div class="org-chart ls-reveal">
-
-                        {{-- Header --}}
-                        <div class="org-header">
-                            <p class="org-eyebrow">MEET THE TEAM</p>
-                            <h2 class="org-title">The Minds Behind <span class="h1-accent">the System</span></h2>
-                            <p class="org-subtitle">Dedicated developers and commission members building a secure and transparent voting platform.</p>
-                        </div>
-
-                        {{-- ── LEVEL 1: University President ── --}}
-                        <div class="org-flow">
-
-                            {{-- ── LEVEL 1: University President ── --}}
-                            <div class="org-node team-card-animate">
-                                <article class="team-card org-leader-card">
-                                    <div class="tc-image-wrap">
-                                        <img src="{{ asset('assets/team/joy.png') }}" alt="Dr. Joy M. Mirasol" class="tc-image"
-                                            onerror="this.style.display='none'; this.nextElementSibling.style.display='none'; this.parentElement.querySelector('.tc-av-fallback').style.display='flex';">
-                                        <div class="tc-image-overlay"></div>
-                                        <div class="tc-av-fallback tc-av-fallback--icon" style="display:none;">
-                                            <i class="fas fa-university"></i>
-                                        </div>
-                                    </div>
-                                    <div class="tc-content">
-                                        <h4 class="tc-name">Dr. Joy M. Mirasol</h4>
-                                        <p class="tc-role">University President</p>
-                                        <p class="tc-description">Provides overall direction and institutional governance for all university-sanctioned activities.</p>
-                                    </div>
-                                </article>
-                            </div>
-
-                            <div class="org-line team-card-animate" aria-hidden="true">
-                                <span class="org-line-dot"></span>
-                                <span class="org-line-track"></span>
-                                <span class="org-line-dot"></span>
-                            </div>
-
-                            {{-- ── LEVEL 2: Vice President ── --}}
-                            <div class="org-node team-card-animate">
-                                <article class="team-card org-leader-card">
-                                    <div class="tc-image-wrap">
-                                        <img src="{{ asset('assets/team/tan.png') }}" alt="Dr. Lincoln V. Tan" class="tc-image"
-                                            onerror="this.style.display='none'; this.nextElementSibling.style.display='none'; this.parentElement.querySelector('.tc-av-fallback').style.display='flex';">
-                                        <div class="tc-image-overlay"></div>
-                                        <div class="tc-av-fallback tc-av-fallback--icon" style="display:none;">
-                                            <i class="fas fa-person-chalkboard"></i>
-                                        </div>
-                                    </div>
-                                    <div class="tc-content">
-                                        <h4 class="tc-name">Dr. Lincoln V. Tan</h4>
-                                        <p class="tc-role">VP &mdash; Culture, Arts &amp; Student Services</p>
-                                        <p class="tc-description">Oversees student welfare initiatives and ensures campus activities align with university values.</p>
-                                    </div>
-                                </article>
-                            </div>
-
-                            <div class="org-line team-card-animate" aria-hidden="true">
-                                <span class="org-line-dot"></span>
-                                <span class="org-line-track"></span>
-                                <span class="org-line-dot"></span>
-                            </div>
-
-                            {{-- ── LEVEL 3: Director ── --}}
-                            <div class="org-node team-card-animate">
-                                <article class="team-card org-leader-card">
-                                    <div class="tc-image-wrap">
-                                        <img src="{{ asset('assets/team/enzo.png') }}" alt="Dr. Lorenzo B. Dinlayan III" class="tc-image"
-                                            onerror="this.style.display='none'; this.nextElementSibling.style.display='none'; this.parentElement.querySelector('.tc-av-fallback').style.display='flex';">
-                                        <div class="tc-image-overlay"></div>
-                                        <div class="tc-av-fallback tc-av-fallback--icon" style="display:none;">
-                                            <i class="fas fa-sitemap"></i>
-                                        </div>
-                                    </div>
-                                    <div class="tc-content">
-                                        <h4 class="tc-name">Dr. Lorenzo B. Dinlayan III</h4>
-                                        <p class="tc-role">Director &mdash; Student Leadership &amp; Dev. Unit</p>
-                                        <p class="tc-description">Guides student organizations and oversees the implementation of student leadership programs.</p>
-                                    </div>
-                                </article>
-                            </div>
-
-                            <div class="org-line org-line--to-section team-card-animate" aria-hidden="true">
-                                <span class="org-line-dot"></span>
-                                <span class="org-line-track"></span>
-                                <span class="org-line-label">COMELEC Commission</span>
-                                <span class="org-line-track"></span>
-                                <span class="org-line-dot"></span>
-                            </div>
-
-                            {{-- ── LEVEL 5: COMELEC Section ── --}}
-                            <div class="org-section team-card-animate">
-
-                                <div class="org-section-header">
-                                    <i class="fas fa-shield-halved"></i>
-                                    <span>COMELEC Commission Team</span>
-                                </div>
-
-                                {{-- ── Adviser (solo, centred) ── --}}
-                                <div class="org-adviser-wrap team-card-animate">
-                                    <article class="team-card org-leader-card">
-                                        <div class="tc-image-wrap">
-                                            <img src="{{ $adviser['avatar'] }}" alt="{{ $adviser['name'] }}" class="tc-image"
-                                                onerror="this.style.display='none'; this.nextElementSibling.style.display='none'; this.parentElement.querySelector('.tc-av-fallback').style.display='flex';">
-                                            <div class="tc-image-overlay"></div>
-                                            <div class="tc-av-fallback" style="display:none;">{{ $adviser['initials'] }}</div>
-                                        </div>
-                                        <div class="tc-content">
-                                            <h4 class="tc-name">{{ $adviser['name'] }}</h4>
-                                            <p class="tc-role">{{ $adviser['role'] }}</p>
-                                            <p class="tc-description">{{ $adviser['description'] }}</p>
-                                            <div class="tc-socials">
-                                                <a href="#" class="tc-social" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
-                                                <a href="#" class="tc-social" aria-label="Email"><i class="fas fa-envelope"></i></a>
-                                            </div>
-                                        </div>
-                                    </article>
-                                </div>
-
-                                <div class="org-adviser-divider" aria-hidden="true">
-                                    <span class="org-line-dot"></span>
-                                    <span class="org-line-track" style="height:28px;"></span>
-                                    <span class="org-line-dot"></span>
-                                </div>
-
-                                {{-- Commission members grid --}}
-                                <div class="team-cards-grid">
-                                    @foreach ($commissionMembers as $m)
-                                        <article class="team-card team-card-animate">
-                                            <div class="tc-image-wrap">
-                                                <img src="{{ $m['avatar'] }}" alt="{{ $m['name'] }}" class="tc-image"
-                                                    onerror="this.style.display='none'; this.parentElement.querySelector('.tc-av-fallback').style.display='flex';">
-                                                <div class="tc-image-overlay"></div>
-                                                <div class="tc-av-fallback" style="display:none;">{{ $m['initials'] }}</div>
-                                            </div>
-                                            <div class="tc-content">
-                                                <h4 class="tc-name">{{ $m['name'] }}</h4>
-                                                <p class="tc-role">{{ $m['role'] }}</p>
-                                                <p class="tc-description">{{ $m['description'] }}</p>
-                                                <div class="tc-socials">
-                                                    <a href="#" class="tc-social" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
-                                                    <a href="#" class="tc-social" aria-label="Email"><i class="fas fa-envelope"></i></a>
-                                                </div>
-                                            </div>
-                                        </article>
-                                    @endforeach
-                                </div>
-
-                                {{-- Development Team subsection --}}
-                                <div class="org-dev-subsection">
-                                    <div class="org-dev-label">
-                                        <span class="org-dev-line"></span>
-                                        <span class="org-dev-text"><i class="fas fa-code"></i> Development Team</span>
-                                        <span class="org-dev-line"></span>
-                                    </div>
-                                    <div class="team-cards-grid team-cards-grid--development">
-                                        @foreach ($developmentTeam as $m)
-                                            <article class="team-card team-card-animate">
-                                                <div class="tc-image-wrap">
-                                                    <img src="{{ $m['avatar'] }}" alt="{{ $m['name'] }}" class="tc-image"
-                                                        onerror="this.style.display='none'; this.parentElement.querySelector('.tc-av-fallback').style.display='flex';">
-                                                    <div class="tc-image-overlay"></div>
-                                                    <div class="tc-av-fallback" style="display:none;">{{ $m['initials'] }}</div>
-                                                </div>
-                                                <div class="tc-content">
-                                                    <h4 class="tc-name">{{ $m['name'] }}</h4>
-                                                    <p class="tc-role">{{ $m['role'] }}</p>
-                                                    <p class="tc-description">{{ $m['description'] }}</p>
-                                                    <div class="tc-socials">
-                                                        <a href="#" class="tc-social" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
-                                                        <a href="#" class="tc-social" aria-label="Email"><i class="fas fa-envelope"></i></a>
-                                                    </div>
-                                                </div>
-                                            </article>
-                                        @endforeach
-                                    </div>
-                                </div>
-
-                            </div>{{-- end .org-section --}}
-
-                        </div>{{-- end .org-flow --}}
-
-                    </div>{{-- end .org-chart --}}
-
                 </div>
             </section>{{-- end #about --}}
 
@@ -804,13 +624,13 @@
             {{-- ════════════════════════════════════════════
                  ELECTIONS SECTION
             ════════════════════════════════════════════ --}}
-            <section id="elections" class="landing-section section-scroll-target ls-alt-bg">
-                <div class="ls-inner">
+            <section id="election" class="landing-section section-scroll-target scroll-mt-24 ls-alt-bg">
+                <div class="ls-inner w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 
                     <header class="ls-header ls-reveal">
                         <span class="ls-tag"><i class="fas fa-vote-yea"></i> Elections</span>
-                        <h2 class="ls-title">Student Government <span class="h1-accent">Elections</span></h2>
-                        <p class="ls-subtitle">Participate in secure, transparent, and reliable digital elections designed for every BukSU student.</p>
+                        <h2 class="ls-title text-2xl sm:text-3xl lg:text-4xl break-words">Student Government <span class="h1-accent">Election</span></h2>
+                        <p class="ls-subtitle text-sm sm:text-base break-words">Participate in secure, transparent, and reliable digital elections designed for every BukSU student.</p>
                     </header>
 
                     <div class="ls-elections-layout ls-reveal" data-election-page>
@@ -848,8 +668,8 @@
                                         <a href="{{ route('admin.dashboard') }}" class="btn-primary">Dashboard</a>
                                     @endif
                                 @else
-                                    <a href="{{ route('login') }}" class="btn-primary" id="ls-vote-btn"
-                                       @click.prevent="loginOpen = true; loginTab = 'voter'">Vote Now</a>
+                                    <button type="button" class="btn-primary" id="ls-vote-btn"
+                                       @click="loginOpen = true; loginTab = 'voter'">Vote Now</button>
                                 @endauth
                             </div>
                             <p class="ls-vote-hint" id="ls-vote-hint">Voting will be available once the election starts.</p>
@@ -884,27 +704,27 @@
                                 <div class="ls-progress-fill" id="ls-fill"></div>
                             </div>
 
-                            <a href="{{ route('login') }}" class="btn-primary" style="display:inline-block;margin-top:20px;text-decoration:none;"
-                               @click.prevent="loginOpen = true; loginTab = 'voter'">
+                            <button type="button" class="btn-primary" style="display:inline-flex;margin-top:20px;text-decoration:none;"
+                               @click="loginOpen = true; loginTab = 'voter'">
                                 View Election Details <i class="fas fa-arrow-right"></i>
-                            </a>
+                            </button>
                         </div>
                     </div>
 
                 </div>
-            </section>{{-- end #elections --}}
+            </section>{{-- end #election --}}
 
 
             {{-- ════════════════════════════════════════════
                  HOW IT WORKS SECTION
             ════════════════════════════════════════════ --}}
-            <section id="how-it-works" class="landing-section section-scroll-target">
-                <div class="ls-inner">
+            <section id="how-it-works" class="landing-section section-scroll-target scroll-mt-24">
+                <div class="ls-inner w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 
                     <header class="ls-header ls-reveal">
                         <span class="ls-tag"><i class="fas fa-circle-question"></i> How It Works</span>
-                        <h2 class="ls-title">Simple Steps to <span class="h1-accent">Cast Your Vote</span></h2>
-                        <p class="ls-subtitle">A straightforward, secure voting process designed to be completed in minutes.</p>
+                        <h2 class="ls-title text-2xl sm:text-3xl lg:text-4xl break-words">Simple Steps to <span class="h1-accent">Cast Your Vote</span></h2>
+                        <p class="ls-subtitle text-sm sm:text-base break-words">A straightforward, secure voting process designed to be completed in minutes.</p>
                     </header>
 
                     <div class="ls-steps ls-reveal">
@@ -978,17 +798,181 @@
                 </div>
             </section>{{-- end #how-it-works --}}
 
+            {{-- ════════════════════════════════════════════
+                 MEET THE TEAM SECTION
+            ════════════════════════════════════════════ --}}
+            <section id="meet-the-team" class="landing-section section-scroll-target scroll-mt-24 ls-alt-bg">
+                <div class="ls-inner w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                    <div class="org-chart ls-reveal">
+                        <div class="org-header">
+                            <p class="org-eyebrow">MEET THE TEAM</p>
+                            <h2 class="org-title text-2xl sm:text-3xl lg:text-4xl break-words">The Minds Behind <span class="h1-accent">the System</span></h2>
+                            <p class="org-subtitle text-sm sm:text-base break-words">Dedicated developers and commission members building a secure and transparent voting platform.</p>
+                        </div>
+                        <div class="org-flow">
+                            <div class="org-node team-card-animate">
+                                <article class="team-card org-leader-card">
+                                    <div class="tc-image-wrap">
+                                        <img src="{{ asset('assets/team/joy.png') }}" alt="Dr. Joy M. Mirasol" class="tc-image"
+                                            onerror="this.style.display='none'; this.nextElementSibling.style.display='none'; this.parentElement.querySelector('.tc-av-fallback').style.display='flex';">
+                                        <div class="tc-image-overlay"></div>
+                                        <div class="tc-av-fallback tc-av-fallback--icon" style="display:none;">
+                                            <i class="fas fa-university"></i>
+                                        </div>
+                                    </div>
+                                    <div class="tc-content">
+                                        <h4 class="tc-name">Dr. Joy M. Mirasol</h4>
+                                        <p class="tc-role">University President</p>
+                                        <p class="tc-description">Provides overall direction and institutional governance for all university-sanctioned activities.</p>
+                                    </div>
+                                </article>
+                            </div>
+                            <div class="org-line team-card-animate" aria-hidden="true">
+                                <span class="org-line-dot"></span>
+                                <span class="org-line-track"></span>
+                                <span class="org-line-dot"></span>
+                            </div>
+                            <div class="org-node team-card-animate">
+                                <article class="team-card org-leader-card">
+                                    <div class="tc-image-wrap">
+                                        <img src="{{ asset('assets/team/tan.png') }}" alt="Dr. Lincoln V. Tan" class="tc-image"
+                                            onerror="this.style.display='none'; this.nextElementSibling.style.display='none'; this.parentElement.querySelector('.tc-av-fallback').style.display='flex';">
+                                        <div class="tc-image-overlay"></div>
+                                        <div class="tc-av-fallback tc-av-fallback--icon" style="display:none;">
+                                            <i class="fas fa-person-chalkboard"></i>
+                                        </div>
+                                    </div>
+                                    <div class="tc-content">
+                                        <h4 class="tc-name">Dr. Lincoln V. Tan</h4>
+                                        <p class="tc-role">VP &mdash; Culture, Arts &amp; Student Services</p>
+                                        <p class="tc-description">Oversees student welfare initiatives and ensures campus activities align with university values.</p>
+                                    </div>
+                                </article>
+                            </div>
+                            <div class="org-line team-card-animate" aria-hidden="true">
+                                <span class="org-line-dot"></span>
+                                <span class="org-line-track"></span>
+                                <span class="org-line-dot"></span>
+                            </div>
+                            <div class="org-node team-card-animate">
+                                <article class="team-card org-leader-card">
+                                    <div class="tc-image-wrap">
+                                        <img src="{{ asset('assets/team/enzo.png') }}" alt="Dr. Lorenzo B. Dinlayan III" class="tc-image"
+                                            onerror="this.style.display='none'; this.nextElementSibling.style.display='none'; this.parentElement.querySelector('.tc-av-fallback').style.display='flex';">
+                                        <div class="tc-image-overlay"></div>
+                                        <div class="tc-av-fallback tc-av-fallback--icon" style="display:none;">
+                                            <i class="fas fa-sitemap"></i>
+                                        </div>
+                                    </div>
+                                    <div class="tc-content">
+                                        <h4 class="tc-name">Dr. Lorenzo B. Dinlayan III</h4>
+                                        <p class="tc-role">Director &mdash; Student Leadership &amp; Dev. Unit</p>
+                                        <p class="tc-description">Guides student organizations and oversees the implementation of student leadership programs.</p>
+                                    </div>
+                                </article>
+                            </div>
+                            <div class="org-line org-line--to-section team-card-animate" aria-hidden="true">
+                                <span class="org-line-dot"></span>
+                                <span class="org-line-track"></span>
+                                <span class="org-line-label">COMELEC Commission</span>
+                                <span class="org-line-track"></span>
+                                <span class="org-line-dot"></span>
+                            </div>
+                            <div class="org-section team-card-animate">
+                                <div class="org-section-header">
+                                    <i class="fas fa-shield-halved"></i>
+                                    <span>COMELEC Commission Team</span>
+                                </div>
+                                <div class="org-adviser-wrap team-card-animate">
+                                    <article class="team-card org-leader-card">
+                                        <div class="tc-image-wrap">
+                                            <img src="{{ $adviser['avatar'] }}" alt="{{ $adviser['name'] }}" class="tc-image"
+                                                onerror="this.style.display='none'; this.nextElementSibling.style.display='none'; this.parentElement.querySelector('.tc-av-fallback').style.display='flex';">
+                                            <div class="tc-image-overlay"></div>
+                                            <div class="tc-av-fallback" style="display:none;">{{ $adviser['initials'] }}</div>
+                                        </div>
+                                        <div class="tc-content">
+                                            <h4 class="tc-name">{{ $adviser['name'] }}</h4>
+                                            <p class="tc-role">{{ $adviser['role'] }}</p>
+                                            <p class="tc-description">{{ $adviser['description'] }}</p>
+                                            <div class="tc-socials">
+                                                <a href="#" class="tc-social" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
+                                                <a href="#" class="tc-social" aria-label="Email"><i class="fas fa-envelope"></i></a>
+                                            </div>
+                                        </div>
+                                    </article>
+                                </div>
+                                <div class="org-adviser-divider" aria-hidden="true">
+                                    <span class="org-line-dot"></span>
+                                    <span class="org-line-track" style="height:28px;"></span>
+                                    <span class="org-line-dot"></span>
+                                </div>
+                                <div class="team-cards-grid">
+                                    @foreach ($commissionMembers as $m)
+                                        <article class="team-card team-card-animate">
+                                            <div class="tc-image-wrap">
+                                                <img src="{{ $m['avatar'] }}" alt="{{ $m['name'] }}" class="tc-image"
+                                                    onerror="this.style.display='none'; this.parentElement.querySelector('.tc-av-fallback').style.display='flex';">
+                                                <div class="tc-image-overlay"></div>
+                                                <div class="tc-av-fallback" style="display:none;">{{ $m['initials'] }}</div>
+                                            </div>
+                                            <div class="tc-content">
+                                                <h4 class="tc-name">{{ $m['name'] }}</h4>
+                                                <p class="tc-role">{{ $m['role'] }}</p>
+                                                <p class="tc-description">{{ $m['description'] }}</p>
+                                                <div class="tc-socials">
+                                                    <a href="#" class="tc-social" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
+                                                    <a href="#" class="tc-social" aria-label="Email"><i class="fas fa-envelope"></i></a>
+                                                </div>
+                                            </div>
+                                        </article>
+                                    @endforeach
+                                </div>
+                                <div class="org-dev-subsection">
+                                    <div class="org-dev-label">
+                                        <span class="org-dev-line"></span>
+                                        <span class="org-dev-text"><i class="fas fa-code"></i> Development Team</span>
+                                        <span class="org-dev-line"></span>
+                                    </div>
+                                    <div class="team-cards-grid team-cards-grid--development">
+                                        @foreach ($developmentTeam as $m)
+                                            <article class="team-card team-card-animate">
+                                                <div class="tc-image-wrap">
+                                                    <img src="{{ $m['avatar'] }}" alt="{{ $m['name'] }}" class="tc-image"
+                                                        onerror="this.style.display='none'; this.parentElement.querySelector('.tc-av-fallback').style.display='flex';">
+                                                    <div class="tc-image-overlay"></div>
+                                                    <div class="tc-av-fallback" style="display:none;">{{ $m['initials'] }}</div>
+                                                </div>
+                                                <div class="tc-content">
+                                                    <h4 class="tc-name">{{ $m['name'] }}</h4>
+                                                    <p class="tc-role">{{ $m['role'] }}</p>
+                                                    <p class="tc-description">{{ $m['description'] }}</p>
+                                                    <div class="tc-socials">
+                                                        <a href="#" class="tc-social" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
+                                                        <a href="#" class="tc-social" aria-label="Email"><i class="fas fa-envelope"></i></a>
+                                                    </div>
+                                                </div>
+                                            </article>
+                                        @endforeach
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>{{-- end #meet-the-team --}}
+
 
             {{-- ════════════════════════════════════════════
                  CONTACT SECTION
             ════════════════════════════════════════════ --}}
-            <section id="contact" class="landing-section section-scroll-target ls-alt-bg">
-                <div class="ls-inner">
+            <section id="contact" class="landing-section section-scroll-target scroll-mt-24 ls-alt-bg">
+                <div class="ls-inner w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 
                     <header class="ls-header ls-reveal">
                         <span class="ls-tag"><i class="fas fa-envelope"></i> Contact</span>
-                        <h2 class="ls-title">Get in <span class="h1-accent">Touch</span></h2>
-                        <p class="ls-subtitle">We're here to assist you with any concerns about the election or the system.</p>
+                        <h2 class="ls-title text-2xl sm:text-3xl lg:text-4xl break-words">Get in <span class="h1-accent">Touch</span></h2>
+                        <p class="ls-subtitle text-sm sm:text-base break-words">We're here to assist you with any concerns about the election or the system.</p>
                     </header>
 
                     <div class="ls-contact-layout ls-reveal">
@@ -1075,8 +1059,9 @@
                 <div class="footer-center">
                     <a href="#home"         onclick="smoothScrollTo('home');return false;">Home</a>
                     <a href="#about"        onclick="smoothScrollTo('about');return false;">About</a>
-                    <a href="#elections"    onclick="smoothScrollTo('elections');return false;">Elections</a>
+                    <a href="#election"     onclick="smoothScrollTo('election');return false;">Election</a>
                     <a href="#how-it-works" onclick="smoothScrollTo('how-it-works');return false;">How It Works</a>
+                    <a href="#meet-the-team" onclick="smoothScrollTo('meet-the-team');return false;">Meet the Team</a>
                     <a href="#contact"      onclick="smoothScrollTo('contact');return false;">Contact</a>
                 </div>
                 <div class="footer-right">
