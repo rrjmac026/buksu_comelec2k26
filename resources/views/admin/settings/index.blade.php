@@ -557,6 +557,60 @@
     </div>
 </div>
 
+{{-- ═══════════════════════════════════════════ --}}
+{{-- RESET VOTES MODAL                           --}}
+{{-- ═══════════════════════════════════════════ --}}
+<div id="resetVotesModal" class="st-modal-backdrop" style="display:none;"
+     onclick="if(event.target===this) closeResetVotesModal()">
+    <div class="st-modal">
+        <div class="st-modal-header">
+            <div style="display:flex;align-items:flex-start;gap:12px;">
+                <div class="abk-del-icon">
+                    <i class="fas fa-triangle-exclamation"></i>
+                </div>
+                <div style="min-width:0;flex:1;">
+                    <div class="st-modal-title" style="color:#f87171;">Reset All Votes</div>
+                    <div class="st-modal-sub">This action is permanent and cannot be undone.</div>
+                </div>
+            </div>
+        </div>
+        <div class="st-modal-body">
+            <div style="padding:14px 16px;border-radius:10px;margin-bottom:16px;
+                        background:rgba(248,113,113,0.06);border:1px solid rgba(248,113,113,0.2);
+                        font-size:0.72rem;color:rgba(248,113,113,0.85);line-height:1.7;">
+                <i class="fas fa-triangle-exclamation" style="margin-right:6px;"></i>
+                <strong>Warning:</strong> Every ballot cast by every voter will be
+                <strong>permanently deleted</strong>. Voter eligibility and candidate
+                records are not affected — only the votes themselves.
+            </div>
+            <p style="font-size:0.75rem;color:rgba(255,251,240,0.5);line-height:1.7;margin:0 0 16px;">
+                To confirm, type <strong style="color:#fffbf0;">RESET</strong> in the box below:
+            </p>
+            <input type="text" id="resetVotesConfirmInput"
+                   placeholder="Type RESET to confirm"
+                   class="abk-input"
+                   style="margin-bottom:0;"
+                   oninput="toggleResetVotesBtn()">
+        </div>
+        <div class="st-modal-footer">
+            <button class="st-m-cancel" onclick="closeResetVotesModal()">Cancel</button>
+            <form id="resetVotesForm"
+                  method="POST"
+                  action="{{ route('admin.settings.election.votes.reset') }}"
+                  style="margin:0;">
+                @csrf
+                @method('DELETE')
+                <button type="submit" id="resetVotesSubmitBtn"
+                        class="st-m-delete" disabled
+                        style="opacity:.4;cursor:not-allowed;">
+                    <i class="fas fa-trash-can" style="font-size:.62rem;margin-right:4px;"></i>
+                    Delete All Votes
+                </button>
+            </form>
+        </div>
+    </div>
+</div>
+
 @push('scripts')
 @include('admin.settings.partials._scripts')
 @endpush
