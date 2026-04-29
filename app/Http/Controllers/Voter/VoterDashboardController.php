@@ -8,6 +8,8 @@ use App\Models\CastedVote;
 use App\Models\ElectionSetting;
 use App\Models\Position;
 use App\Models\User;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 
 class VoterDashboardController extends Controller
 {
@@ -142,6 +144,26 @@ class VoterDashboardController extends Controller
             'totalVoters'     => $totalVoters,
             'totalVotesCast'  => $totalVotesCast,
             'timestamp'       => now()->format('h:i:s A'),
+        ]);
+    }
+
+    public function completeWalkthrough(Request $request): JsonResponse
+    {
+        $voter = $request->user();
+
+        if (!$voter || !$voter->isVoter()) {
+            abort(403);
+        }
+
+        if (!$voter->walkthrough_completed_at) {
+            $voter->forceFill([
+                'walkthrough_completed_at' => now(),
+            ])->save();
+        }
+
+        return response()->json([
+            'ok' => true,
+            'completed_at' => optional($voter->walkthrough_completed_at)->toISOString(),
         ]);
     }
 }

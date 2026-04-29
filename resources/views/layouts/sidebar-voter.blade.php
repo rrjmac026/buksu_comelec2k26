@@ -31,6 +31,7 @@
 {{-- Always show Cast My Vote — the intro page handles already-voted state --}}
 <a href="{{ route('voter.vote.intro') }}"
    class="nav-link {{ Str::startsWith($currentRoute, 'voter.vote') ? 'active' : '' }} {{ $voteBlocked ? 'opacity-70 cursor-not-allowed' : '' }}"
+   data-tour="cast-vote-sidebar"
    data-election-guard="vote"
    title="{{ $voteBlocked ? $voteTooltip : '' }}"
    aria-disabled="{{ $voteBlocked ? 'true' : 'false' }}">
@@ -53,7 +54,8 @@
 <div class="nav-section-label">Account</div>
 
 <a href="{{ route('voter.feedback') }}"
-   class="nav-link {{ $currentRoute === 'voter.feedback' ? 'active' : '' }}">
+   class="nav-link {{ $currentRoute === 'voter.feedback' ? 'active' : '' }}"
+   data-tour="feedback-sidebar">
     <div class="nav-link-icon"><i class="fas fa-comment-dots"></i></div>
     <div class="nav-link-text">
         <span class="nav-link-label">Feedback</span>

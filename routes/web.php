@@ -154,6 +154,8 @@ Route::middleware(['auth', 'voter', 'election.status'])->prefix('voter')->name('
  
     // Dashboard
     Route::get('/dashboard',    [VoterDashboardController::class, 'index'])->name('dashboard');
+    Route::post('/walkthrough/complete', [VoterDashboardController::class, 'completeWalkthrough'])
+        ->name('walkthrough.complete');
     // Route::get('/results',      [VoterDashboardController::class, 'results'])->name('results');
     // Route::get('/results/live', [VoterDashboardController::class, 'liveResults'])->name('results.live');
  
