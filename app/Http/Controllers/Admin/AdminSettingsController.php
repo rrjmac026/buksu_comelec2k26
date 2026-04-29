@@ -430,4 +430,33 @@ class AdminSettingsController extends Controller
         while ($bytes >= 1024 && $i < count($units) - 1) { $bytes /= 1024; $i++; }
         return round($bytes, $precision) . ' ' . $units[$i];
     }
+
+    public function resetVotes(Request $request)
+    {
+        try {
+            $count = \App\Models\CastedVote::count();
+
+            if ($count === 0) {
+                return redirect()->route('admin.settings.index', ['tab' => 'election'])
+                    ->with('error', 'There are no votes to reset.');
+            }
+
+            \App\Models\CastedVote::truncate();
+
+            Log::warning('All votes have been reset.', [
+                'deleted_count' => $count,
+                'reset_by'      => Auth::id(),
+                'reset_at'      => now()->toDateTimeString(),
+            ]);
+
+            return redirect()->route('admin.settings.index', ['tab' => 'election'])
+                ->with('success', "All {$count} vote(s) have been permanently deleted.");
+
+        } catch (\Exception $e) {
+            Log::error('Vote reset failed', ['error' => $e->getMessage(), 'user_id' => Auth::id()]);
+
+            return redirect()->route('admin.settings.index', ['tab' => 'election'])
+                ->with('error', 'Failed to reset votes: ' . $e->getMessage());
+        }
+    }
 }

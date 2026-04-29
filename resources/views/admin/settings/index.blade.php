@@ -156,6 +156,33 @@
                 </form>
             </div>
         </div>
+        {{-- Reset Votes Card --}}
+        <div class="ec-card" style="border-color:rgba(248,113,113,0.25);">
+            <div class="ec-header" style="border-bottom-color:rgba(248,113,113,0.1);">
+                <div class="ec-title" style="color:#f87171;">Danger Zone</div>
+                <div class="ec-sub">Irreversible actions — proceed with extreme caution.</div>
+            </div>
+            <div class="ec-body">
+                <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:16px;flex-wrap:wrap;">
+                    <div style="flex:1;min-width:200px;">
+                        <div style="font-size:0.82rem;font-weight:700;color:#fffbf0;margin-bottom:4px;">
+                            Reset All Votes
+                        </div>
+                        <div style="font-size:0.7rem;color:rgba(255,251,240,0.4);line-height:1.6;">
+                            Permanently deletes every ballot cast. This cannot be undone.
+                            Use only to restart the election from a clean slate.
+                        </div>
+                    </div>
+                    <button type="button"
+                            onclick="openResetVotesModal()"
+                            class="abk-btn"
+                            style="background:rgba(248,113,113,0.1);border:1px solid rgba(248,113,113,0.25);
+                                color:rgba(248,113,113,0.8);white-space:nowrap;flex-shrink:0;">
+                        <i class="fas fa-trash-can" style="font-size:.62rem;"></i> Reset All Votes
+                    </button>
+                </div>
+            </div>
+        </div>
     </div>
 
     {{-- ══════════════════════════════════════
