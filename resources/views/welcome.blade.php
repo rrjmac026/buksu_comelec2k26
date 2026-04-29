@@ -4,7 +4,7 @@
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <title>{{ config('app.name', 'Voting System') }}</title>
-        <link rel="icon" href="{{ asset('images/tab_icon.png') }}" type="image/x-icon">
+        <link rel="icon" href="{{ asset('assets/icon.svg') }}" type="image/svg+xml">
         <link rel="preconnect" href="https://fonts.googleapis.com">
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
         <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,800;0,900;1,700&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600;9..40,700&display=swap" rel="stylesheet">
@@ -451,7 +451,7 @@
                         {{-- CENTER: Ballot Box Visual --}}
                         <div class="hero-visual">
                             <div class="centerpiece-wrap">
-                                <img src="{{ asset('center.png') }}" alt="Voting ballot box visual" class="centerpiece-img w-full max-w-[280px] sm:max-w-[360px] lg:max-w-[460px] mx-auto">
+                                <img src="{{ asset('center.png') }}" alt="Voting ballot box visual" class="centerpiece-img w-full max-w-[280px] sm:max-w-[360px] lg:max-w-[500px] xl:max-w-[800px] mx-auto">
                             </div>
                         </div>
 

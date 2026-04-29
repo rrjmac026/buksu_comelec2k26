@@ -114,6 +114,33 @@ body {
 
 .nav-actions { display: flex; align-items: center; gap: 12px; flex-shrink: 0; margin-left: auto; }
 
+/* Keep nav links truly centered on wide screens */
+@media (min-width: 1101px) {
+  .site-nav {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+    align-items: center;
+    gap: 16px;
+  }
+
+  .nav-brand {
+    flex: unset;
+    justify-self: start;
+    min-width: 0;
+  }
+
+  .nav-links {
+    flex: unset;
+    justify-self: center;
+    justify-content: center;
+  }
+
+  .nav-actions {
+    margin-left: 0;
+    justify-self: end;
+  }
+}
+
 .nav-live-badge {
   display: inline-flex; align-items: center; gap: 7px;
   padding: 5px 12px; border-radius: 20px;
@@ -355,6 +382,16 @@ body {
   object-fit: contain;
   filter: drop-shadow(0 26px 46px rgba(0,0,0,0.52)) drop-shadow(0 0 44px rgba(140,0,220,0.48));
   animation: centerpiece-float 5.8s ease-in-out infinite;
+}
+
+@media (min-width: 1024px) {
+  .hero-visual {
+    max-width: 750px;
+  }
+
+  .centerpiece-img {
+    max-width: 750px;
+  }
 }
 
 @keyframes centerpiece-float {

@@ -21,6 +21,7 @@ class User extends Authenticatable
 
     protected $casts = [
         'email_verified_at' => 'datetime',
+        'walkthrough_completed_at' => 'datetime',
     ];
 
     /**

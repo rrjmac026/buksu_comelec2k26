@@ -15,25 +15,29 @@
     {{-- ═══════════════════════════════════════════
          WELCOME BANNER
     ═══════════════════════════════════════════ --}}
-    <div class="welcome-banner">
+    <div class="welcome-banner" data-tour="welcome-card">
         <div class="welcome-banner-grid"></div>
         <div class="welcome-inner">
-            <div>
-                <h2 class="welcome-title"
-                    style="font-family:'Playfair Display',serif;font-size:1.4rem;font-weight:900;color:#fffbf0;margin:0 0 7px 0;line-height:1.25;text-shadow:0 2px 20px rgba(249,180,15,0.15);">
+            <div class="welcome-main">
+                <h2 class="welcome-title">
                     Welcome, {{ $voter->full_name }}! 👋
                 </h2>
-                <p class="welcome-sub"
-                   style="font-size:.82rem;color:rgba(255,251,240,0.62);margin:0;line-height:1.65;max-width:520px;">
+                <p class="welcome-sub">
                     {{ $hasVoted
                         ? "Thank you for casting your vote! Your participation helps shape the future of our organization."
                         : "You're invited to participate in this important election. Your voice matters—cast your vote now!" }}
                 </p>
-            </div>
-            <div class="welcome-date">
-                <span style="font-family:'Playfair Display',serif;font-size:.9rem;font-weight:800;background:linear-gradient(135deg,#f9b40f,#fcd558);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;">
+                <div class="welcome-date">
+                    <span class="welcome-date-text">
                     {{ now()->format('l, F j, Y') }}
-                </span>
+                    </span>
+                </div>
+            </div>
+            <div class="welcome-actions">
+                <button type="button" class="welcome-walkthrough-btn" data-tour-trigger>
+                    <i class="fas fa-circle-question"></i>
+                    Help / Walkthrough
+                </button>
             </div>
         </div>
     </div>
@@ -69,7 +73,7 @@
     </div>
 
     @elseif($electionStatus === 'ongoing')
-    <div class="vd-election-banner live">
+    <div class="vd-election-banner live" data-tour="election-status">
         <div class="vd-election-banner-icon">
             <span class="vd-live-dot"></span>
             <i class="fas fa-circle-dot"></i>
@@ -135,6 +139,7 @@
         const labelEl  = document.getElementById('vd-cd-label');
         const chipEl   = document.getElementById('vd-cd-chip');
         const blocksEl = document.getElementById('vd-cd-blocks');
+        const cardEl   = document.getElementById('vd-countdown-card');
 
         function pad(n) { return String(Math.floor(n)).padStart(2, '0'); }
 
@@ -172,11 +177,18 @@
                     mEl.textContent = pad((diff % 3600000) / 60000);
                     sEl.textContent = pad((diff % 60000) / 1000);
                     blocksEl.style.display = 'flex';
+                    if (cardEl) cardEl.style.display = '';
                 } else {
-                    labelEl.textContent    = endTs ? 'Voting has closed' : 'Voting is now open';
-                    chipEl.textContent     = endTs && now >= endTs ? 'Closing' : '● Live';
-                    chipEl.className       = 'vd-cd-chip live';
-                    blocksEl.style.display = 'none';
+                    if (endTs && now >= endTs) {
+                        labelEl.textContent    = 'Voting has closed';
+                        chipEl.textContent     = 'Closing';
+                        chipEl.className       = 'vd-cd-chip live';
+                        blocksEl.style.display = 'none';
+                        if (cardEl) cardEl.style.display = '';
+                    } else {
+                        // No end time configured while ongoing: hide duplicate "live/open" strip.
+                        if (cardEl) cardEl.style.display = 'none';
+                    }
                 }
                 return;
             }
@@ -266,6 +278,7 @@
                 @else
                     <a href="{{ route('voter.vote.intro') }}"
                        class="vd-cta-btn vd-cta-btn-full {{ $voteBlocked ? 'opacity-70 cursor-not-allowed' : '' }}"
+                       data-tour="cast-vote-button"
                        data-election-guard="vote"
                        title="{{ $voteBlocked ? $voteTooltip : '' }}"
                        aria-disabled="{{ $voteBlocked ? 'true' : 'false' }}">
@@ -282,7 +295,7 @@
     <div class="vd-main-grid">
 
         {{-- MY PROFILE --}}
-        <div class="vd-gc p-5" style="animation-delay:.12s;">
+        <div class="vd-gc p-5" style="animation-delay:.12s;" data-tour="voter-details">
             {{-- Avatar row --}}
             <div style="display:flex;align-items:center;gap:14px;margin-bottom:16px;padding-bottom:14px;border-bottom:1px solid rgba(249,180,15,0.08);">
                 <div style="width:50px;height:50px;border-radius:14px;background:linear-gradient(135deg,#f9b40f,#fcd558);display:flex;align-items:center;justify-content:center;font-size:1.15rem;font-weight:900;color:#380041;flex-shrink:0;box-shadow:0 0 18px rgba(249,180,15,0.4);font-family:'Playfair Display',serif;">
@@ -389,4 +402,5 @@
     {{-- close .vd-page-content --}}
     </div>
 
+    <x-voter-walkthrough />
 </x-app-layout>

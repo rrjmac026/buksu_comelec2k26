@@ -245,15 +245,79 @@
             background-size: 40px 40px;
         }
         .welcome-inner {
-            display: flex; flex-direction: column; gap: 14px;
-            position: relative; z-index: 1;
+            display: flex;
+            align-items: flex-end;
+            justify-content: space-between;
+            gap: 18px;
+            position: relative;
+            z-index: 1;
+        }
+        .welcome-main {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            min-width: 0;
+        }
+        .welcome-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.4rem;
+            font-weight: 900;
+            color: #fffbf0;
+            margin: 0;
+            line-height: 1.25;
+            text-shadow: 0 2px 20px rgba(249,180,15,0.15);
+        }
+        .welcome-sub {
+            font-size: .82rem;
+            color: rgba(255,251,240,0.62);
+            margin: 0;
+            line-height: 1.65;
+            max-width: 560px;
         }
         .welcome-date {
-            display: inline-flex; align-self: flex-start;
+            display: inline-flex;
+            align-self: flex-start;
             padding: 8px 18px; border-radius: var(--radius-sm);
             background: rgba(249,180,15,0.1); border: 1px solid rgba(249,180,15,0.28);
             box-shadow: 0 0 20px rgba(249,180,15,0.1);
         }
+        .welcome-date-text {
+            font-family: 'Playfair Display', serif;
+            font-size: .9rem;
+            font-weight: 800;
+            background: linear-gradient(135deg,#f9b40f,#fcd558);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .welcome-actions {
+            display: flex;
+            align-items: flex-end;
+            justify-content: flex-end;
+            align-self: stretch;
+        }
+        .welcome-walkthrough-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
+            padding: 10px 16px;
+            border-radius: 12px;
+            border: 1px solid rgba(249,180,15,0.28);
+            background: linear-gradient(145deg, rgba(45, 8, 70, 0.58), rgba(24, 4, 38, 0.62));
+            color: #fcd558;
+            font-size: .72rem;
+            font-weight: 700;
+            letter-spacing: .03em;
+            box-shadow: 0 0 0 rgba(249,180,15,0);
+            transition: all .2s ease;
+            white-space: nowrap;
+        }
+        .welcome-walkthrough-btn:hover {
+            border-color: rgba(249,180,15,0.5);
+            box-shadow: 0 0 18px rgba(249,180,15,0.18);
+            transform: translateY(-1px);
+        }
+        .welcome-walkthrough-btn:active { transform: translateY(0); }
 
         /* ══════════════════════════════════════
            STAT CARDS GRID
@@ -275,6 +339,32 @@
         }
         @media (min-width:900px) {
             .vd-main-grid { grid-template-columns: 1fr 1fr; gap:20px; margin-bottom:20px; }
+        }
+
+        @media (max-width: 900px) {
+            .welcome-inner {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 12px;
+            }
+            .welcome-actions {
+                width: 100%;
+                justify-content: flex-start;
+                align-self: auto;
+            }
+        }
+        @media (max-width: 640px) {
+            .welcome-title { font-size: 1.18rem; }
+            .welcome-sub { max-width: 100%; font-size: .78rem; }
+            .welcome-actions {
+                justify-content: center;
+            }
+            .welcome-walkthrough-btn {
+                width: 100%;
+                justify-content: center;
+                padding: 11px 16px;
+                font-size: .74rem;
+            }
         }
 
         /* ══════════════════════════════════════
