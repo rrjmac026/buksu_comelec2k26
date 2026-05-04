@@ -29,7 +29,7 @@ class DatabaseSeeder extends Seeder
             PositionSeeder::class,
             OrganizationSeeder::class,
             CandidateSeeder::class,
-            FacultyStaffSeeder::class,
+            // FacultyStaffSeeder::class,
             // TestCandidateSeeder::class
         ]);
 
@@ -64,28 +64,16 @@ class DatabaseSeeder extends Seeder
             ]
         );
 
-        // User::updateOrCreate(
-        //     ['email' => 'user@student.buksu.edu.ph'],
-        //     [
-        //         'first_name' => 'Regular',
-        //         'last_name' => 'User',
-        //         'password' => Hash::make('password'),
-        //         'role' => 'voter',
-        //     ]
-        // );
+        User::updateOrCreate(
+            ['email' => 'adminkleviejun@gmail.com'],
+            [
+                'first_name' => 'Admin Klevie Jun',
+                'last_name' => 'Caseres',
+                'password' => Hash::make('A9v!Q7x#L2p@Z5mK'),
+                'role' => 'admin',
+            ]
+        );
 
-        // \DB::table('users')->updateOrInsert(
-        //     ['email' => 'prototypecapstone@gmail.com'],
-        //     [
-        //         'first_name' => 'Putangina Mo',
-        //         'last_name' => 'Bobo Ka',
-        //         'password'   => null,
-        //         'role'       => 'voter',
-        //         'status'     => 'active',
-        //         'created_at' => now(),
-        //         'updated_at' => now(),
-        //     ]
-        // );
         
     }
 }
