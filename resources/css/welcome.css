@@ -192,12 +192,24 @@ body {
 ═══════════════════════════════ */
 .page-body { padding-top: 68px; flex: 1; display: flex; flex-direction: column; }
 
+/* First screen: hero fills viewport below fixed nav */
+#home {
+  display: flex;
+  flex-direction: column;
+  min-height: calc(100vh - 68px);
+  min-height: calc(100dvh - 68px);
+}
+
+#home > .outer {
+  flex: 1 1 auto;
+  min-height: 0;
+}
+
 /* ═══════════════════════════════
    OUTER (hero section wrapper)
 ═══════════════════════════════ */
 .outer {
   width: 100%;
-  min-height: auto;
   background: var(--bg);
   background-image:
     radial-gradient(ellipse 70% 60% at 5%  10%, rgba(90,0,140,0.6) 0%, transparent 60%),
@@ -205,7 +217,7 @@ body {
     radial-gradient(ellipse 40% 40% at 50% 50%, rgba(30,0,55,0.25) 0%, transparent 70%);
   display: flex; align-items: center; justify-content: center;
   padding: 40px 0;
-  position: relative; overflow: hidden; flex: 0 0 auto;
+  position: relative; overflow: hidden;
 }
 
 .grid-bg {
@@ -1009,7 +1021,12 @@ body {
   .nav-actions { gap: 8px; }
   .nav-brand { max-width: calc(100% - 92px); }
 
-  .outer { padding: 28px 16px; min-height: unset; }
+  #home {
+    min-height: calc(100vh - 62px);
+    min-height: calc(100dvh - 62px);
+  }
+
+  .outer { padding: 28px 16px; }
 
   .hero-layout {
     grid-template-columns: 1fr;
