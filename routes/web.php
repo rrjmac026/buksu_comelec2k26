@@ -124,6 +124,7 @@ Route::middleware(['auth', 'admin'])
             // Election sub-routes
             Route::post('/election/status', [AdminSettingsController::class, 'updateStatus'])->name('election.status');
             Route::post('/election/name',   [AdminSettingsController::class, 'updateName'])->name('election.name');
+            Route::delete('/election/votes/reset', [AdminSettingsController::class, 'resetVotes'])->name('election.votes.reset');
         
             // Backup sub-routes
             Route::prefix('backups')->name('backups.')->group(function () {
@@ -136,6 +137,8 @@ Route::middleware(['auth', 'admin'])
                 Route::post('/quick-backup',      [AdminSettingsController::class, 'quickBackup'])->name('quick');
                 Route::get('/statistics',         [AdminSettingsController::class, 'backupStatistics'])->name('statistics');
             });
+
+            
         
         });
 

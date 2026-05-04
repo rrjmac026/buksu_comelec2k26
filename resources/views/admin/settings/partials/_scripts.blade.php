@@ -317,7 +317,27 @@
     /* ── Keyboard escape ───────────────────────────────────────────── */
     document.addEventListener('keydown', e => {
         if (e.key === 'Escape') {
-            closeCreateModal(); closeDeleteModal(); closeTestModal(); closeStatusConfirmModal(); closeErrorModal();
+            closeCreateModal(); closeDeleteModal(); closeTestModal();
+            closeStatusConfirmModal(); closeErrorModal(); closeResetVotesModal();
         }
     });
+
+    /* ── Reset Votes Modal ─────────────────────────────────────────── */
+    function openResetVotesModal() {
+        document.getElementById('resetVotesConfirmInput').value = '';
+        toggleResetVotesBtn();
+        document.getElementById('resetVotesModal').style.display = 'flex';
+        setTimeout(() => document.getElementById('resetVotesConfirmInput').focus(), 100);
+    }
+    function closeResetVotesModal() {
+        document.getElementById('resetVotesModal').style.display = 'none';
+    }
+    function toggleResetVotesBtn() {
+        const val = document.getElementById('resetVotesConfirmInput').value.trim();
+        const btn = document.getElementById('resetVotesSubmitBtn');
+        const enabled = val === 'RESET';
+        btn.disabled = !enabled;
+        btn.style.opacity = enabled ? '1' : '.4';
+        btn.style.cursor  = enabled ? 'pointer' : 'not-allowed';
+    }
 </script>
