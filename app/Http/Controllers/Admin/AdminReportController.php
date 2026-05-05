@@ -15,6 +15,17 @@ use Carbon\Carbon;
 class AdminReportController extends Controller
 {
     // =========================================================
+    //  Brand Palette (from Welcome Blade)
+    //  Deep purple:  56,  0,  65  (#380041)
+    //  Gold:        249,180, 15   (#f9b40f)
+    //  Gold light:  252,213, 88   (#fcd558)
+    //  Row even:    243,234,247   (#f3eaf7 — soft lavender)
+    //  Row odd:     255,255,255   (white)
+    //  Body text:    26,  0, 38   (#1a0026 — near-black purple)
+    //  Muted text:   80, 50, 90   (mid-purple gray)
+    // =========================================================
+
+    // =========================================================
     //  Route Handlers
     // =========================================================
 
@@ -132,8 +143,11 @@ class AdminReportController extends Controller
         $this->addHeaderToPage($pdf, 'All Election Results', $data['generatedAt']);
         $this->addStatsSection($pdf, $data);
 
+        // Section heading — gold on white
+        $pdf->SetTextColor(56, 0, 65);
         $pdf->SetFont('Arial', 'B', 14);
         $pdf->Cell(0, 10, 'Supreme Student Council (SSC) Results', 0, 1, 'L');
+        $pdf->SetTextColor(26, 0, 38);
         $pdf->Ln(2);
 
         $widths = [70, 30, 35, 25, 20];
@@ -150,8 +164,10 @@ class AdminReportController extends Controller
         foreach ($data['collegeResults'] as $college) {
             $pdf->AddPage();
 
+            $pdf->SetTextColor(56, 0, 65);
             $pdf->SetFont('Arial', 'B', 14);
             $pdf->Cell(0, 10, $this->utf8($college['college']->name . ' Results'), 0, 1, 'L');
+            $pdf->SetTextColor(26, 0, 38);
             $pdf->Ln(2);
 
             if ($college['positions']->isNotEmpty()) {
@@ -160,8 +176,10 @@ class AdminReportController extends Controller
                 foreach ($college['positions'] as $position) {
                     if ($pdf->GetY() > 250) {
                         $pdf->AddPage();
+                        $pdf->SetTextColor(56, 0, 65);
                         $pdf->SetFont('Arial', 'B', 14);
                         $pdf->Cell(0, 10, $this->utf8($college['college']->name . ' Results (continued)'), 0, 1, 'L');
+                        $pdf->SetTextColor(26, 0, 38);
                         $pdf->Ln(2);
                         $this->drawTableHeader($pdf, $widths);
                     }
@@ -169,7 +187,9 @@ class AdminReportController extends Controller
                 }
             } else {
                 $pdf->SetFont('Arial', '', 11);
+                $pdf->SetTextColor(80, 50, 90);
                 $pdf->Cell(0, 10, 'No candidates found for this college.', 0, 1, 'L');
+                $pdf->SetTextColor(26, 0, 38);
             }
         }
 
@@ -185,22 +205,31 @@ class AdminReportController extends Controller
         $this->addHeaderToPage($pdf, 'Voter Turnout Report', $data['generatedAt']);
         $this->addStatsSection($pdf, $data);
 
+        $pdf->SetTextColor(56, 0, 65);
         $pdf->SetFont('Arial', 'B', 14);
         $pdf->Cell(0, 10, 'Turnout by College', 0, 1, 'L');
+        $pdf->SetTextColor(26, 0, 38);
         $pdf->Ln(2);
 
         $cw = [80, 35, 35, 30];
+
+        // Header row — deep purple fill, gold text
         $pdf->SetFont('Arial', 'B', 11);
-        $pdf->SetFillColor(168, 85, 247);
-        $pdf->SetTextColor(255);
+        $pdf->SetFillColor(56, 0, 65);
+        $pdf->SetTextColor(249, 180, 15);
         foreach (['College', 'Total Voters', 'Votes Cast', 'Turnout'] as $i => $h) {
             $pdf->Cell($cw[$i], 10, $h, 1, 0, 'C', true);
         }
         $pdf->Ln();
-        $pdf->SetTextColor(0);
+        $pdf->SetTextColor(26, 0, 38);
 
         foreach ($data['collegeStats'] as $i => $row) {
             $fill = $i % 2 === 0;
+            if ($fill) {
+                $pdf->SetFillColor(243, 234, 247);
+            } else {
+                $pdf->SetFillColor(255, 255, 255);
+            }
             $pdf->SetFont('Arial', '', 10);
             $pdf->Cell($cw[0], 10, $this->utf8($row['name']),          1, 0, 'L', $fill);
             $pdf->Cell($cw[1], 10, number_format($row['totalVoters']), 1, 0, 'C', $fill);
@@ -210,8 +239,10 @@ class AdminReportController extends Controller
         }
 
         $pdf->Ln(8);
+        $pdf->SetTextColor(56, 0, 65);
         $pdf->SetFont('Arial', 'B', 14);
         $pdf->Cell(0, 10, 'Non-Voters (' . $data['nonVoters']->count() . ')', 0, 1, 'L');
+        $pdf->SetTextColor(26, 0, 38);
         $pdf->Ln(2);
 
         $nw      = [65, 40, 30, 45];
@@ -224,7 +255,13 @@ class AdminReportController extends Controller
                 $this->drawSmallHeader($pdf, $nw, $headers);
             }
             $fill = $i % 2 === 0;
+            if ($fill) {
+                $pdf->SetFillColor(243, 234, 247);
+            } else {
+                $pdf->SetFillColor(255, 255, 255);
+            }
             $pdf->SetFont('Arial', '', 10);
+            $pdf->SetTextColor(26, 0, 38);
             $pdf->Cell($nw[0], 10, $this->utf8($voter->full_name),                1, 0, 'L', $fill);
             $pdf->Cell($nw[1], 10, $this->utf8($voter->student_number ?? '-'),    1, 0, 'C', $fill);
             $pdf->Cell($nw[2], 10, $this->utf8($voter->college?->acronym ?? '-'), 1, 0, 'C', $fill);
@@ -254,11 +291,17 @@ class AdminReportController extends Controller
             }
 
             $fill  = $i % 2 === 0;
+            if ($fill) {
+                $pdf->SetFillColor(243, 234, 247);
+            } else {
+                $pdf->SetFillColor(255, 255, 255);
+            }
             $first = $votes->first();
             $voter = $first->voter;
             $time  = Carbon::parse($first->voted_at)->timezone('Asia/Manila')->format('M j, Y H:i');
 
             $pdf->SetFont('Arial', '', 9);
+            $pdf->SetTextColor(26, 0, 38);
             $pdf->Cell($cw[0], 10, $this->utf8($txn),                              1, 0, 'L', $fill);
             $pdf->Cell($cw[1], 10, $this->utf8($voter?->full_name ?? '-'),          1, 0, 'L', $fill);
             $pdf->Cell($cw[2], 10, $this->utf8($voter?->student_number ?? '-'),     1, 0, 'C', $fill);
@@ -289,7 +332,13 @@ class AdminReportController extends Controller
             }
 
             $fill = $i % 2 === 0;
+            if ($fill) {
+                $pdf->SetFillColor(243, 234, 247);
+            } else {
+                $pdf->SetFillColor(255, 255, 255);
+            }
             $pdf->SetFont('Arial', '', 9);
+            $pdf->SetTextColor(26, 0, 38);
             $pdf->Cell($cw[0], 10, $this->utf8($candidate->full_name),                                  1, 0, 'L', $fill);
             $pdf->Cell($cw[1], 10, $this->utf8($candidate->position?->name ?? '-'),                     1, 0, 'L', $fill);
             $pdf->Cell($cw[2], 10, $this->utf8($candidate->partylist?->name ?? '-'),                    1, 0, 'C', $fill);
@@ -312,25 +361,30 @@ class AdminReportController extends Controller
         $this->addHeaderToPage($pdf, 'Voter Feedback Report', $data['generatedAt']);
 
         // ── Summary stats block ───────────────────────────────────
+        $pdf->SetTextColor(56, 0, 65);
         $pdf->SetFont('Arial', 'B', 14);
         $pdf->Cell(0, 10, 'Feedback Summary', 0, 1, 'L');
+        $pdf->SetTextColor(26, 0, 38);
         $pdf->SetFont('Arial', '', 12);
 
-        // Plain ASCII label — no em dash
         $stars = [1 => 'Poor', 2 => 'Fair', 3 => 'Good', 4 => 'Great', 5 => 'Excellent'];
 
         foreach ([
             ['Total Responses:', number_format($data['totalCount'])],
             ['Average Rating:',  number_format($data['averageRating'], 2) . ' / 5.00'],
         ] as $stat) {
+            $pdf->SetTextColor(80, 50, 90);
             $pdf->Cell(60, 8, $stat[0], 0, 0, 'L');
+            $pdf->SetTextColor(26, 0, 38);
             $pdf->Cell(0,  8, $stat[1], 0, 1, 'L');
         }
         $pdf->Ln(2);
 
         // ── Rating breakdown bars ─────────────────────────────────
+        $pdf->SetTextColor(56, 0, 65);
         $pdf->SetFont('Arial', 'B', 11);
         $pdf->Cell(0, 8, 'Rating Breakdown', 0, 1, 'L');
+        $pdf->SetTextColor(26, 0, 38);
 
         $barMaxWidth = 100;
         foreach ([5, 4, 3, 2, 1] as $star) {
@@ -338,27 +392,28 @@ class AdminReportController extends Controller
             $pct   = $data['totalCount'] > 0 ? round($count / $data['totalCount'] * 100, 1) : 0;
             $fill  = (int) round($barMaxWidth * $pct / 100);
 
-            // Plain hyphen — no em dash, no UTF-8 special chars
             $label = $star . ' - ' . $stars[$star];
 
             $pdf->SetFont('Arial', '', 9);
+            $pdf->SetTextColor(80, 50, 90);
             $pdf->Cell(28, 7, $label, 0, 0, 'L');
 
-            // Background track
-            $pdf->SetFillColor(230, 220, 240);
+            // Background track — soft lavender
+            $pdf->SetFillColor(232, 216, 240);
             $pdf->Cell($barMaxWidth, 5, '', 1, 0, 'L', true);
 
-            // Purple filled portion
+            // Gold filled portion
             if ($fill > 0) {
                 $x = $pdf->GetX() - $barMaxWidth;
                 $y = $pdf->GetY();
                 $pdf->SetXY($x, $y);
-                $pdf->SetFillColor(168, 85, 247);
+                $pdf->SetFillColor(249, 180, 15);
                 $pdf->Cell($fill, 5, '', 0, 0, 'L', true);
                 $pdf->SetXY($x + $barMaxWidth, $y);
             }
 
             $pdf->SetFont('Arial', '', 9);
+            $pdf->SetTextColor(26, 0, 38);
             $pdf->Cell(0, 5, '  ' . number_format($count) . ' (' . $pct . '%)', 0, 1, 'L');
             $pdf->Ln(2);
         }
@@ -366,8 +421,10 @@ class AdminReportController extends Controller
         $pdf->Ln(6);
 
         // ── Individual feedback table ─────────────────────────────
+        $pdf->SetTextColor(56, 0, 65);
         $pdf->SetFont('Arial', 'B', 14);
         $pdf->Cell(0, 10, 'Individual Responses (' . number_format($data['totalCount']) . ')', 0, 1, 'L');
+        $pdf->SetTextColor(26, 0, 38);
         $pdf->Ln(2);
 
         $cw      = [50, 25, 22, 83];
@@ -383,10 +440,15 @@ class AdminReportController extends Controller
             }
 
             $fill      = $i % 2 === 0;
-            // Plain hyphen — avoids any UTF-8 encoding issue
+            if ($fill) {
+                $pdf->SetFillColor(243, 234, 247);
+            } else {
+                $pdf->SetFillColor(255, 255, 255);
+            }
             $ratingStr = $fb->rating . ' - ' . ($stars[$fb->rating] ?? '-');
 
             $pdf->SetFont('Arial', '', 9);
+            $pdf->SetTextColor(26, 0, 38);
             $pdf->Cell($cw[0], $lineHeight, $this->utf8($fb->user?->full_name ?? '-'),         1, 0, 'L', $fill);
             $pdf->Cell($cw[1], $lineHeight, $this->utf8($fb->user?->college?->acronym ?? '-'), 1, 0, 'C', $fill);
             $pdf->Cell($cw[2], $lineHeight, $ratingStr,                                         1, 0, 'C', $fill);
@@ -406,13 +468,27 @@ class AdminReportController extends Controller
     {
         $timestamp = Carbon::now('Asia/Manila')->format('F j, Y H:i:s T');
 
+        // Title in deep purple
+        $pdf->SetTextColor(56, 0, 65);
         $pdf->SetFont('Arial', 'B', 16);
         foreach (explode("\n", $title) as $line) {
             $pdf->Cell(0, 10, $this->utf8($line), 0, 1, 'C');
         }
+
+        // Timestamp in muted mid-purple
+        $pdf->SetTextColor(80, 50, 90);
         $pdf->SetFont('Arial', '', 12);
         $pdf->Cell(0, 10, 'Generated on: ' . $timestamp, 0, 1, 'C');
-        $pdf->Ln(5);
+
+        // Gold rule divider
+        $pdf->SetDrawColor(249, 180, 15);
+        $pdf->SetLineWidth(0.8);
+        $pdf->Line(15, $pdf->GetY(), $pdf->GetPageWidth() - 15, $pdf->GetY());
+        $pdf->SetLineWidth(0.2);
+        $pdf->SetDrawColor(0, 0, 0);
+
+        $pdf->SetTextColor(26, 0, 38);
+        $pdf->Ln(6);
     }
 
     private function addStatsSection($pdf, $data)
@@ -421,40 +497,50 @@ class AdminReportController extends Controller
         $totalVoted  = $data['totalVoted']  ?? 0;
         $pct         = $totalVoters > 0 ? round($totalVoted / $totalVoters * 100, 2) : 0;
 
+        // Stats section heading — deep purple
+        $pdf->SetTextColor(56, 0, 65);
         $pdf->SetFont('Arial', 'B', 14);
         $pdf->Cell(0, 10, 'Voting Statistics', 0, 1, 'L');
-        $pdf->SetFont('Arial', '', 12);
 
+        $pdf->SetFont('Arial', '', 12);
         foreach ([
             ['Total Eligible Voters:', number_format($totalVoters)],
             ['Total Votes Cast:',      number_format($totalVoted)],
             ['Voter Turnout:',         $pct . '%'],
         ] as $stat) {
+            $pdf->SetTextColor(80, 50, 90);
             $pdf->Cell(60, 8, $stat[0], 0, 0, 'L');
+            $pdf->SetTextColor(26, 0, 38);
             $pdf->Cell(0,  8, $stat[1], 0, 1, 'L');
         }
+        $pdf->SetTextColor(26, 0, 38);
         $pdf->Ln(5);
     }
 
     private function drawTableHeader($pdf, $widths)
     {
+        // Deep purple fill, gold text
         $pdf->SetFont('Arial', 'B', 11);
-        $pdf->SetFillColor(168, 85, 247);
-        $pdf->SetTextColor(255);
+        $pdf->SetFillColor(56, 0, 65);
+        $pdf->SetTextColor(249, 180, 15);
 
         foreach (['Candidate Name', 'College', 'Partylist', 'Votes', '%'] as $i => $h) {
             $pdf->Cell($widths[$i], 10, $h, 1, 0, 'C', true);
         }
         $pdf->Ln();
-        $pdf->SetTextColor(0);
+        $pdf->SetTextColor(26, 0, 38);
+        $pdf->SetFillColor(255, 255, 255);
     }
 
     private function drawPositionSection($pdf, $position, $totalVoted, $widths)
     {
         $widths = [70, 30, 35, 25, 20];
 
+        // Position name — gold accent
         $pdf->SetFont('Arial', 'B', 11);
+        $pdf->SetTextColor(56, 0, 65);
         $pdf->Cell(0, 8, $this->utf8($position->name), 0, 1, 'L');
+        $pdf->SetTextColor(26, 0, 38);
         $pdf->SetFont('Arial', '', 10);
 
         foreach ($position->candidates as $index => $candidate) {
@@ -472,6 +558,13 @@ class AdminReportController extends Controller
     {
         $pct = $totalVoted > 0 ? round($candidate->vote_count / $totalVoted * 100, 2) : 0;
 
+        if ($fill) {
+            $pdf->SetFillColor(243, 234, 247);
+        } else {
+            $pdf->SetFillColor(255, 255, 255);
+        }
+        $pdf->SetTextColor(26, 0, 38);
+
         $pdf->Cell($widths[0], 10, $this->utf8($candidate->full_name),                 1, 0, 'L', $fill);
         $pdf->Cell($widths[1], 10, $this->utf8($candidate->college?->acronym  ?? '-'), 1, 0, 'C', $fill);
         $pdf->Cell($widths[2], 10, $this->utf8($candidate->partylist?->acronym ?? '-'),1, 0, 'C', $fill);
@@ -482,14 +575,16 @@ class AdminReportController extends Controller
 
     private function drawSmallHeader($pdf, array $widths, array $headers): void
     {
+        // Deep purple fill, gold text
         $pdf->SetFont('Arial', 'B', 11);
-        $pdf->SetFillColor(168, 85, 247);
-        $pdf->SetTextColor(255);
+        $pdf->SetFillColor(56, 0, 65);
+        $pdf->SetTextColor(249, 180, 15);
         foreach ($headers as $i => $h) {
             $pdf->Cell($widths[$i], 10, $h, 1, 0, 'C', true);
         }
         $pdf->Ln();
-        $pdf->SetTextColor(0);
+        $pdf->SetTextColor(26, 0, 38);
+        $pdf->SetFillColor(255, 255, 255);
     }
 
     // =========================================================
@@ -706,7 +801,6 @@ class AdminReportController extends Controller
 
     private function truncate(string $text, int $max): string
     {
-        // Use '...' — avoids the UTF-8 ellipsis character (…) which FPDF can't render
         return mb_strlen($text) > $max ? mb_substr($text, 0, $max - 1) . '...' : $text;
     }
 
