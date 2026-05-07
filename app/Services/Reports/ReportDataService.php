@@ -13,6 +13,18 @@ use Carbon\Carbon;
 class ReportDataService
 {
     // =========================================================
+    //  Year-rep position → eligible voter year_level mapping
+    //  Mirrors the SQL query logic exactly.
+    // =========================================================
+
+    private array $yrLevelMap = [
+        'Second Year Representative' => 1,
+        'Third Year Representative'  => 2,
+        'Fourth Year Representative' => 3,
+        'Fifth Year Representative'  => 4,
+    ];
+
+    // =========================================================
     //  Public Data Builders
     // =========================================================
 
@@ -47,6 +59,9 @@ class ReportDataService
                 ->get()
                 ->filter(fn($p) => $p->candidates->isNotEmpty());
 
+            // Enrich year-rep candidates with yr_vote_count + yr_denominator
+            $this->enrichYearRepCandidates($positions, $college->id);
+
             [$totalVoters, $totalVoted] = $this->collegeTurnout($college->id);
 
             return compact('college', 'positions', 'totalVoters', 'totalVoted');
@@ -80,6 +95,9 @@ class ReportDataService
             }])
             ->get()
             ->filter(fn($p) => $p->candidates->isNotEmpty());
+
+        // Enrich year-rep candidates with yr_vote_count + yr_denominator
+        $this->enrichYearRepCandidates($positions, $collegeInfo->id);
 
         [$totalVoters, $totalVoted] = $this->collegeTurnout($collegeInfo->id);
 
@@ -221,6 +239,55 @@ class ReportDataService
             User::where('role', 'voter')->where('status', 'Active')->count(),
             CastedVote::distinct('voter_id')->count(),
         ];
+    }
+
+    /**
+     * Returns [total_enrolled, total_voted] for a specific college + year level.
+     * year_level: 1 = 2nd Year Rep voters, 2 = 3rd Year, 3 = 4th Year, 4 = 5th Year
+     */
+    public function yrLevelTurnout(int $collegeId, int $yearLevel): array
+    {
+        $voterIds = User::where('role', 'voter')
+            ->where('status', 'active')
+            ->where('college_id', $collegeId)
+            ->where('year_level', $yearLevel)
+            ->pluck('id');
+
+        return [
+            $voterIds->count(),
+            CastedVote::whereIn('voter_id', $voterIds)->distinct('voter_id')->count(),
+        ];
+    }
+
+    /**
+     * For year-rep positions, attach yr_vote_count (votes from the correct
+     * year-level students only) and yr_denominator (total_yr_voted for that
+     * college + year level) onto each candidate.
+     * Non-year-rep candidates are left completely untouched.
+     */
+    private function enrichYearRepCandidates($positions, int $collegeId): void
+    {
+        foreach ($positions as $position) {
+            if (! isset($this->yrLevelMap[$position->name])) {
+                continue;
+            }
+
+            $yearLevel = $this->yrLevelMap[$position->name];
+            [, $yrVoted] = $this->yrLevelTurnout($collegeId, $yearLevel);
+
+            $yrVoterIds = User::where('role', 'voter')
+                ->where('status', 'active')
+                ->where('college_id', $collegeId)
+                ->where('year_level', $yearLevel)
+                ->pluck('id');
+
+            foreach ($position->candidates as $candidate) {
+                $candidate->yr_vote_count  = CastedVote::where('candidate_id', $candidate->candidate_id)
+                    ->whereIn('voter_id', $yrVoterIds)
+                    ->count();
+                $candidate->yr_denominator = $yrVoted;
+            }
+        }
     }
 
     // =========================================================

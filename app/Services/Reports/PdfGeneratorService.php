@@ -470,7 +470,14 @@ class PdfGeneratorService
 
     private function drawCandidateRow($pdf, $candidate, int $totalVoted, array $widths, bool $fill = false): void
     {
-        $pct = $totalVoted > 0 ? round($candidate->vote_count / $totalVoted * 100, 2) : 0;
+        // Year-rep positions carry their own vote count and denominator.
+        // All other positions fall back to the standard college-wide figures.
+        $votes       = $candidate->yr_vote_count ?? $candidate->vote_count;
+        $denominator = (isset($candidate->yr_denominator) && $candidate->yr_denominator > 0)
+            ? $candidate->yr_denominator
+            : $totalVoted;
+
+        $pct = $denominator > 0 ? round($votes / $denominator * 100, 2) : 0;
 
         $pdf->SetFillColor(...($fill ? [243, 234, 247] : [255, 255, 255]));
         $pdf->SetTextColor(26, 0, 38);
@@ -478,8 +485,8 @@ class PdfGeneratorService
         $pdf->Cell($widths[0], 10, $this->utf8($candidate->full_name),                  1, 0, 'L', $fill);
         $pdf->Cell($widths[1], 10, $this->utf8($candidate->college?->acronym  ?? '-'),  1, 0, 'C', $fill);
         $pdf->Cell($widths[2], 10, $this->utf8($candidate->partylist?->acronym ?? '-'), 1, 0, 'C', $fill);
-        $pdf->Cell($widths[3], 10, $candidate->vote_count,                              1, 0, 'R', $fill);
-        $pdf->Cell($widths[4], 10, $pct . '%',                                          1, 0, 'R', $fill);
+        $pdf->Cell($widths[3], 10, $votes,                                               1, 0, 'R', $fill);
+        $pdf->Cell($widths[4], 10, $pct . '%',                                           1, 0, 'R', $fill);
         $pdf->Ln();
     }
 
