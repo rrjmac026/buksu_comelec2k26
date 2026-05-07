@@ -17,7 +17,7 @@ class ReportDataService
     //  Mirrors the SQL query logic exactly.
     // =========================================================
 
-    private array $yrLevelMap = [
+    public array $yrLevelMap = [
         'Second Year Representative' => 1,
         'Third Year Representative'  => 2,
         'Fourth Year Representative' => 3,
@@ -248,7 +248,7 @@ class ReportDataService
     public function yrLevelTurnout(int $collegeId, int $yearLevel): array
     {
         $voterIds = User::where('role', 'voter')
-            ->where('status', 'active')
+            ->whereRaw('LOWER(status) = ?', ['active'])
             ->where('college_id', $collegeId)
             ->where('year_level', $yearLevel)
             ->pluck('id');

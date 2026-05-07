@@ -216,7 +216,7 @@
 
     {{-- Results by position --}}
     @forelse($results as $position)
-    @php $positionTotalVotes = $position->candidates->sum('votes_count'); @endphp
+    @php $positionTotalVotes = $position->candidates->sum('vote_count'); @endphp
     <div class="avr-pos-card">
         <div class="avr-pos-header">
             <span class="avr-pos-name">{{ $position->name }}</span>
@@ -230,10 +230,12 @@
         <div class="avr-pos-body">
             @foreach($position->candidates as $idx => $candidate)
             @php
-                $voteCount  = $candidate->votes_count ?? 0;
-                $percentage = $positionTotalVotes > 0 ? round(($voteCount / $positionTotalVotes) * 100, 1) : 0;
-                $rankClass  = $idx === 0 ? 'r1' : ($idx === 1 ? 'r2' : ($idx === 2 ? 'r3' : 'rn'));
-                $isWinner   = $idx === 0 && $voteCount > 0;
+                $isYearRep   = isset($candidate->yr_vote_count);
+                $voteCount   = $isYearRep ? $candidate->yr_vote_count : ($candidate->vote_count ?? 0);
+                $denominator = $isYearRep ? $candidate->yr_denominator : $positionTotalVotes;
+                $percentage  = $denominator > 0 ? round(($voteCount / $denominator) * 100, 1) : 0;
+                $rankClass   = $idx === 0 ? 'r1' : ($idx === 1 ? 'r2' : ($idx === 2 ? 'r3' : 'rn'));
+                $isWinner    = $idx === 0 && $voteCount > 0;
             @endphp
 
             @if($idx > 0)<div class="avr-cand-divider"></div>@endif
@@ -263,7 +265,14 @@
                     </div>
                     <div class="avr-cand-votes-wrap">
                         <div class="avr-cand-votes-num">{{ number_format($voteCount) }}</div>
-                        <div class="avr-cand-votes-pct">{{ $percentage }}%</div>
+                        <div class="avr-cand-votes-pct">
+                            {{ $percentage }}%
+                            @if($isYearRep)
+                                <span style="display:block;font-size:0.55rem;color:rgba(255,251,240,0.25);margin-top:1px;">
+                                    of {{ number_format($denominator) }} yr voters
+                                </span>
+                            @endif
+                        </div>
                     </div>
                 </div>
                 <div class="avr-prog-track">

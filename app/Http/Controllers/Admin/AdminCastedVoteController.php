@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\CastedVote;
 use App\Models\Position;
+use App\Services\Reports\ReportDataService;
 use Illuminate\Http\Request;
 
 class AdminCastedVoteController extends Controller
@@ -75,11 +76,41 @@ class AdminCastedVoteController extends Controller
     /**
      * GET /admin/votes/results
      */
-    public function results()
+    public function results(ReportDataService $reportData)
     {
         $results = Position::with([
-            'candidates' => fn($q) => $q->withCount('votes')->orderByDesc('votes_count'),
-        ])->get();
+            'candidates' => fn($q) => $q
+                ->selectRaw('candidates.*, (
+                    SELECT COUNT(*) FROM casted_votes cv
+                    WHERE cv.candidate_id = candidates.candidate_id
+                    AND cv.position_id = candidates.position_id
+                ) AS vote_count')
+                ->with(['partylist', 'college'])
+                ->orderByDesc('vote_count'),
+        ])->orderBy('sort_order')->get();
+
+        foreach ($results as $position) {
+            if (!array_key_exists($position->name, $reportData->yrLevelMap)) continue;
+
+            $yearLevel = $reportData->yrLevelMap[$position->name];
+
+            foreach ($position->candidates->groupBy('college_id') as $collegeId => $candidates) {
+                [, $yrVoted] = $reportData->yrLevelTurnout($collegeId, $yearLevel);
+
+                $yrVoterIds = \App\Models\User::where('role', 'voter')
+                    ->whereRaw('LOWER(status) = ?', ['active'])
+                    ->where('college_id', $collegeId)
+                    ->where('year_level', $yearLevel)
+                    ->pluck('id');
+
+                foreach ($candidates as $candidate) {
+                    $candidate->yr_vote_count  = \App\Models\CastedVote::where('candidate_id', $candidate->candidate_id)
+                        ->whereIn('voter_id', $yrVoterIds)
+                        ->count();
+                    $candidate->yr_denominator = $yrVoted;
+                }
+            }
+        }
 
         $totalVotersTurnout = CastedVote::distinct('voter_id')->count('voter_id');
 
