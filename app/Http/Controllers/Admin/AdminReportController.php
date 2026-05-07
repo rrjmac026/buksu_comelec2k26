@@ -183,7 +183,8 @@ class AdminReportController extends Controller
                         $pdf->Ln(2);
                         $this->drawTableHeader($pdf, $widths);
                     }
-                    $this->drawPositionSection($pdf, $position, $college['totalVoted'], $widths);
+                    $this->drawPositionSection($pdf, $position, $college['totalVoted'], $widths, $college['college']->id);
+                    //                                                                         ^ add this
                 }
             } else {
                 $pdf->SetFont('Arial', '', 11);
@@ -769,7 +770,7 @@ class AdminReportController extends Controller
 
     private function sboPositionsQuery()
     {
-        return Position::whereIn('id', range(4, 14))
+        return Position::whereIn('id', range(4, 15))  // 14 → 15
             ->orderBy('sort_order');
     }
 

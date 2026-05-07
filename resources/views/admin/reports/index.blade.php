@@ -280,6 +280,12 @@
                 <strong>SSC Results</strong>, <strong>All Election Results</strong>, <strong>Voter Turnout</strong>, and <strong>Voter Feedback</strong> use portrait layout (A4).
                 <strong>Ballot Log</strong> and <strong>Candidate Summary</strong> use landscape layout for wider tables.
                 Data is accurate as of the moment of download.
+                <br><br>
+                <strong>How vote percentages are calculated:</strong>
+                SSC positions (President, VP, Senator) use <strong>all registered voters</strong> as the base.
+                College SBO positions (Governor, Secretary, etc.) use <strong>all voters in that college</strong>.
+                Year Representative positions use only the <strong>eligible year-level voters in that college</strong>
+                — e.g., <em>4th Year Representative (BSIT)</em> shows percentages out of 3rd-year BSIT students only.
             </p>
         </div>
 
