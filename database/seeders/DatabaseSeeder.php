@@ -25,10 +25,10 @@ class DatabaseSeeder extends Seeder
 
         $this->call([
             PartylistSeeder::class,
-            CollegeSeeder::class,
-            PositionSeeder::class,
-            OrganizationSeeder::class,
-            CandidateSeeder::class,
+            // CollegeSeeder::class,
+            // PositionSeeder::class,
+            // OrganizationSeeder::class,
+            // CandidateSeeder::class,
             // FacultyStaffSeeder::class,
             // TestCandidateSeeder::class
         ]);
