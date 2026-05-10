@@ -35,7 +35,7 @@ class CustomPDF extends FPDF
         $this->Cell(0, 6, 'Head Commissioner:', 0, 1, 'L');
         $this->SetFont('Arial', '', 10);
         $this->Cell(40, 6, '', 0, 0, 'L'); // Add 40mm spacing from left
-        $this->Cell(0, 6, 'Roxanne Ortega', 0, 1, 'L');
+        $this->Cell(0, 6, 'Roxanne Mae J. Ortega', 0, 1, 'L');
         $this->Ln(10);  // Add 5mm spacing
         $this->SetFont('Arial', 'B', 10);
         $this->Cell(0, 6, 'Comelec Adviser:', 0, 1, 'L');
