@@ -16,35 +16,34 @@ class AdminCandidateController extends Controller
     {
         $query = Candidate::with(['partylist', 'organization', 'position', 'college']);
 
-        // Apply search filter
         if ($search = request('search')) {
             $query->where(function ($q) use ($search) {
                 $q->where('first_name', 'like', "%{$search}%")
-                  ->orWhere('last_name', 'like', "%{$search}%")
-                  ->orWhere('course', 'like', "%{$search}%")
-                  ->orWhereHas('position', fn($p) => $p->where('name', 'like', "%{$search}%"));
+                ->orWhere('last_name', 'like', "%{$search}%")
+                ->orWhere('course', 'like', "%{$search}%")
+                ->orWhereHas('position', fn($p) => $p->where('name', 'like', "%{$search}%"));
             });
         }
 
-        // Apply college filter
         if ($college_id = request('college_id')) {
             $query->where('college_id', $college_id);
         }
 
-        // Apply partylist filter
         if ($partylist_id = request('partylist_id')) {
             $query->where('partylist_id', $partylist_id);
         }
 
-        // Compute stats from the filtered query
+        // ✅ Clone the query for stats so it doesn't interfere with pagination
+        $statsQuery = clone $query;
+
         $stats = [
-            'total' => $query->count(),
-            'partylists' => $query->distinct('partylist_id')->count('partylist_id'),
-            'colleges' => $query->distinct('college_id')->count('college_id'),
-            'votes' => \App\Models\CastedVote::count(),
+            'total'      => $statsQuery->count(),
+            'partylists' => (clone $query)->distinct('partylist_id')->count('partylist_id'),
+            'colleges'   => (clone $query)->distinct('college_id')->count('college_id'),
+            'votes'      => \App\Models\CastedVote::count(),
         ];
 
-        $candidates = $query->latest()->paginate(15);
+        $candidates = $query->latest()->paginate(15)->withQueryString();
 
         return view('admin.candidates.index', compact('candidates', 'stats'));
     }

@@ -478,9 +478,9 @@
         </div>
 
         @if($candidates->hasPages())
-        <div class="ac-pagination">
-            {{ $candidates->withQueryString()->links() }}
-        </div>
+            <div class="ac-pagination">
+                {{ $candidates->withQueryString()->links('vendor.pagination.custom') }}
+            </div>
         @endif
     </div>
 
