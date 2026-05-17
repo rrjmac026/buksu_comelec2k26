@@ -3,6 +3,7 @@
 .gitattributes
 .editorconfig
 .DS_Store
+public/build
 
 # Never bake secrets into an image
 .env
