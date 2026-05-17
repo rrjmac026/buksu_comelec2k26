@@ -109,19 +109,19 @@
             <div class="grid grid-cols-2 sm:grid-cols-3 gap-3">
                 @php $voteCount = $voter->votes->count(); @endphp
                 <div class="rounded-2xl shadow-lg p-4 text-center"
-                     style="background: linear-gradient(to bottom right, rgba(56, 0, 65, 0.4), rgba(30, 0, 37, 0.6)); border: 1px solid rgba(249, 180, 15, 0.2);">
+                    style="background: linear-gradient(to bottom right, rgba(56, 0, 65, 0.4), rgba(30, 0, 37, 0.6)); border: 1px solid rgba(249, 180, 15, 0.2);">
                     <div class="text-2xl font-bold" style="color: #fcd558;">{{ $voteCount }}</div>
                     <div class="text-xs font-medium mt-0.5" style="color: rgba(255, 251, 240, 0.6);">Votes Cast</div>
                 </div>
                 <div class="rounded-2xl shadow-lg p-4 text-center"
-                     style="background: linear-gradient(to bottom right, rgba(56, 0, 65, 0.4), rgba(30, 0, 37, 0.6)); border: 1px solid rgba(249, 180, 15, 0.2);">
+                    style="background: linear-gradient(to bottom right, rgba(56, 0, 65, 0.4), rgba(30, 0, 37, 0.6)); border: 1px solid rgba(249, 180, 15, 0.2);">
                     <div class="text-2xl font-bold" style="color: {{ $voteCount > 0 ? '#6ee7b7' : 'rgba(255, 251, 240, 0.4)' }};">
                         {{ $voteCount > 0 ? 'Yes' : 'No' }}
                     </div>
                     <div class="text-xs font-medium mt-0.5" style="color: rgba(255, 251, 240, 0.6);">Has Voted</div>
                 </div>
                 <div class="rounded-2xl shadow-lg p-4 text-center"
-                     style="background: linear-gradient(to bottom right, rgba(56, 0, 65, 0.4), rgba(30, 0, 37, 0.6)); border: 1px solid rgba(249, 180, 15, 0.2);">
+                    style="background: linear-gradient(to bottom right, rgba(56, 0, 65, 0.4), rgba(30, 0, 37, 0.6)); border: 1px solid rgba(249, 180, 15, 0.2);">
                     <div class="text-xs font-bold font-mono" style="color: #fffbf0;">
                         {{ $voter->created_at?->format('M d, Y') ?? '—' }}
                     </div>
@@ -129,60 +129,20 @@
                 </div>
             </div>
 
-            {{-- Vote History Table --}}
-            <div class="rounded-2xl shadow-lg overflow-hidden"
-                 style="background: linear-gradient(to bottom right, rgba(56, 0, 65, 0.4), rgba(30, 0, 37, 0.6)); border: 1px solid rgba(249, 180, 15, 0.2);">
-                <div class="px-5 py-4" style="background: linear-gradient(to right, rgba(56, 0, 65, 0.6), transparent); border-bottom: 1px solid rgba(249, 180, 15, 0.2);">
-                    <h4 class="font-semibold flex items-center gap-2" style="color: #fcd558;">
-                        <i class="fas fa-ballot-check"></i> Vote History
-                    </h4>
+            {{-- Ballot Secrecy Notice --}}
+            <div class="rounded-2xl shadow-lg p-5 flex items-start gap-4"
+                style="background: linear-gradient(to bottom right, rgba(56, 0, 65, 0.4), rgba(30, 0, 37, 0.6)); border: 1px solid rgba(249, 180, 15, 0.2);">
+                <div class="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0"
+                    style="background: rgba(249, 180, 15, 0.1); border: 1px solid rgba(249, 180, 15, 0.2);">
+                    <i class="fas fa-lock" style="color: #f9b40f;"></i>
                 </div>
-
-                @if($voter->votes->isEmpty())
-                    <div class="py-14 text-center">
-                        <div class="w-14 h-14 rounded-xl flex items-center justify-center mx-auto mb-3"
-                             style="background: rgba(249, 180, 15, 0.2);">
-                            <i class="fas fa-box-open text-2xl" style="color: #f9b40f;"></i>
-                        </div>
-                        <p class="text-sm font-medium" style="color: rgba(255, 251, 240, 0.7);">No votes cast yet</p>
-                    </div>
-                @else
-                    <div class="overflow-x-auto">
-                        <table class="w-full text-sm">
-                            <thead>
-                                <tr style="background: linear-gradient(to right, rgba(56, 0, 65, 0.6), transparent); border-bottom: 1px solid rgba(249, 180, 15, 0.2);">
-                                    <th class="text-left px-5 py-3 text-xs font-bold uppercase tracking-wider" style="color: #fcd558;">Position</th>
-                                    <th class="text-left px-5 py-3 text-xs font-bold uppercase tracking-wider" style="color: #fcd558;">Candidate</th>
-                                    <th class="text-left px-5 py-3 text-xs font-bold uppercase tracking-wider hidden sm:table-cell" style="color: #fcd558;">Date & Time</th>
-                                    <th class="text-left px-5 py-3 text-xs font-bold uppercase tracking-wider hidden md:table-cell" style="color: #fcd558;">Transaction</th>
-                                </tr>
-                            </thead>
-                            <tbody style="border-collapse: collapse;">
-                                @foreach($voter->votes as $vote)
-                                <tr class="transition-colors duration-150" style="border-bottom: 1px solid rgba(249, 180, 15, 0.1); background: linear-gradient(to right, rgba(249, 180, 15, 0.02), transparent);">
-                                    <td class="px-5 py-3.5"
-                                        style="color: #fffbf0; font-weight: 500;">
-                                        {{ $vote->position->name ?? '—' }}
-                                    </td>
-                                    <td class="px-5 py-3.5" style="color: #fffbf0;">
-                                        {{ $vote->candidate ? $vote->candidate->first_name . ' ' . $vote->candidate->last_name : '—' }}
-                                    </td>
-                                    <td class="px-5 py-3.5 hidden sm:table-cell text-xs"
-                                        style="color: #fcd558;">
-                                        {{ $vote->voted_at?->format('M d, Y h:i A') ?? '—' }}
-                                    </td>
-                                    <td class="px-5 py-3.5 hidden md:table-cell">
-                                        <span class="font-mono text-xs px-2.5 py-1 rounded-lg"
-                                              style="background: rgba(249, 180, 15, 0.2); color: #fcd558;">
-                                            {{ $vote->transaction_number ?? '—' }}
-                                        </span>
-                                    </td>
-                                </tr>
-                                @endforeach
-                            </tbody>
-                        </table>
-                    </div>
-                @endif
+                <div>
+                    <p class="text-sm font-bold mb-1" style="color: #fcd558;">Ballot Secrecy Protected</p>
+                    <p class="text-xs leading-relaxed" style="color: rgba(255, 251, 240, 0.5);">
+                        In accordance with ballot secrecy principles, individual vote choices are not visible to administrators.
+                        Only the total vote count is shown to maintain election integrity.
+                    </p>
+                </div>
             </div>
         </div>
     </div>

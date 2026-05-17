@@ -231,8 +231,11 @@
             @foreach($position->candidates as $idx => $candidate)
             @php
                 $isYearRep   = isset($candidate->yr_vote_count);
+                $isSbo       = isset($candidate->sbo_denominator);
                 $voteCount   = $isYearRep ? $candidate->yr_vote_count : ($candidate->vote_count ?? 0);
-                $denominator = $isYearRep ? $candidate->yr_denominator : $positionTotalVotes;
+                $denominator = $isYearRep
+                    ? $candidate->yr_denominator
+                    : ($isSbo ? $candidate->sbo_denominator : $positionTotalVotes);
                 $percentage  = $denominator > 0 ? round(($voteCount / $denominator) * 100, 1) : 0;
                 $rankClass   = $idx === 0 ? 'r1' : ($idx === 1 ? 'r2' : ($idx === 2 ? 'r3' : 'rn'));
                 $isWinner    = $idx === 0 && $voteCount > 0;
