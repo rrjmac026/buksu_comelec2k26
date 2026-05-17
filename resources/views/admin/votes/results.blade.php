@@ -163,7 +163,7 @@
 
     {{-- Stats strip --}}
     @php
-        $totalVotes      = \App\Models\CastedVote::count();
+        $totalVotes      = \App\Models\CastedVote::distinct('voter_id')->count('voter_id');  // ← fixed
         $totalCandidates = \App\Models\Candidate::count();
         $totalPositions  = \App\Models\Position::count();
     @endphp
@@ -172,7 +172,7 @@
             <div class="avr-stat-icon" style="background:rgba(249,180,15,0.1);border:1px solid rgba(249,180,15,0.2);">
                 <i class="fas fa-check-circle" style="color:#f9b40f;"></i>
             </div>
-            <div><div class="avr-stat-num">{{ number_format($totalVotes) }}</div><div class="avr-stat-lbl">Total Votes Cast</div></div>
+            <div><div class="avr-stat-num">{{ number_format($totalVotes) }}</div><div class="avr-stat-lbl">Total Voters Who Voted</div>
         </div>
         <div class="avr-stat-card" style="animation-delay:.1s;">
             <div class="avr-stat-icon" style="background:rgba(52,211,153,0.1);border:1px solid rgba(52,211,153,0.2);">
