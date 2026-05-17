@@ -30,7 +30,7 @@ class PartylistSeeder extends Seeder
             'acronym' => 'HRY',
             'description' => 'HIRAYA - Student Political Party'
         ],
-        ['name' => 'HARAYA',    'acronym' => 'HRY2', 'description' => 'HARAYA - Student Political Party'],
+        ['name' => 'HARAYA',    'acronym' => 'HRA', 'description' => 'HARAYA - Student Political Party'],
     ];
 
         foreach ($partylists as $partylist) {
