@@ -91,6 +91,7 @@ FROM nginx:1.27-alpine AS nginx
 
 COPY docker/nginx/default.conf /etc/nginx/conf.d/default.conf
 COPY --from=app /var/www/html/public /var/www/html/public
+COPY --from=frontend /app/public/build /var/www/html/public/build
 
 EXPOSE 80
 
