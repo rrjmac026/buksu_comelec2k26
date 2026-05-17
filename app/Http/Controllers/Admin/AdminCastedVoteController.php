@@ -89,30 +89,60 @@ class AdminCastedVoteController extends Controller
                 ->orderByDesc('vote_count'),
         ])->orderBy('sort_order')->get();
 
+        // SSC position IDs (President, VP, Senator) — all voters can vote
+        $sscPositionIds = \App\Models\Position::whereIn('name', ['President', 'Vice President', 'Senator'])
+            ->pluck('id')->toArray();
+
+        // Overall turnout (denominator for SSC positions)
+        $overallVoted = CastedVote::distinct('voter_id')->count('voter_id');
+
+        // Cache college turnout so we don't query repeatedly
+        $collegeTurnoutCache = [];
+
         foreach ($results as $position) {
-            if (!array_key_exists($position->name, $reportData->yrLevelMap)) continue;
+            $isYearRep     = array_key_exists($position->name, $reportData->yrLevelMap);
+            $isSscPosition = in_array($position->id, $sscPositionIds);
 
-            $yearLevel = $reportData->yrLevelMap[$position->name];
+            if ($isYearRep) {
+                // Year-rep: denominator = voters of that year level in that college
+                $yearLevel = $reportData->yrLevelMap[$position->name];
 
-            foreach ($position->candidates->groupBy('college_id') as $collegeId => $candidates) {
-                [, $yrVoted] = $reportData->yrLevelTurnout($collegeId, $yearLevel);
+                foreach ($position->candidates->groupBy('college_id') as $collegeId => $candidates) {
+                    [, $yrVoted] = $reportData->yrLevelTurnout($collegeId, $yearLevel);
 
-                $yrVoterIds = \App\Models\User::where('role', 'voter')
-                    ->whereRaw('LOWER(status) = ?', ['active'])
-                    ->where('college_id', $collegeId)
-                    ->where('year_level', $yearLevel)
-                    ->pluck('id');
+                    $yrVoterIds = \App\Models\User::where('role', 'voter')
+                        ->whereRaw('LOWER(status) = ?', ['active'])
+                        ->where('college_id', $collegeId)
+                        ->where('year_level', $yearLevel)
+                        ->pluck('id');
 
-                foreach ($candidates as $candidate) {
-                    $candidate->yr_vote_count  = \App\Models\CastedVote::where('candidate_id', $candidate->candidate_id)
-                        ->whereIn('voter_id', $yrVoterIds)
-                        ->count();
-                    $candidate->yr_denominator = $yrVoted;
+                    foreach ($candidates as $candidate) {
+                        $candidate->yr_vote_count  = \App\Models\CastedVote::where('candidate_id', $candidate->candidate_id)
+                            ->whereIn('voter_id', $yrVoterIds)
+                            ->count();
+                        $candidate->yr_denominator = $yrVoted;
+                    }
+                }
+            } elseif ($isSscPosition) {
+                // SSC: denominator = total voters who voted overall
+                foreach ($position->candidates as $candidate) {
+                    $candidate->sbo_denominator = $overallVoted;
+                }
+            } else {
+                // SBO (Governor, Secretary, etc.): denominator = college voters who voted
+                foreach ($position->candidates as $candidate) {
+                    $collegeId = $candidate->college_id;
+
+                    if (!isset($collegeTurnoutCache[$collegeId])) {
+                        [, $collegeTurnoutCache[$collegeId]] = $reportData->collegeTurnout($collegeId);
+                    }
+
+                    $candidate->sbo_denominator = $collegeTurnoutCache[$collegeId];
                 }
             }
         }
 
-        $totalVotersTurnout = CastedVote::distinct('voter_id')->count('voter_id');
+        $totalVotersTurnout = $overallVoted;
 
         return view('admin.votes.results', compact('results', 'totalVotersTurnout'));
     }
